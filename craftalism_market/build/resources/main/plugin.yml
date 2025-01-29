@@ -1,0 +1,4 @@
+name: craftalism_market
+version: '1.0-SNAPSHOT'
+main: io.github.HenriqueMichelini.craftalism_market.CraftalismMarket
+api-version: '1.21'
