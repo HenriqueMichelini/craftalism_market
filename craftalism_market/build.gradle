@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id "io.github.goooler.shadow" version "8.1.8" // Add Shadow plugin
 }
 
 group = 'io.github.HenriqueMichelini'
@@ -19,6 +20,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    implementation "dev.triumphteam:triumph-gui:3.1.11" // Add Triumph GUI dependency (replace version with the latest one)
 }
 
 def targetJavaVersion = 21
@@ -46,4 +48,9 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+// Configure Shadow plugin
+shadowJar {
+    relocate("dev.triumphteam.gui", "io.github.HenriqueMichelini.craftalism_market.gui") // Replace with your desired package
 }
