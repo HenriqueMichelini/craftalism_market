@@ -5,6 +5,6 @@ api-version: '1.21'
 commands:
   market:
     description: Opens the inventory viewer GUI.
-    usage: /market.
+    usage: /market
     permission: craftalismmarket.market.use
     permission-message: You do not have permission to use this command.

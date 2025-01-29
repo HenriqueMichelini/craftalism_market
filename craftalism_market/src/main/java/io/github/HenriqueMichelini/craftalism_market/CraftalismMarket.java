@@ -11,6 +11,13 @@ public final class CraftalismMarket extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         getLogger().info("CraftalismMarket Enabled!");
+
+        if (getCommand("market") == null) {
+            getLogger().severe("Command 'market' is not registered in plugin.yml!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         Objects.requireNonNull(getCommand("market")).setExecutor(new MarketCommand());
     }
 

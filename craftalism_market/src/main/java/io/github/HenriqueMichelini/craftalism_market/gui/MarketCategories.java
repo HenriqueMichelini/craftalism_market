@@ -16,6 +16,7 @@ public class MarketCategories {
         gui = Gui.gui()
                 .title(Component.text("Market", NamedTextColor.GREEN))
                 .rows(6)
+                .disableAllInteractions()
                 .create();
         populateGui();
     }
