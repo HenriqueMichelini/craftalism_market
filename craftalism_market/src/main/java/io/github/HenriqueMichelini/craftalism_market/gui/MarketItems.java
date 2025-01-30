@@ -14,28 +14,29 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.List;
 import java.util.Objects;
 
-public class MarketSubCategories {
+public class MarketItems {
     private final Gui gui;
+    private String subCategoryTitle;
 
-    public MarketSubCategories(String subCategoryName) {
+    public MarketItems(String subCategoryTitle) {
         gui = Gui.gui()
-                .title(Component.text(subCategoryName, NamedTextColor.GREEN))
+                .title(Component.text(subCategoryTitle, NamedTextColor.GREEN))
                 .rows(6)
                 .disableAllInteractions()
                 .create();
 
-        populateGui(subCategoryName);
+        populateGui(subCategoryTitle);
         addBackButton();
     }
 
-    private void populateGui(String subCategoryName) {
+    private void populateGui(String subCategoryTitle) {
         FileConfiguration config = CraftalismMarket.getInstance().getItemsDataConfig();
         String path = "items";
 
         for (String key : Objects.requireNonNull(config.getConfigurationSection(path)).getKeys(false)) {
             String category = config.getString(path + "." + key + ".category");
 
-            if (category != null && category.equalsIgnoreCase(subCategoryName)) {
+            if (category != null && category.equalsIgnoreCase(subCategoryTitle)) {
                 String materialString = config.getString(path + "." + key + ".material");
                 int amount = config.getInt(path + "." + key + ".amount");
                 double price = config.getDouble(path + "." + key + ".price");
@@ -57,7 +58,7 @@ public class MarketSubCategories {
                         Component.text("Price: " + price + " coins", NamedTextColor.GOLD)
                 ))
                 .asGuiItem(event -> {
-                    new ItemNegotiation(material, (Player) event.getWhoClicked()).getGui().open(event.getWhoClicked());
+                    new ItemNegotiation(material, (Player) event.getWhoClicked(), subCategoryTitle).getGui().open(event.getWhoClicked());
                 });
     }
 

@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -22,13 +23,16 @@ public class ItemNegotiation {
     private final Material itemTarget;
     private int itemAmount = 1;
     private final Player player;
+    private final String subCategoryTitle;
+
     private static final int ROW_INVENTORY_SIZE = 576;
     private static final int FULL_INVENTORY_SIZE = 2304;
     private static final int MIN_AMOUNT = 1;
 
-    public ItemNegotiation(Material itemTarget, Player player) {
+    public ItemNegotiation(Material itemTarget, Player player, String subCategoryTitle) {
         this.itemTarget = itemTarget;
         this.player = player;
+        this.subCategoryTitle = subCategoryTitle;
         gui = Gui.gui()
                 .title(Component.text("Item", NamedTextColor.GREEN))
                 .rows(6)
@@ -172,6 +176,21 @@ public class ItemNegotiation {
         return ItemBuilder.from(item).amount(1).asGuiItem(event -> {
             player.sendMessage(Component.text("buy").color(NamedTextColor.GREEN));
         });
+    }
+
+    private void addBackButton() {
+        GuiItem backButton = ItemBuilder.from(Material.BARRIER)
+                .name(Component.text("Back to Categories", NamedTextColor.RED))
+                .asGuiItem(this::goBackToSubCategories);
+
+        gui.setItem(49, backButton);
+    }
+
+    private void goBackToSubCategories(InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player player) {
+            MarketItems subCategoryGui = new MarketItems(subCategoryTitle);
+            subCategoryGui.getGui().open(player);
+        }
     }
 
     private void performBuyAction() {}

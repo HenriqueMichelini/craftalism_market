@@ -1,51 +1,11 @@
-items:
-  stone:
-    material: STONE
-    category: "Natural Resources"
-    amount: 64
-    price: 10
-  oak_log:
-    material: OAK_LOG
-    category: "Woods"
-    amount: 64
-    price: 10
-  birch_log:
-    material: BIRCH_LOG
-    category: "Woods"
-    amount: 64
-    price: 10
-  spruce_log:
-    material: SPRUCE_LOG
-    category: "Woods"
-    amount: 64
-    price: 10
-  jungle_log:
-    material: JUNGLE_LOG
-    category: "Woods"
-    amount: 64
-    price: 10
-  dark_oak_log:
-    material: DARK_OAK_LOG
-    category: "Woods"
-    amount: 64
-    price: 10
-  acacia_log:
-    material: ACACIA_LOG
-    category: "Woods"
-    amount: 64
-    price: 10
-  cherry_log:
-    material: CHERRY_LOG
-    category: "Woods"
-    amount: 64
-    price: 10
-  mangrove_log:
-    material: MANGROVE_LOG
-    category: "Woods"
-    amount: 64
-    price: 10
-  pale_oak_log:
-    material: PALE_OAK_LOG
-    category: "Woods"
-    amount: 64
-    price: 10
+stone:
+  material: STONE
+  category: "Natural Resources"
+  price: 10
+  amount: 2000
+  maxAmount: 2000
+  regenerationRate: 50
+  priceAdjustmentFactor: 0.1
+  regenAdjustmentFactor: 0.05
+  productivity: 1.00
+  lastActivity: 0

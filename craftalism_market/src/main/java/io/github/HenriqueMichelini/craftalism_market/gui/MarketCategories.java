@@ -8,11 +8,12 @@ import io.github.HenriqueMichelini.craftalism_market.gui.util.GuiItemData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public class MarketCategories {
     private final Gui gui;
@@ -23,23 +24,32 @@ public class MarketCategories {
                 .rows(6) // Fixed number of rows
                 .disableAllInteractions() // Disable all interactions by default
                 .create();
+
         populateGui();
     }
 
-    // Populate the categories screen with different materials and titles
+    // Populate the categories screen dynamically from market_category.yml
     private void populateGui() {
-        Map<Integer, GuiItemData> categoryItems = Map.of(
-                19, new GuiItemData(Material.STONE, "Natural Resources"),
-                21, new GuiItemData(Material.OAK_LOG, "Woods"),
-                23, new GuiItemData(Material.PURPLE_WOOL, "Wools"),
-                25, new GuiItemData(Material.EMERALD, "Ores"),
-                29, new GuiItemData(Material.CYAN_DYE, "Dyes"),
-                31, new GuiItemData(Material.WHEAT, "Livestock"),
-                33, new GuiItemData(Material.STRING, "Mob Drops")
-        );
+        FileConfiguration config = CraftalismMarket.getInstance().getMarketCategoryConfig(); // Load market_category.yml
 
-        // Add each category item to the GUI
-        categoryItems.forEach((slot, data) -> gui.setItem(slot, createGuiItem(data)));
+        if (!config.contains("items")) return; // Avoid errors if the file is empty
+
+        Set<String> keys = Objects.requireNonNull(config.getConfigurationSection("items")).getKeys(false);
+
+        for (String key : keys) {
+            String path = "items." + key;
+            String title = config.getString(path + ".title");
+            String materialStr = config.getString(path + ".material");
+            int slot = config.getInt(path + ".slot");
+
+            if (title == null || materialStr == null) continue; // Skip if data is missing
+
+            Material material = Material.matchMaterial(materialStr);
+            if (material == null) continue; // Skip invalid materials
+
+            GuiItemData data = new GuiItemData(material, title);
+            gui.setItem(slot, createGuiItem(data));
+        }
     }
 
     // Create a GUI item for each category
@@ -52,11 +62,10 @@ public class MarketCategories {
     // Open the subcategory when a category item is clicked
     private void openSubCategory(InventoryClickEvent event, GuiItemData data) {
         if (event.getWhoClicked() instanceof Player player) {
-            MarketSubCategories subCategoryGui = new MarketSubCategories(data.getTitle());
+            MarketItems subCategoryGui = new MarketItems(data.getTitle());
             subCategoryGui.getGui().open(player);
         }
     }
-
 
     // Return the constructed GUI
     public Gui getGui() {
