@@ -3,6 +3,7 @@ package io.github.HenriqueMichelini.craftalism_market.gui;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import io.github.HenriqueMichelini.craftalism_market.gui.util.GuiItemData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -23,32 +24,33 @@ public class MarketCategories {
         populateGui();
     }
 
-    // Populate the categories screen with different materials
+    // Populate the categories screen with different materials and titles
     private void populateGui() {
-        Map<Integer, Material> categoryItems = Map.of(
-                19, Material.STONE,       // Natural Resources
-                21, Material.OAK_LOG,     // Woods
-                23, Material.PURPLE_WOOL, // Wools
-                25, Material.EMERALD,     // Ores
-                29, Material.CYAN_DYE,    // Dyes
-                31, Material.WHEAT,       // Livestock
-                33, Material.STRING       // Mob Drops
+        Map<Integer, GuiItemData> categoryItems = Map.of(
+                19, new GuiItemData(Material.STONE, "Natural Resources"),
+                21, new GuiItemData(Material.OAK_LOG, "Woods"),
+                23, new GuiItemData(Material.PURPLE_WOOL, "Wools"),
+                25, new GuiItemData(Material.EMERALD, "Ores"),
+                29, new GuiItemData(Material.CYAN_DYE, "Dyes"),
+                31, new GuiItemData(Material.WHEAT, "Livestock"),
+                33, new GuiItemData(Material.STRING, "Mob Drops")
         );
 
-        categoryItems.forEach((slot, material) -> gui.setItem(slot, createGuiItem(material)));
+        categoryItems.forEach((slot, data) -> gui.setItem(slot, createGuiItem(data)));
     }
 
     // Create a GUI item for each category
-    private GuiItem createGuiItem(Material material) {
-        return ItemBuilder.from(material)
-                .asGuiItem(event -> openSubCategory(event, material));
+    private GuiItem createGuiItem(GuiItemData data) {
+        return ItemBuilder.from(data.getMaterial())
+                .name(Component.text(data.getTitle(), NamedTextColor.WHITE))
+                .asGuiItem(event -> openSubCategory(event, data));
     }
 
     // Open the subcategory when a category item is clicked
-    private void openSubCategory(InventoryClickEvent event, Material material) {
+    private void openSubCategory(InventoryClickEvent event, GuiItemData data) {
         if (event.getWhoClicked() instanceof Player player) {
             // Determine which subcategory to open based on clicked material
-            Map<Integer, Material> subCategoryItems = switch (material) {
+            Map<Integer, Material> subCategoryItems = switch (data.getMaterial()) {
                 case STONE -> MarketSubCategories.naturalResourcesCategory();
                 case OAK_LOG -> MarketSubCategories.woodCategory();
                 case PURPLE_WOOL -> MarketSubCategories.woolCategory();
@@ -61,7 +63,7 @@ public class MarketCategories {
 
             if (subCategoryItems != null) {
                 // Create and open the appropriate subcategory GUI
-                MarketSubCategories subCategoryGui = new MarketSubCategories(material.name(), subCategoryItems);
+                MarketSubCategories subCategoryGui = new MarketSubCategories(data.getTitle(), subCategoryItems);
                 subCategoryGui.getGui().open(player);
             }
         }
