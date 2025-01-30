@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import java.util.List;
 import java.util.Objects;
 
 public class MarketSubCategories {
@@ -39,6 +40,7 @@ public class MarketSubCategories {
                 int amount = config.getInt(path + "." + key + ".amount");
                 double price = config.getDouble(path + "." + key + ".price");
 
+                assert materialString != null;
                 Material material = Material.matchMaterial(materialString);
                 if (material != null) {
                     GuiItem item = createGuiItem(material, amount, price);
@@ -50,9 +52,10 @@ public class MarketSubCategories {
 
     private GuiItem createGuiItem(Material material, int amount, double price) {
         return ItemBuilder.from(material)
-                .amount(amount)
-                .name(Component.text(material.name(), NamedTextColor.AQUA))
-                .lore(Component.text("Price: " + price + " coins", NamedTextColor.GOLD))
+                .lore(List.of(
+                        Component.text("Amount: " + amount, NamedTextColor.WHITE),
+                        Component.text("Price: " + price + " coins", NamedTextColor.GOLD)
+                ))
                 .asGuiItem(event -> {
                     new ItemNegotiation(material, (Player) event.getWhoClicked()).getGui().open(event.getWhoClicked());
                 });
