@@ -34,8 +34,7 @@ public class MarketSubCategories {
     // Create the GuiItem with click event
     private GuiItem createGuiItem(Material material) {
         return ItemBuilder.from(material).asGuiItem(event -> {
-            // Handle the click action here (if needed)
-            event.getWhoClicked().sendMessage("You clicked on " + material.name());
+            new ItemNegotiation(material, (Player) event.getWhoClicked()).getGui().open(event.getWhoClicked());
         });
     }
 
