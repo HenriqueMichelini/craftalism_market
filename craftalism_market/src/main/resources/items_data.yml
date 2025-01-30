@@ -1,0 +1,6 @@
+items:
+  stone:
+    material: STONE
+    category: "Natural Resources"
+    amount: 64
+    price: 10

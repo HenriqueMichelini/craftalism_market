@@ -3,12 +3,14 @@ package io.github.HenriqueMichelini.craftalism_market.gui;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.gui.util.GuiItemData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.Map;
 
@@ -18,7 +20,7 @@ public class MarketCategories {
     public MarketCategories() {
         gui = Gui.gui()
                 .title(Component.text("Market", NamedTextColor.GREEN))
-                .rows(6)
+                .rows(6) // Fixed number of rows
                 .disableAllInteractions() // Disable all interactions by default
                 .create();
         populateGui();
@@ -36,6 +38,7 @@ public class MarketCategories {
                 33, new GuiItemData(Material.STRING, "Mob Drops")
         );
 
+        // Add each category item to the GUI
         categoryItems.forEach((slot, data) -> gui.setItem(slot, createGuiItem(data)));
     }
 
@@ -49,25 +52,11 @@ public class MarketCategories {
     // Open the subcategory when a category item is clicked
     private void openSubCategory(InventoryClickEvent event, GuiItemData data) {
         if (event.getWhoClicked() instanceof Player player) {
-            // Determine which subcategory to open based on clicked material
-            Map<Integer, Material> subCategoryItems = switch (data.getMaterial()) {
-                case STONE -> MarketSubCategories.naturalResourcesCategory();
-                case OAK_LOG -> MarketSubCategories.woodCategory();
-                case PURPLE_WOOL -> MarketSubCategories.woolCategory();
-                case EMERALD -> MarketSubCategories.oresCategory();
-                case CYAN_DYE -> MarketSubCategories.dyesCategory();
-                case WHEAT -> MarketSubCategories.livestockCategory();
-                case STRING -> MarketSubCategories.mobDropsCategory();
-                default -> null;
-            };
-
-            if (subCategoryItems != null) {
-                // Create and open the appropriate subcategory GUI
-                MarketSubCategories subCategoryGui = new MarketSubCategories(data.getTitle(), subCategoryItems);
-                subCategoryGui.getGui().open(player);
-            }
+            MarketSubCategories subCategoryGui = new MarketSubCategories(data.getTitle());
+            subCategoryGui.getGui().open(player);
         }
     }
+
 
     // Return the constructed GUI
     public Gui getGui() {
