@@ -57,8 +57,6 @@ public class CraftalismMarket extends JavaPlugin {
     }
 
     private void saveDefaultMarketCategory() {
-        marketCategoryFile.getParentFile().mkdirs(); // Ensure the directory exists
-
         try {
             if (marketCategoryFile.createNewFile()) {
                 marketCategoryConfig = YamlConfiguration.loadConfiguration(marketCategoryFile);
@@ -103,7 +101,6 @@ public class CraftalismMarket extends JavaPlugin {
             }
         } catch (IOException e) {
             getLogger().severe("Could not create market_category_items.yml!");
-            e.printStackTrace();
         }
     }
 
@@ -120,7 +117,6 @@ public class CraftalismMarket extends JavaPlugin {
             itemsDataConfig.save(itemsDataFile);
         } catch (IOException e) {
             getLogger().severe("Could not save market_items.yml!");
-            e.printStackTrace();
         }
     }
 
@@ -129,7 +125,6 @@ public class CraftalismMarket extends JavaPlugin {
             marketCategoryConfig.save(marketCategoryFile);
         } catch (IOException e) {
             getLogger().severe("Could not save market_category_items.yml!");
-            e.printStackTrace();
         }
     }
 }

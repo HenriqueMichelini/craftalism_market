@@ -16,20 +16,22 @@ import java.util.Objects;
 
 public class MarketItems {
     private final Gui gui;
-    private String subCategoryTitle;
+    private final String subCategoryTitle;
 
     public MarketItems(String subCategoryTitle) {
+        this.subCategoryTitle = subCategoryTitle;
+
         gui = Gui.gui()
                 .title(Component.text(subCategoryTitle, NamedTextColor.GREEN))
                 .rows(6)
                 .disableAllInteractions()
                 .create();
 
-        populateGui(subCategoryTitle);
+        populateGui();
         addBackButton();
     }
 
-    private void populateGui(String subCategoryTitle) {
+    private void populateGui() {
         FileConfiguration config = CraftalismMarket.getInstance().getItemsDataConfig();
         String path = "items";
 
@@ -40,12 +42,18 @@ public class MarketItems {
                 String materialString = config.getString(path + "." + key + ".material");
                 int amount = config.getInt(path + "." + key + ".amount");
                 double price = config.getDouble(path + "." + key + ".price");
+                int slot = config.getInt(path + "." + key + ".slot", -1); // Default to -1 if missing
+
+                if (slot < 0 || slot >= gui.getRows() * 9) {
+                    CraftalismMarket.getInstance().getLogger().warning("Invalid slot for item: " + key + " slot: " + slot);
+                    continue;
+                }
 
                 assert materialString != null;
                 Material material = Material.matchMaterial(materialString);
                 if (material != null) {
                     GuiItem item = createGuiItem(material, amount, price);
-                    gui.addItem(item);
+                    gui.setItem(slot, item); // Set item in the correct slot
                 }
             }
         }

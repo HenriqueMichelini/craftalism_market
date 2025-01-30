@@ -4,48 +4,58 @@ items:
     category: "Natural Resources"
     amount: 64
     price: 10
+    slot: 10
   oak_log:
     material: OAK_LOG
     category: "Woods"
     amount: 64
     price: 10
+    slot: 10
   birch_log:
     material: BIRCH_LOG
     category: "Woods"
     amount: 64
     price: 10
+    slot: 11
   spruce_log:
     material: SPRUCE_LOG
     category: "Woods"
     amount: 64
     price: 10
+    slot: 12
   jungle_log:
     material: JUNGLE_LOG
     category: "Woods"
     amount: 64
     price: 10
+    slot: 13
   dark_oak_log:
     material: DARK_OAK_LOG
     category: "Woods"
     amount: 64
     price: 10
+    slot: 14
   acacia_log:
     material: ACACIA_LOG
     category: "Woods"
     amount: 64
     price: 10
+    slot: 15
   cherry_log:
     material: CHERRY_LOG
     category: "Woods"
     amount: 64
     price: 10
+    slot: 16
   mangrove_log:
     material: MANGROVE_LOG
     category: "Woods"
     amount: 64
     price: 10
+    slot: 19
   pale_oak_log:
     material: PALE_OAK_LOG
     category: "Woods"
     amount: 64
     price: 10
+    slot: 20

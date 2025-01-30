@@ -81,6 +81,8 @@ public class ItemNegotiation {
         gui.setItem(38, buyButton());
 
         gui.setItem(42, sellButton());
+
+        addBackButton();
     }
 
     private GuiItem createAmountButton(Material materialItem, int amount, boolean isAdding) {
@@ -180,7 +182,7 @@ public class ItemNegotiation {
 
     private void addBackButton() {
         GuiItem backButton = ItemBuilder.from(Material.BARRIER)
-                .name(Component.text("Back to Categories", NamedTextColor.RED))
+                .name(Component.text("Back to " + subCategoryTitle, NamedTextColor.RED))
                 .asGuiItem(this::goBackToSubCategories);
 
         gui.setItem(49, backButton);
