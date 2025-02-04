@@ -1,6 +1,7 @@
 package io.github.HenriqueMichelini.craftalism_market;
 
 import io.github.HenriqueMichelini.craftalism_market.command.MarketCommand;
+import io.github.HenriqueMichelini.craftalism_market.util.MarketItemData;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,14 +18,16 @@ public class CraftalismMarket extends JavaPlugin {
     private File marketCategoryFile;
     private FileConfiguration marketCategoryConfig;
 
+    private MarketItemData marketItemData;
+
     @Override
     public void onEnable() {
         instance = this;
-        loadItemsData(); // Load market_items.yml
         loadMarketCategoryData(); // Load market_category_items.yml
 
         getLogger().info("Craftalism Market Plugin Enabled!");
-        Objects.requireNonNull(getCommand("market")).setExecutor(new MarketCommand());
+        Objects.requireNonNull(getCommand("market")).setExecutor(new MarketCommand(this));
+        marketItemData = new MarketItemData(this);
     }
 
     @Override
@@ -34,16 +37,6 @@ public class CraftalismMarket extends JavaPlugin {
 
     public static CraftalismMarket getInstance() {
         return instance;
-    }
-
-    private void loadItemsData() {
-        itemsDataFile = new File(getDataFolder(), "market_items.yml");
-
-        if (!itemsDataFile.exists()) {
-            saveResource("market_items.yml", false);
-        }
-
-        itemsDataConfig = YamlConfiguration.loadConfiguration(itemsDataFile);
     }
 
     private void loadMarketCategoryData() {

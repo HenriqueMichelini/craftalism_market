@@ -1,11 +1,14 @@
-stone:
-  material: STONE
-  category: "Natural Resources"
-  price: 10
-  amount: 2000
-  maxAmount: 2000
-  regenerationRate: 50
-  priceAdjustmentFactor: 0.1
-  regenAdjustmentFactor: 0.05
-  productivity: 1.00
-  lastActivity: 0
+items:
+  cobblestone:
+    material: COBBLESTONE
+    category: "Natural Resources"
+    price: 0.37
+    amount: 2000
+    maxAmount: 2000
+    regenerationRate: 50
+    priceAdjustmentFactor: 0.1
+    regenAdjustmentFactor: 0.05
+    decayRate: 0.02
+    productivity: 1.00
+    lastActivity: 0
+    price_history: [0.37]

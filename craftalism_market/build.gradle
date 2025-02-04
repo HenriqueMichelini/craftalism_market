@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id "io.github.goooler.shadow" version "8.1.8" // Add Shadow plugin
+    id "io.github.goooler.shadow" version "8.1.8" // Correct Shadow plugin ID
 }
 
 group = 'io.github.HenriqueMichelini'
@@ -19,8 +19,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-    implementation "dev.triumphteam:triumph-gui:3.1.11" // Add Triumph GUI dependency (replace version with the latest one)
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT") // Paper API
+    compileOnly files("libs/craftalism_economy-1.0-SNAPSHOT.jar") // Local JAR dependency (not bundled)
+    implementation "dev.triumphteam:triumph-gui:3.1.11" // TriumphGUI (bundled)
 }
 
 def targetJavaVersion = 21
@@ -52,5 +53,11 @@ processResources {
 
 // Configure Shadow plugin
 shadowJar {
-    relocate("dev.triumphteam.gui", "io.github.HenriqueMichelini.craftalism_market.gui") // Replace with your desired package
+    relocate("dev.triumphteam.gui", "io.github.HenriqueMichelini.craftalism_market.shaded.gui") // Relocate TriumphGUI
+    archiveClassifier.set('') // Remove the "-all" suffix from the JAR file
+    minimize() // Optional: Minimize the JAR by removing unused classes (use with caution)
+}
+
+tasks.build {
+    dependsOn(shadowJar) // Ensure shadowJar is run during the build task
 }
