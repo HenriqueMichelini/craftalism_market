@@ -15,6 +15,10 @@ public class Transaction {
     private final Player player;
 
     public Transaction(Player player, EconomyManager economyManager, DataLoader dataLoader) {
+        if (economyManager == null) {
+            throw new IllegalStateException("EconomyManager not initialized!");
+        }
+
         this.player = player;
         this.economyManager = economyManager;
         this.dataLoader = dataLoader;

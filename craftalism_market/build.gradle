@@ -20,8 +20,9 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT") // Paper API
-    compileOnly files("libs/craftalism_economy-1.0-SNAPSHOT.jar") // Local JAR dependency (not bundled)
-    implementation "dev.triumphteam:triumph-gui:3.1.11" // TriumphGUI (bundled)
+    compileOnly files("libs/craftalism_economy-1.0-SNAPSHOT.jar") // Changed from implementation
+    implementation "dev.triumphteam:triumph-gui:3.1.11"
+
 }
 
 def targetJavaVersion = 21

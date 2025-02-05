@@ -1,11 +1,14 @@
 package io.github.HenriqueMichelini.craftalism_market;
 
+import io.github.HenriqueMichelini.craftalism_economy.CraftalismEconomy;
 import io.github.HenriqueMichelini.craftalism_economy.economy.EconomyManager;
 import io.github.HenriqueMichelini.craftalism_market.command.MarketCommand;
 import io.github.HenriqueMichelini.craftalism_market.gui.GUIManager;
 import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -21,19 +24,25 @@ public class CraftalismMarket extends JavaPlugin {
 
     private DataLoader dataLoader;
     private GUIManager guiManager;
-    private EconomyManager economyManager;
 
     @Override
     public void onEnable() {
-        instance = this;
 
+        Plugin economyPlugin = Bukkit.getPluginManager().getPlugin("CraftalismEconomy");
+        getLogger().info("Found economy plugin: " + (economyPlugin != null ? economyPlugin.getName() : "null"));
+
+        if (!(economyPlugin instanceof CraftalismEconomy)) {
+            getLogger().severe("CraftalismEconomy not found! Disabling...");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        instance = this;
         dataLoader = new DataLoader(this);
         dataLoader.loadMarketCategories();
         dataLoader.loadItemsData();
 
-        economyManager = new EconomyManager(this);
-
-        guiManager = new GUIManager(dataLoader, economyManager);
+        guiManager = new GUIManager(dataLoader, this);
 
         this.getCommand("market").setExecutor(new MarketCommand(guiManager));
 
@@ -133,5 +142,14 @@ public class CraftalismMarket extends JavaPlugin {
 
     public DataLoader getDataLoader() {
         return dataLoader;
+    }
+
+    public EconomyManager getEconomyManager() {
+        // Match EXACT plugin name case
+        Plugin economyPlugin = Bukkit.getPluginManager().getPlugin("CraftalismEconomy");
+        if (economyPlugin instanceof CraftalismEconomy) {
+            return ((CraftalismEconomy) economyPlugin).getEconomyManager();
+        }
+        return null;
     }
 }

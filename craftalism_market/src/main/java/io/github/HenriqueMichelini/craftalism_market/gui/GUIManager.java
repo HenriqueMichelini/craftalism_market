@@ -4,6 +4,7 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.HenriqueMichelini.craftalism_economy.economy.EconomyManager;
+import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
 import io.github.HenriqueMichelini.craftalism_market.logic.Transaction;
 import io.github.HenriqueMichelini.craftalism_market.model.MarketCategoryItem;
@@ -11,7 +12,6 @@ import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -19,9 +19,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.math.BigDecimal;
 import java.util.Map;
 
+
 public class GUIManager {
     private final DataLoader dataLoader;
-    private final EconomyManager economyManager;
+    private final CraftalismMarket marketPlugin;
     private Gui marketGui;
     private Gui marketGuiItemsByCategory;
     private Gui marketGuiItemNegotiation;
@@ -38,9 +39,9 @@ public class GUIManager {
     private static final int BUY_BUTTON_SLOT = 38;
     private static final int SELL_BUTTON_SLOT = 42;
 
-    public GUIManager(DataLoader dataLoader, EconomyManager economyManager) {
+    public GUIManager(DataLoader dataLoader, CraftalismMarket marketPlugin) {
         this.dataLoader = dataLoader;
-        this.economyManager = economyManager;
+        this.marketPlugin = marketPlugin;
     }
 
     public void openMarket(Player player) {
@@ -250,6 +251,13 @@ public class GUIManager {
 
         return new GuiItem(itemStack, event -> {
             Player player = (Player) event.getWhoClicked();
+            EconomyManager economyManager = marketPlugin.getEconomyManager();
+
+            if (economyManager == null) {
+                player.sendMessage("§cEconomy system not available!");
+                return;
+            }
+
             Transaction transaction = new Transaction(player, economyManager, dataLoader);
             transaction.performBuyTransaction(itemName, getAmountOfItemsSelected());
             marketGuiItemNegotiation.close(player);
@@ -283,7 +291,14 @@ public class GUIManager {
 
         return new GuiItem(itemStack, event -> {
             Player player = (Player) event.getWhoClicked();
-            Transaction transaction = new Transaction(player, economyManager, dataLoader);
+            EconomyManager economyManager = marketPlugin.getEconomyManager(); // Added this line
+
+            if (economyManager == null) {
+                player.sendMessage("§cEconomy system not available!");
+                return;
+            }
+
+            Transaction transaction = new Transaction(player, economyManager, dataLoader); // Fixed here
             transaction.performSellTransaction(itemName, getAmountOfItemsSelected());
             marketGuiItemNegotiation.close(player);
         });

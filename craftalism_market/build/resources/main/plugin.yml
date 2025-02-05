@@ -1,4 +1,4 @@
-name: craftalism_market
+name: CraftalismMarket
 version: '1.0-SNAPSHOT'
 main: io.github.HenriqueMichelini.craftalism_market.CraftalismMarket
 api-version: '1.21'
@@ -8,4 +8,4 @@ commands:
     usage: /market
     permission: craftalismmarket.market.use
     permission-message: You do not have permission to use this command.
-softdepend: [CraftalismEconomy]
+depend: [CraftalismEconomy]
