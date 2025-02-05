@@ -1,14 +1,15 @@
 package io.github.HenriqueMichelini.craftalism_market;
 
+import io.github.HenriqueMichelini.craftalism_economy.economy.EconomyManager;
 import io.github.HenriqueMichelini.craftalism_market.command.MarketCommand;
-import io.github.HenriqueMichelini.craftalism_market.util.MarketItemData;
+import io.github.HenriqueMichelini.craftalism_market.gui.GUIManager;
+import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 
 public class CraftalismMarket extends JavaPlugin {
     private static CraftalismMarket instance;
@@ -18,16 +19,25 @@ public class CraftalismMarket extends JavaPlugin {
     private File marketCategoryFile;
     private FileConfiguration marketCategoryConfig;
 
-    private MarketItemData marketItemData;
+    private DataLoader dataLoader;
+    private GUIManager guiManager;
+    private EconomyManager economyManager;
 
     @Override
     public void onEnable() {
         instance = this;
-        loadMarketCategoryData(); // Load market_category_items.yml
 
-        getLogger().info("Craftalism Market Plugin Enabled!");
-        Objects.requireNonNull(getCommand("market")).setExecutor(new MarketCommand(this));
-        marketItemData = new MarketItemData(this);
+        dataLoader = new DataLoader(this);
+        dataLoader.loadMarketCategories();
+        dataLoader.loadItemsData();
+
+        economyManager = new EconomyManager(this);
+
+        guiManager = new GUIManager(dataLoader, economyManager);
+
+        this.getCommand("market").setExecutor(new MarketCommand(guiManager));
+
+        getLogger().info("Craftalism Market Plugin Enabled!");// Initialize DataLoader
     }
 
     @Override
@@ -119,5 +129,9 @@ public class CraftalismMarket extends JavaPlugin {
         } catch (IOException e) {
             getLogger().severe("Could not save market_category_items.yml!");
         }
+    }
+
+    public DataLoader getDataLoader() {
+        return dataLoader;
     }
 }

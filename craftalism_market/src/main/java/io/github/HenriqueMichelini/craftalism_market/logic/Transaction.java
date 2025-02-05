@@ -1,110 +1,95 @@
 package io.github.HenriqueMichelini.craftalism_market.logic;
 
 import io.github.HenriqueMichelini.craftalism_economy.economy.EconomyManager;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Material;
+import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.UUID;
 
 public class Transaction {
-    private final Player player;
-    private final ItemStack item;
-    private final BigDecimal pricePerUnit;
-    private final int itemAmount;
     private final EconomyManager economyManager;
+    private final DataLoader dataLoader;
+    private final Player player;
 
-    // 1. Single EconomyManager instance
-    public Transaction(Player player, ItemStack item, BigDecimal pricePerUnit,
-                       int itemAmount, EconomyManager economyManager) {
+    public Transaction(Player player, EconomyManager economyManager, DataLoader dataLoader) {
         this.player = player;
-        this.item = item;
-        this.pricePerUnit = pricePerUnit;
-        this.itemAmount = itemAmount;
         this.economyManager = economyManager;
+        this.dataLoader = dataLoader;
     }
 
-    public boolean performBuy() {
-        // 2. Check inventory space first
-        if (!hasInventorySpace(player, item.getType(), itemAmount)) {
-            sendMessage("Not enough inventory space!", NamedTextColor.RED);
-            return false;
+    public void performBuyTransaction(String itemName, int amount) {
+        UUID playerUUID = player.getUniqueId();
+        MarketItem item = dataLoader.getMarketItems().get(itemName);
+
+        if (item == null) {
+            player.sendMessage("§cItem not found!");
+            return;
         }
 
-        BigDecimal totalPrice = pricePerUnit.multiply(BigDecimal.valueOf(itemAmount));
+        BigDecimal totalPrice = item.getPrice().multiply(BigDecimal.valueOf(amount));
 
-        // 3. Use proper economy manager instance
-        BigDecimal playerBalance = economyManager.getBalance(player.getUniqueId());
-        if (playerBalance.compareTo(totalPrice) < 0) {
-            sendMessage("You don't have enough money!", NamedTextColor.RED);
-            return false;
+        // Check balance and stock
+        if (!economyManager.hasBalance(playerUUID, totalPrice)) {
+            player.sendMessage("§cInsufficient funds!");
+            return;
         }
 
-        // 4. Deduct before adding items
-        economyManager.withdraw(player.getUniqueId(), totalPrice);
-
-        ItemStack itemsToAdd = new ItemStack(item.getType(), itemAmount);
-        player.getInventory().addItem(itemsToAdd).values().forEach(leftover -> {
-            player.getWorld().dropItemNaturally(player.getLocation(), leftover);
-        });
-
-        // 5. Use formatted components
-        sendMessage("Purchased " + itemAmount + " " + getItemName() + " for $" + totalPrice,
-                NamedTextColor.GREEN);
-        return true;
-    }
-
-    public boolean performSell() {
-        int availableAmount = countItemsInInventory();
-        if (availableAmount < itemAmount) {
-            sendMessage("You only have " + availableAmount + " " + getItemName() + " to sell!",
-                    NamedTextColor.RED);
-            return false;
+        if (item.getAmount() < amount) {
+            player.sendMessage("§cNot enough stock available!");
+            return;
         }
 
-        BigDecimal totalPrice = pricePerUnit.multiply(BigDecimal.valueOf(itemAmount));
-        removeItemsFromInventory(itemAmount);
+        // Perform transaction
+        if (economyManager.withdraw(playerUUID, totalPrice)) {
+            // Add items to player's inventory
+            ItemStack itemStack = new ItemStack(item.getMaterial(), amount);
+            Map<Integer, ItemStack> remaining = player.getInventory().addItem(itemStack);
 
-        economyManager.deposit(player.getUniqueId(), totalPrice);
-        sendMessage("Sold " + itemAmount + " " + getItemName() + " for $" + totalPrice,
-                NamedTextColor.GREEN);
-        return true;
-    }
-
-    private boolean hasInventorySpace(Player player, Material material, int amount) {
-        int emptySlots = 0;
-        for (ItemStack item : player.getInventory().getStorageContents()) {
-            if (item == null || item.getType() == Material.AIR) {
-                emptySlots++;
+            if (!remaining.isEmpty()) {
+                // Refund if inventory is full
+                economyManager.deposit(playerUUID, totalPrice);
+                player.sendMessage("§cNot enough inventory space!");
+                return;
             }
+
+            // Update market stock
+//            item.setAmount(item.getAmount() - amount);
+//            dataLoader.saveMarketItems();
+
+            player.sendMessage("§aSuccessfully purchased " + amount + " " + itemName + " for $" + totalPrice);
         }
-        return (amount / material.getMaxStackSize()) <= emptySlots;
     }
 
-    private String getItemName() {
-        return item.getItemMeta().hasDisplayName() ?
-                item.getItemMeta().getDisplayName() :
-                item.getType().toString().toLowerCase().replace("_", " ");
-    }
+    public void performSellTransaction(String itemName, int amount) {
+        UUID playerUUID = player.getUniqueId();
+        MarketItem item = dataLoader.getMarketItems().get(itemName);
 
-    private int countItemsInInventory() {
-        return player.getInventory().all(item.getType())
-                .values().stream()
-                .mapToInt(ItemStack::getAmount)
-                .sum();
-    }
+        if (item == null) {
+            player.sendMessage("§cItem not found!");
+            return;
+        }
 
-    private void removeItemsFromInventory(int amount) {
-        player.getInventory().removeItemAnySlot(new ItemStack(item.getType(), amount));
-    }
+        // Check if player has enough items
+        if (!player.getInventory().containsAtLeast(new ItemStack(item.getMaterial()), amount)) {
+            player.sendMessage("§cYou don't have enough items to sell!");
+            return;
+        }
 
-    private void sendMessage(String message, NamedTextColor color) {
-        player.sendMessage(
-                Component.text(message)
-                        .color(color)
-                        .hoverEvent(Component.text("Transaction details"))
-        );
+        BigDecimal totalEarnings = item.getPrice().multiply(BigDecimal.valueOf(amount));
+
+        // Remove items from inventory
+        player.getInventory().removeItem(new ItemStack(item.getMaterial(), amount));
+
+        // Deposit money
+        economyManager.deposit(playerUUID, totalEarnings);
+
+//        // Update market stock
+//        item.setAmount(item.getAmount() + amount);
+//        dataLoader.saveMarketItems();
+
+        player.sendMessage("§aSuccessfully sold " + amount + " " + itemName + " for $" + totalEarnings);
     }
 }
