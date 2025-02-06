@@ -2,11 +2,9 @@ package io.github.HenriqueMichelini.craftalism_market.logic;
 
 import io.github.HenriqueMichelini.craftalism_economy.economy.EconomyManager;
 import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
-import io.github.HenriqueMichelini.craftalism_market.util.InventoryManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
-import org.bukkit.Material;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -60,10 +58,6 @@ public class Transaction {
                 player.sendMessage(Component.text("There isn't enough inventory space to comport " + amount + " of " + itemName + ". The remaining was dropped in the floor.", NamedTextColor.GOLD));
             }
 
-            // Update market stock (if needed)
-            // item.setAmount(item.getAmount() - amount);
-            // dataLoader.saveMarketItems();
-
             player.sendMessage(Component.text("Successfully purchased " + amount + " " + itemName + " for $" + totalPrice, NamedTextColor.GREEN));
             return true;
         }
@@ -103,10 +97,6 @@ public class Transaction {
 
         // Deposit money
         economyManager.deposit(playerUUID, totalEarnings);
-
-        // Update market stock (if needed)
-        // item.setAmount(item.getAmount() + amount);
-        // dataLoader.saveMarketItems();
 
         player.sendMessage(Component.text("Successfully sold " + amount + " " + itemName + " for $" + totalEarnings, NamedTextColor.GREEN));
         return true;
