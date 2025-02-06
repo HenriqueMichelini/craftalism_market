@@ -3,6 +3,8 @@ items:
     material: COBBLESTONE
     category: "Natural Resources"
     price: 0.37
+    priceSell: 0.296
+    priceSellRatio: 0.8
     amount: 2000
     maxAmount: 2000
     regenerationRate: 50
@@ -11,4 +13,19 @@ items:
     decayRate: 0.02
     productivity: 1.00
     lastActivity: 0
-    price_history: [0.37]
+    price_history: [ 0.37, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
+  oak_log:
+    material: OAK_LOG
+    category: "Woods"
+    price: 1.0
+    priceSell: 0.8
+    priceSellRatio: 0.8
+    amount: 20000
+    maxAmount: 20000
+    regenerationRate: 50
+    priceAdjustmentFactor: 0.1
+    regenAdjustmentFactor: 0.05
+    decayRate: 0.02
+    productivity: 1.00
+    lastActivity: 0
+    price_history: [ 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]

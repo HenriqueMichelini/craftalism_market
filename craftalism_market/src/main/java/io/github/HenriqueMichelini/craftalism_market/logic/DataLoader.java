@@ -8,8 +8,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DataLoader {
     private final CraftalismMarket plugin;
@@ -79,7 +82,15 @@ public class DataLoader {
             String materialName = itemData.getString("material");
             int slot = itemData.getInt("slot");
             BigDecimal price = BigDecimal.valueOf(itemData.getDouble("price"));
+            BigDecimal priceSell = BigDecimal.valueOf(itemData.getDouble("priceSell"));
+            Double priceSellRatio = itemData.getDouble("priceSellRatio");
             int amount = itemData.getInt("amount");
+
+            // Load price_history as a List<Double> and convert it to List<BigDecimal>
+            List<Double> priceHistoryDouble = itemData.getDoubleList("price_history");
+            List<BigDecimal> priceHistory = priceHistoryDouble.stream()
+                    .map(BigDecimal::valueOf)
+                    .collect(Collectors.toList());
 
             if (category == null || materialName == null) {
                 plugin.getLogger().warning("Invalid data for item: " + itemKey);
@@ -92,7 +103,8 @@ public class DataLoader {
                 continue;
             }
 
-            marketItems.put(itemKey, new MarketItem(category, material, slot, price, amount));
+            // Pass priceHistory to the MarketItem constructor
+            marketItems.put(itemKey, new MarketItem(category, material, slot, price, priceSell, priceSellRatio, amount, priceHistory));
         }
     }
 

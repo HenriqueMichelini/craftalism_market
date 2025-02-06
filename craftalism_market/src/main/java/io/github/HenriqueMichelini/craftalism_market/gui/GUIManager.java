@@ -12,323 +12,331 @@ import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.math.BigDecimal;
-import java.util.Map;
-
+import java.util.ArrayList;
+import java.util.List;
 
 public class GUIManager {
-    private final DataLoader dataLoader;
-    private final CraftalismMarket marketPlugin;
+    // Constants
+    private static final int CENTER_SLOT = 13;
+    private static final int BACK_BUTTON_SLOT = 49;
+    private static final int BUY_BUTTON_SLOT = 38;
+    private static final int SELL_BUTTON_SLOT = 42;
+    private static final int[] ADD_SLOTS = {0, 9, 18, 27, 36, 45};
+    private static final int[] DEDUCT_SLOTS = {8, 17, 26, 35, 44, 53};
+    private static final int[] AMOUNTS = {1, 8, 32, 64, 576, 2304};
+
+    // GUI instances
     private Gui marketGui;
     private Gui marketGuiItemsByCategory;
     private Gui marketGuiItemNegotiation;
 
-    private String itemName = "";
-
+    // State
+    private String currentItemName = "";
     private int amountOfItemsSelected = 1;
 
-    // Constants for slot numbers
-    private static final int CENTER_SLOT = 13;
-    private static final int[] ADD_SLOTS = {0, 9, 18, 27, 36, 45};
-    private static final int[] DEDUCT_SLOTS = {8, 17, 26, 35, 44, 53};
-    private static final int[] AMOUNTS = {1, 8, 32, 64, 576, 2304};
-    private static final int BUY_BUTTON_SLOT = 38;
-    private static final int SELL_BUTTON_SLOT = 42;
+    // Dependencies
+    private final DataLoader dataLoader;
+    private final CraftalismMarket marketPlugin;
 
     public GUIManager(DataLoader dataLoader, CraftalismMarket marketPlugin) {
         this.dataLoader = dataLoader;
         this.marketPlugin = marketPlugin;
     }
 
+    // Public GUI access methods
     public void openMarket(Player player) {
-        createMarketGui();
-        populateMarketGui();
+        initializeMarketGui();
         marketGui.open(player);
     }
 
-    private void createMarketGui() {
-        marketGui = Gui.gui()
-                .title(Component.text("Market", NamedTextColor.GREEN))
-                .rows(6)
-                .disableAllInteractions()
-                .create();
-    }
-
-    private void populateMarketGui() {
-        Map<String, MarketCategoryItem> marketCategories = dataLoader.getMarketCategories();
-
-        for (Map.Entry<String, MarketCategoryItem> entry : marketCategories.entrySet()) {
-            MarketCategoryItem categoryItem = entry.getValue();
-
-            ItemStack itemStack = new ItemStack(categoryItem.getMaterial());
-            GuiItem guiItem = ItemBuilder.from(itemStack)
-                    .name(Component.text(categoryItem.getTitle(), NamedTextColor.GREEN))
-                    .asGuiItem(event -> openMarketItemsByCategory(categoryItem.getTitle(), (Player) event.getWhoClicked()));
-
-            marketGui.setItem(categoryItem.getSlot(), guiItem);
-        }
-    }
-
     public void openMarketItemsByCategory(String category, Player player) {
-        createMarketGuiItemsByCategory(category);
-        populateMarketGuiItemsByCategory(category);
+        initializeCategoryGui(category);
         marketGuiItemsByCategory.open(player);
     }
 
-    private void createMarketGuiItemsByCategory(String categoryItem) {
-        marketGuiItemsByCategory = Gui.gui()
-                .title(Component.text(categoryItem, NamedTextColor.GREEN))
-                .rows(6)
-                .disableAllInteractions()
-                .create();
-    }
-
-    private GuiItem createBackToMarketGuiButton() {
-        ItemStack itemStack = new ItemStack(Material.BARRIER);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        itemMeta.displayName(Component.text("Back to Market", NamedTextColor.RED));
-        itemStack.setItemMeta(itemMeta);
-
-        return new GuiItem(itemStack, event -> openMarket((Player) event.getWhoClicked()));
-    }
-
-    private void populateMarketGuiItemsByCategory(String category) {
-        marketGuiItemsByCategory.setItem(49, createBackToMarketGuiButton());
-
-        Map<String, MarketItem> marketItems = dataLoader.getMarketItems();
-
-        for (Map.Entry<String, MarketItem> entry : marketItems.entrySet()) {
-            String itemName = entry.getKey();
-            MarketItem item = entry.getValue();
-
-            if (!item.getCategory().equalsIgnoreCase(category)) continue;
-
-            ItemStack itemStack = new ItemStack(item.getMaterial());
-            GuiItem guiItem = ItemBuilder.from(itemStack)
-                    .name(Component.text(itemName, NamedTextColor.GREEN))
-                    .lore(
-                            Component.text("Price: $" + item.getPrice()),
-                            Component.text("Stock: " + item.getAmount())
-                    )
-                    .asGuiItem(event -> openItemNegotiation((Player) event.getWhoClicked(), itemName));
-
-            marketGuiItemsByCategory.setItem(item.getSlot(), guiItem);
-        }
-    }
-
     public void openItemNegotiation(Player player, String itemName) {
-        setItemName(itemName);
-        createMarketGuiItemNegotiation(itemName);
-        populateMarketGuiItemNegotiation(itemName);
+        this.currentItemName = itemName;
+        initializeNegotiationGui(itemName);
         marketGuiItemNegotiation.open(player);
     }
 
-    private void createMarketGuiItemNegotiation(String itemName) {
-        marketGuiItemNegotiation = Gui.gui()
-                .title(Component.text("Market", NamedTextColor.GREEN))
-                .rows(6)
+    // GUI initialization methods
+    private void initializeMarketGui() {
+        marketGui = createBaseGui("Market", 6);
+        populateMarketCategories();
+    }
+
+    private void initializeCategoryGui(String category) {
+        marketGuiItemsByCategory = createBaseGui(category, 6);
+        populateCategoryItems(category);
+        addBackButton(marketGuiItemsByCategory, this::openMarket);
+    }
+
+    private void initializeNegotiationGui(String itemName) {
+        marketGuiItemNegotiation = createBaseGui("Market", 6);
+        marketGuiItemNegotiation.setCloseGuiAction(event -> {
+            setAmountOfItemsSelected(1); // Reset to 1 when GUI closes
+        });
+        configureNegotiationGui(itemName);
+        addBackButton(marketGuiItemNegotiation, p -> openMarketItemsByCategory(getItemCategory(itemName), p));
+    }
+
+    // GUI population methods
+    private void populateMarketCategories() {
+        dataLoader.getMarketCategories().values().forEach(this::addCategoryItem);
+    }
+
+    private void populateCategoryItems(String category) {
+        dataLoader.getMarketItems().entrySet().stream()
+                .filter(entry -> entry.getValue().getCategory().equalsIgnoreCase(category))
+                .forEach(entry -> addItemToCategory(entry.getKey(), entry.getValue()));
+    }
+
+    private void configureNegotiationGui(String itemName) {
+        MarketItem item = getValidMarketItem(itemName);
+        if (item == null) return;
+
+        addItemDisplay(item);
+        addTransactionButtons(itemName);
+        addAmountControls();
+    }
+
+    // Helper methods
+    private Gui createBaseGui(String title, int rows) {
+        return Gui.gui()
+                .title(Component.text(title, NamedTextColor.GREEN))
+                .rows(rows)
                 .disableAllInteractions()
                 .create();
-
-        // Add a close event listener to reset amountOfItemsSelected
-        marketGuiItemNegotiation.setDefaultClickAction(event -> event.setCancelled(true)); // Prevent item movement
-        marketGuiItemNegotiation.setCloseGuiAction(event -> {
-            // Reset the amountOfItemsSelected when the GUI is closed
-            setAmountOfItemsSelected(1);
-        });
     }
 
-    private GuiItem createBackToMarketGuiItemsByCategoryButton(String category) {
-        ItemStack itemStack = new ItemStack(Material.BARRIER);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        itemMeta.displayName(Component.text("Back to " + category, NamedTextColor.RED));
-        itemStack.setItemMeta(itemMeta);
-
-        return new GuiItem(itemStack, event -> openMarketItemsByCategory(category, (Player) event.getWhoClicked()));
+    private void addBackButton(Gui gui, java.util.function.Consumer<Player> backAction) {
+        gui.setItem(BACK_BUTTON_SLOT, createNavigationButton(
+                Material.BARRIER,
+                "Back",
+                NamedTextColor.RED,
+                backAction
+        ));
     }
 
-    private void populateMarketGuiItemNegotiation(String itemName) {
-        Map<String, MarketItem> marketItems = dataLoader.getMarketItems();
-        MarketItem item = marketItems.get(itemName);
-        String category = item.getCategory();
+    private GuiItem createNavigationButton(Material material, String text, NamedTextColor color, java.util.function.Consumer<Player> action) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(Component.text(text, color));
+        item.setItemMeta(meta);
 
-        marketGuiItemNegotiation.setItem(49, createBackToMarketGuiItemsByCategoryButton(category));
+        return new GuiItem(item, event ->
+                action.accept((Player) event.getWhoClicked())
+        );
+    }
 
-        marketGuiItemNegotiation.setItem(BUY_BUTTON_SLOT, createBuyButton(itemName));
-        marketGuiItemNegotiation.setItem(SELL_BUTTON_SLOT, createSellButton(itemName));
+    private void addCategoryItem(MarketCategoryItem categoryItem) {
+        GuiItem guiItem = ItemBuilder.from(categoryItem.getMaterial())
+                .name(Component.text(categoryItem.getTitle(), NamedTextColor.GREEN))
+                .asGuiItem(event ->
+                        openMarketItemsByCategory(categoryItem.getTitle(), (Player) event.getWhoClicked())
+                );
+        marketGui.setItem(categoryItem.getSlot(), guiItem);
+    }
 
-        if (item == null) {
-            System.out.println("Item not found: " + itemName); // Replace with proper logging
+    private void addItemToCategory(String itemName, MarketItem item) {
+        GuiItem guiItem = ItemBuilder.from(item.getMaterial())
+                .name(Component.text(itemName, NamedTextColor.GREEN))
+                .lore(createItemLore(item))
+                .asGuiItem(event ->
+                        openItemNegotiation((Player) event.getWhoClicked(), itemName)
+                );
+        marketGuiItemsByCategory.setItem(item.getSlot(), guiItem);
+    }
+
+    private List<Component> createItemLore(MarketItem item) {
+        return List.of(
+                Component.text("Price: $" + item.getPrice(), NamedTextColor.WHITE),
+                Component.text("Stock: " + item.getAmount(), NamedTextColor.AQUA)
+        );
+    }
+
+    private void addItemDisplay(MarketItem item) {
+        ItemStack displayItem = new ItemStack(item.getMaterial());
+        ItemMeta meta = displayItem.getItemMeta();
+        meta.lore(createDetailedLore(item));
+        displayItem.setItemMeta(meta);
+
+        marketGuiItemNegotiation.setItem(CENTER_SLOT, ItemBuilder.from(displayItem).asGuiItem());
+    }
+
+    private List<Component> createDetailedLore(MarketItem item) {
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Buy Price: $" + item.getPrice(), NamedTextColor.GREEN));
+        lore.add(Component.text("Sell Price: $" + item.getPriceSell(), NamedTextColor.RED));
+        lore.add(Component.text("Stock: " + item.getAmount(), NamedTextColor.AQUA));
+        lore.add(Component.empty());
+        addPriceHistory(lore, item);
+        return lore;
+    }
+
+    private void addPriceHistory(List<Component> lore, MarketItem item) {
+        List<BigDecimal> history = item.getPriceHistory();
+        if (history.isEmpty()) {
+            lore.add(Component.text("Price History: No data", NamedTextColor.GRAY));
             return;
         }
 
-        // Display item details
-        ItemStack itemStack = new ItemStack(item.getMaterial());
-        GuiItem displayItem = ItemBuilder.from(itemStack)
-                .name(Component.text(itemName, NamedTextColor.GREEN))
-                .lore(
-                        Component.text("Price: $" + item.getPrice()),
-                        Component.text("Stock: " + item.getAmount())
-                )
-                .asGuiItem();
-
-        marketGuiItemNegotiation.setItem(CENTER_SLOT, displayItem);
-
-        // Add amount buttons
-        populateAmountButtons();
+        lore.add(Component.text("Price History:", NamedTextColor.GOLD));
+        history.forEach(price ->
+                lore.add(Component.text("  - $" + price, NamedTextColor.GRAY))
+        );
     }
 
-    private void populateAmountButtons() {
-        for (int i = 0; i < AMOUNTS.length; i++) {
-            int amount = AMOUNTS[i];
-            marketGuiItemNegotiation.setItem(ADD_SLOTS[i], createAmountButton(Material.GREEN_STAINED_GLASS_PANE, amount, NamedTextColor.GREEN, true));
-            marketGuiItemNegotiation.setItem(DEDUCT_SLOTS[i], createAmountButton(Material.RED_STAINED_GLASS_PANE, amount, NamedTextColor.RED, false));
+    private void addTransactionButtons(String itemName) {
+        marketGuiItemNegotiation.setItem(BUY_BUTTON_SLOT, createTransactionButton(
+                Material.SLIME_BLOCK,
+                "Buy",
+                NamedTextColor.GREEN,
+                itemName
+        ));
+
+        marketGuiItemNegotiation.setItem(SELL_BUTTON_SLOT, createTransactionButton(
+                Material.HONEY_BLOCK,
+                "Sell",
+                NamedTextColor.GOLD,
+                itemName
+        ));
+    }
+
+    private GuiItem createTransactionButton(Material material, String action, NamedTextColor color, String itemName) {
+        ItemStack button = new ItemStack(material);
+        ItemMeta meta = button.getItemMeta();
+        meta.displayName(Component.text(action, color));
+        meta.lore(createTransactionLore(itemName, action));
+        button.setItemMeta(meta);
+
+        return new GuiItem(button, event -> handleTransaction(action, (Player) event.getWhoClicked(), itemName));
+    }
+
+    private List<Component> createTransactionLore(String itemName, String action) {
+        MarketItem item = getValidMarketItem(itemName);
+        BigDecimal price = action.equalsIgnoreCase("buy") ? item.getPrice() : item.getPriceSell();
+        BigDecimal total = price.multiply(BigDecimal.valueOf(amountOfItemsSelected));
+
+        return List.of(
+                Component.text("Price/item: $" + price, NamedTextColor.WHITE),
+                Component.text("Quantity: " + amountOfItemsSelected, NamedTextColor.WHITE),
+                Component.text("Total: $" + total, NamedTextColor.YELLOW)
+        );
+    }
+
+    private void handleTransaction(String action, Player player, String itemName) {
+        EconomyManager economy = marketPlugin.getEconomyManager();
+        if (economy == null) {
+            player.sendMessage(Component.text("Economy system unavailable!", NamedTextColor.RED));
+            return;
+        }
+
+        Transaction transaction = new Transaction(player, economy, dataLoader);
+        boolean success = action.equalsIgnoreCase("buy")
+                ? transaction.performBuyTransaction(itemName, amountOfItemsSelected)
+                : transaction.performSellTransaction(itemName, amountOfItemsSelected);
+
+        if (success) {
+            player.playSound(player.getLocation(), getTransactionSound(action), 1.0f, 1.0f);
+            marketGuiItemNegotiation.close(player);
         }
     }
 
-    private GuiItem createAmountButton(Material material, int amount, NamedTextColor color, boolean isAdding) {
-        ItemStack itemStack = new ItemStack(material);
-        ItemMeta itemMeta = itemStack.getItemMeta();
+    // Amount control methods
+    private void addAmountControls() {
+        for (int i = 0; i < AMOUNTS.length; i++) {
+            int amount = AMOUNTS[i];
+            marketGuiItemNegotiation.setItem(ADD_SLOTS[i], createAmountControl(
+                    Material.GREEN_STAINED_GLASS_PANE,
+                    amount,
+                    true
+            ));
+            marketGuiItemNegotiation.setItem(DEDUCT_SLOTS[i], createAmountControl(
+                    Material.RED_STAINED_GLASS_PANE,
+                    amount,
+                    false
+            ));
+        }
+    }
 
-        String action = isAdding ? "ADD" : "DEDUCT";
-        String title = String.format("%s %d", action, amount);
+    private GuiItem createAmountControl(Material material, int amount, boolean isAddition) {
+        ItemStack button = new ItemStack(material);
+        ItemMeta meta = button.getItemMeta();
+        String action = isAddition ? "Add" : "Deduct";
 
-        itemMeta.displayName(Component.text(title, color));
-        itemStack.setItemMeta(itemMeta);
+        meta.displayName(Component.text(action + " " + amount,
+                isAddition ? NamedTextColor.GREEN : NamedTextColor.RED));
+        button.setItemMeta(meta);
 
-        return ItemBuilder.from(itemStack).asGuiItem(event -> {
-            adjustSelectedItemAmount(amount, isAdding);
-            sendMessageToPlayerOfAdjustSelectedItemAmount((Player) event.getWhoClicked(), amountOfItemsSelected, isAdding);
-            marketGuiItemNegotiation.updateItem(BUY_BUTTON_SLOT, createBuyButton(itemName));
-            marketGuiItemNegotiation.updateItem(SELL_BUTTON_SLOT, createSellButton(itemName));
+        return new GuiItem(button, event -> {
+            updateSelectedAmount(amount, isAddition);
+            Player player = (Player) event.getWhoClicked();
+            provideAmountFeedback(player, isAddition);
+            refreshTransactionButtons();
         });
     }
 
-    private void adjustSelectedItemAmount(int buttonAmount, boolean isAddition) {
+    private void updateSelectedAmount(int delta, boolean isAddition) {
         int newAmount = isAddition
-                ? amountOfItemsSelected + buttonAmount
-                : amountOfItemsSelected - buttonAmount;
+                ? amountOfItemsSelected + delta
+                : amountOfItemsSelected - delta;
 
-        int clampedAmount = Math.max(1, Math.min(2304, newAmount));
-        setAmountOfItemsSelected(clampedAmount);
+        amountOfItemsSelected = Math.clamp(newAmount, 1, 2304);
     }
 
-    private void sendMessageToPlayerOfAdjustSelectedItemAmount(Player player, int amountOfItemsSelected, boolean isAdding) {
-        Component message = isAdding ? Component.text("Amount selected: " + amountOfItemsSelected, NamedTextColor.GREEN) : Component.text("Amount selected: " + amountOfItemsSelected, NamedTextColor.RED);
-        player.sendMessage(message);
+    private void provideAmountFeedback(Player player, boolean isAddition) {
+        player.sendMessage(Component.text("Selected: " + amountOfItemsSelected,
+                isAddition ? NamedTextColor.GREEN : NamedTextColor.RED));
+        player.playSound(player.getLocation(),
+                isAddition ? Sound.ENTITY_EXPERIENCE_ORB_PICKUP : Sound.BLOCK_NOTE_BLOCK_BASS,
+                1.0f, 1.0f);
     }
 
-    private GuiItem createBuyButton(String itemName) {
-        ItemStack itemStack = new ItemStack(Material.SLIME_BLOCK);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        // Set the display name
-        itemMeta.displayName(Component.text("Buy", NamedTextColor.GREEN));
-
-        // Get the item data
-        Map<String, MarketItem> marketItems = dataLoader.getMarketItems();
-        MarketItem item = marketItems.get(itemName);
-
-        // Calculate the total price
-        BigDecimal pricePerAmount = item.getPrice();
-        int totalAmount = getAmountOfItemsSelected();
-        BigDecimal totalPrice = pricePerAmount.multiply(BigDecimal.valueOf(totalAmount));
-
-        // Initialize and set the lore
-        itemMeta.lore(java.util.Arrays.asList(
-                Component.text("Price per amount: $" + pricePerAmount, NamedTextColor.WHITE),
-                Component.text("Amount selected: " + totalAmount, NamedTextColor.WHITE),
-                Component.text("Total price: $" + totalPrice, NamedTextColor.YELLOW)
-        ));
-
-        itemStack.setItemMeta(itemMeta);
-
-        return new GuiItem(itemStack, event -> {
-            Player player = (Player) event.getWhoClicked();
-            EconomyManager economyManager = marketPlugin.getEconomyManager();
-
-            if (economyManager == null) {
-                player.sendMessage("§cEconomy system not available!");
-                return;
-            }
-
-            Transaction transaction = new Transaction(player, economyManager, dataLoader);
-            transaction.performBuyTransaction(itemName, getAmountOfItemsSelected());
-            marketGuiItemNegotiation.close(player);
-        });
+    private void refreshTransactionButtons() {
+        marketGuiItemNegotiation.updateItem(BUY_BUTTON_SLOT,
+                createTransactionButton(Material.SLIME_BLOCK, "Buy", NamedTextColor.GREEN, currentItemName));
+        marketGuiItemNegotiation.updateItem(SELL_BUTTON_SLOT,
+                createTransactionButton(Material.HONEY_BLOCK, "Sell", NamedTextColor.GOLD, currentItemName));
     }
 
-    private GuiItem createSellButton(String itemName) {
-        ItemStack itemStack = new ItemStack(Material.HONEY_BLOCK);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        // Set the display name
-        itemMeta.displayName(Component.text("Sell", NamedTextColor.GOLD));
-
-        // Get the item data
-        Map<String, MarketItem> marketItems = dataLoader.getMarketItems();
-        MarketItem item = marketItems.get(itemName);
-
-        // Calculate the total price
-        BigDecimal pricePerAmount = item.getPrice();
-        int totalAmount = getAmountOfItemsSelected();
-        BigDecimal totalPrice = pricePerAmount.multiply(BigDecimal.valueOf(totalAmount));
-
-        // Initialize and set the lore
-        itemMeta.lore(java.util.Arrays.asList(
-                Component.text("Price per amount: $" + pricePerAmount, NamedTextColor.WHITE),
-                Component.text("Amount selected: " + totalAmount, NamedTextColor.WHITE),
-                Component.text("Total price: $" + totalPrice, NamedTextColor.YELLOW)
-        ));
-
-        itemStack.setItemMeta(itemMeta);
-
-        return new GuiItem(itemStack, event -> {
-            Player player = (Player) event.getWhoClicked();
-            EconomyManager economyManager = marketPlugin.getEconomyManager(); // Added this line
-
-            if (economyManager == null) {
-                player.sendMessage("§cEconomy system not available!");
-                return;
-            }
-
-            Transaction transaction = new Transaction(player, economyManager, dataLoader); // Fixed here
-            transaction.performSellTransaction(itemName, getAmountOfItemsSelected());
-            marketGuiItemNegotiation.close(player);
-        });
+    // Utility methods
+    private MarketItem getValidMarketItem(String itemName) {
+        MarketItem item = dataLoader.getMarketItems().get(itemName);
+        if (item == null) {
+            marketPlugin.getLogger().severe("Invalid item: " + itemName);
+        }
+        return item;
     }
 
-//    private Sound playSoundWhenAdd() {
-//        return //sound
-//    }
-//
-//    private Sound playSoundWhenDeduct() {
-//        return //sound
-//    }
-//
-//    private Sound playSoundWhenBuyOrSell() {
-//        return //sound
-//    }
+    private String getItemCategory(String itemName) {
+        MarketItem item = getValidMarketItem(itemName);
+        return item != null ? item.getCategory() : "";
+    }
 
+    private Sound getTransactionSound(String action) {
+        return action.equalsIgnoreCase("buy")
+                ? Sound.BLOCK_NOTE_BLOCK_BELL
+                : Sound.ENTITY_VILLAGER_YES;
+    }
+
+    // State management
     private int getAmountOfItemsSelected() {
         return amountOfItemsSelected;
     }
 
-    private void setAmountOfItemsSelected(int amountOfItemsSelected) {
-        this.amountOfItemsSelected = amountOfItemsSelected;
+    private void setAmountOfItemsSelected(int amount) {
+        this.amountOfItemsSelected = Math.clamp(amount, 1, 2304);
     }
 
-    public String getItemName() {
-        return itemName;
-    }
-
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
+    public void resetAmountOfItemsSelected() {
+        setAmountOfItemsSelected(1);
     }
 }

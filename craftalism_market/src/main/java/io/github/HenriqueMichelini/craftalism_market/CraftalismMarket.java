@@ -51,6 +51,9 @@ public class CraftalismMarket extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (guiManager != null) {
+            guiManager.resetAmountOfItemsSelected(); // Add this method to GUIManager
+        }
         getLogger().info("Craftalism Market Plugin Disabled!");
     }
 

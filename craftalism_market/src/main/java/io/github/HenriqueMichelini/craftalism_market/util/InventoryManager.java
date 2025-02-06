@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
+import java.util.Map;
 
 public class InventoryManager {
 
@@ -46,22 +47,33 @@ public class InventoryManager {
         return remaining == 0;
     }
 
-    public static void addItemToPlayer(Player player, Material material, int amount) {
+    public static boolean addItemToPlayer(Player player, Material material, int amount) {
         Inventory inventory = player.getInventory();
         int remaining = amount;
+        boolean allItemsAdded = true;
 
         while (remaining > 0) {
             int stackSize = Math.min(remaining, material.getMaxStackSize());
             ItemStack stack = new ItemStack(material, stackSize);
 
-            HashMap<Integer, ItemStack> leftovers = inventory.addItem(stack);
+            Map<Integer, ItemStack> leftovers = inventory.addItem(stack);
             if (!leftovers.isEmpty()) {
+                allItemsAdded = false;
+                // Handle all leftover stacks
                 for (ItemStack leftover : leftovers.values()) {
-                    player.getWorld().dropItemNaturally(player.getLocation(), leftover);
-                    remaining -= leftover.getAmount();
+                    int leftoverAmount = leftover.getAmount();
+                    remaining -= leftoverAmount;
+                    // Drop items with natural spread
+                    player.getWorld().dropItemNaturally(
+                            player.getLocation(),
+                            new ItemStack(material, leftoverAmount)
+                    );
                 }
+            } else {
+                remaining -= stackSize;
             }
-            remaining -= stackSize;
         }
+
+        return allItemsAdded;
     }
 }
