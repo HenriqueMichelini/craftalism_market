@@ -79,9 +79,15 @@ public class Transaction {
             return false;
         }
 
+        int playerItems = InventoryManager.countItems(player, item.getMaterial());
+
+        if (playerItems <= 0) {
+            player.sendMessage(Component.text("You don't have any of " + itemName, NamedTextColor.RED));
+            return false;
+        }
+
         // Check if player has enough items
         if (!InventoryManager.hasItems(player, item.getMaterial(), amount)) {
-            int playerItems = InventoryManager.countItems(player, item.getMaterial());
             player.sendMessage(Component.text("The amount selected (" + amount + ") is more than available in your inventory (" + playerItems + "). Selling every " + itemName + " of your inventory.", NamedTextColor.GOLD));
             amount = playerItems;
         }
