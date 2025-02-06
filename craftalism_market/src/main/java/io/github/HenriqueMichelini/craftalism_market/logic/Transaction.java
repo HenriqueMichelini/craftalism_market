@@ -11,17 +11,19 @@ import java.util.UUID;
 
 public class Transaction {
     private final EconomyManager economyManager;
+    private final MarketManager marketManager;
     private final DataLoader dataLoader;
     private final Player player;
 
-    public Transaction(Player player, EconomyManager economyManager, DataLoader dataLoader) {
+    public Transaction(Player player, EconomyManager economyManager, DataLoader dataLoader, MarketManager marketManager) {
         if (economyManager == null) {
             throw new IllegalStateException("EconomyManager not initialized!");
         }
 
-        this.player = player;
         this.economyManager = economyManager;
+        this.marketManager = marketManager;
         this.dataLoader = dataLoader;
+        this.player = player;
     }
 
     public boolean performBuyTransaction(String itemName, int amount) {
@@ -59,6 +61,8 @@ public class Transaction {
             }
 
             player.sendMessage(Component.text("Successfully purchased " + amount + " " + itemName + " for $" + totalPrice, NamedTextColor.GREEN));
+            marketManager.handlePurchase(item, amount);
+
             return true;
         }
         return false;
@@ -90,6 +94,7 @@ public class Transaction {
 
         // Remove items from inventory
         boolean removed = InventoryManager.removeItemFromPlayer(player, item.getMaterial(), amount);
+
         if (!removed) {
             player.sendMessage(Component.text("Failed to remove items from inventory!", NamedTextColor.RED));
             return false;
@@ -99,6 +104,9 @@ public class Transaction {
         economyManager.deposit(playerUUID, totalEarnings);
 
         player.sendMessage(Component.text("Successfully sold " + amount + " " + itemName + " for $" + totalEarnings, NamedTextColor.GREEN));
+
+        marketManager.handleSale(item, amount);
+
         return true;
     }
 }

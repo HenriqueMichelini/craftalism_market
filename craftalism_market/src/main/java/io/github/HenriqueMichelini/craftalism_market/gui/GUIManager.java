@@ -6,6 +6,7 @@ import dev.triumphteam.gui.guis.GuiItem;
 import io.github.HenriqueMichelini.craftalism_economy.economy.EconomyManager;
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
+import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
 import io.github.HenriqueMichelini.craftalism_market.logic.Transaction;
 import io.github.HenriqueMichelini.craftalism_market.model.MarketCategoryItem;
 import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
@@ -43,10 +44,12 @@ public class GUIManager {
     // Dependencies
     private final DataLoader dataLoader;
     private final CraftalismMarket marketPlugin;
+    private final MarketManager marketManager;
 
-    public GUIManager(DataLoader dataLoader, CraftalismMarket marketPlugin) {
+    public GUIManager(DataLoader dataLoader, CraftalismMarket marketPlugin, MarketManager marketManager) {
         this.dataLoader = dataLoader;
         this.marketPlugin = marketPlugin;
+        this.marketManager = marketManager;
     }
 
     // Public GUI access methods
@@ -239,7 +242,7 @@ public class GUIManager {
             return;
         }
 
-        Transaction transaction = new Transaction(player, economy, dataLoader);
+        Transaction transaction = new Transaction(player, economy, dataLoader, marketManager);
         boolean success = action.equalsIgnoreCase("buy")
                 ? transaction.performBuyTransaction(itemName, amountOfItemsSelected)
                 : transaction.performSellTransaction(itemName, amountOfItemsSelected);

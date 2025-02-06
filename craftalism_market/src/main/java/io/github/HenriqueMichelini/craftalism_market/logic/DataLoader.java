@@ -4,9 +4,11 @@ import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.model.MarketCategoryItem;
 import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -77,6 +79,7 @@ public class DataLoader {
             var itemData = itemsSection.getConfigurationSection(itemKey);
             if (itemData == null) continue;
 
+            // Load all fields from YAML
             String category = itemData.getString("category");
             String materialName = itemData.getString("material");
             int slot = itemData.getInt("slot");
@@ -84,8 +87,15 @@ public class DataLoader {
             BigDecimal priceSell = BigDecimal.valueOf(itemData.getDouble("priceSell"));
             Double priceSellRatio = itemData.getDouble("priceSellRatio");
             int amount = itemData.getInt("amount");
+            int maxAmount = itemData.getInt("maxAmount");
+            double regenerationRate = itemData.getDouble("regenerationRate");
+            double priceAdjustmentFactor = itemData.getDouble("priceAdjustmentFactor");
+            double regenAdjustmentFactor = itemData.getDouble("regenAdjustmentFactor");
+            double decayRate = itemData.getDouble("decayRate");
+            double productivity = itemData.getDouble("productivity");
+            long lastActivity = itemData.getLong("lastActivity");
 
-            // Load price_history as a List<Double> and convert it to List<BigDecimal>
+            // Load price_history
             List<Double> priceHistoryDouble = itemData.getDoubleList("price_history");
             List<BigDecimal> priceHistory = priceHistoryDouble.stream()
                     .map(BigDecimal::valueOf)
@@ -102,8 +112,64 @@ public class DataLoader {
                 continue;
             }
 
-            // Pass priceHistory to the MarketItem constructor
-            marketItems.put(itemKey, new MarketItem(category, material, slot, price, priceSell, priceSellRatio, amount, priceHistory));
+            // Create MarketItem with all parameters
+            marketItems.put(itemKey, new MarketItem(
+                    category,
+                    material,
+                    slot,
+                    price,
+                    priceSell,
+                    priceSellRatio,
+                    amount,
+                    maxAmount,
+                    regenerationRate,
+                    priceAdjustmentFactor,
+                    regenAdjustmentFactor,
+                    decayRate,
+                    productivity,
+                    lastActivity,
+                    priceHistory
+            ));
+        }
+    }
+
+    public void saveItemsData() {
+        File file = new File(plugin.getDataFolder(), "items_data.yml");
+        YamlConfiguration config = new YamlConfiguration();
+
+        ConfigurationSection itemsSection = config.createSection("items");
+
+        for (Map.Entry<String, MarketItem> entry : marketItems.entrySet()) {
+            String itemKey = entry.getKey();
+            MarketItem item = entry.getValue();
+
+            ConfigurationSection itemSection = itemsSection.createSection(itemKey);
+            itemSection.set("category", item.getCategory());
+            itemSection.set("material", item.getMaterial().name());
+            itemSection.set("slot", item.getSlot());
+            itemSection.set("price", item.getPrice().doubleValue());
+            itemSection.set("priceSell", item.getPriceSell().doubleValue());
+            itemSection.set("priceSellRatio", item.getPriceSellRatio());
+            itemSection.set("amount", item.getAmount());
+            itemSection.set("maxAmount", item.getMaxAmount());
+            itemSection.set("regenerationRate", item.getRegenerationRate());
+            itemSection.set("priceAdjustmentFactor", item.getPriceAdjustmentFactor());
+            itemSection.set("regenAdjustmentFactor", item.getRegenAdjustmentFactor());
+            itemSection.set("decayRate", item.getDecayRate());
+            itemSection.set("productivity", item.getProductivity());
+            itemSection.set("lastActivity", item.getLastActivity());
+
+            // Convert BigDecimal price history to Double list
+            List<Double> priceHistory = item.getPriceHistory().stream()
+                    .map(BigDecimal::doubleValue)
+                    .collect(Collectors.toList());
+            itemSection.set("price_history", priceHistory);
+        }
+
+        try {
+            config.save(file);
+        } catch (IOException e) {
+            plugin.getLogger().severe("Failed to save items_data.yml: " + e.getMessage());
         }
     }
 

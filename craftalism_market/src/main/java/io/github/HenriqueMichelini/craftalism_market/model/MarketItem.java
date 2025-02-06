@@ -1,21 +1,44 @@
 package io.github.HenriqueMichelini.craftalism_market.model;
 
 import org.bukkit.Material;
-
 import java.math.BigDecimal;
 import java.util.List;
 
 public class MarketItem {
+    // Immutable fields
     private final String category;
     private final Material material;
     private final int slot;
-    private final BigDecimal price;
-    private final BigDecimal priceSell;
     private final Double priceSellRatio;
-    private final int amount;
-    private final List<BigDecimal> price_history;
+    private final int maxAmount;
+    private final double regenerationRate;
+    private final double priceAdjustmentFactor;
+    private final double regenAdjustmentFactor;
+    private final double decayRate;
+    private final double productivity;
 
-    public MarketItem(String category, Material material, int slot, BigDecimal price, BigDecimal priceSell, Double priceSellRatio, int amount, List<BigDecimal> priceHistory) {
+    // Mutable fields
+    private BigDecimal price;
+    private BigDecimal priceSell;
+    private int amount;
+    private List<BigDecimal> priceHistory;
+    private long lastActivity;
+
+    public MarketItem(String category,
+                      Material material,
+                      int slot,
+                      BigDecimal price,
+                      BigDecimal priceSell,
+                      Double priceSellRatio,
+                      int amount,
+                      int maxAmount,
+                      double regenerationRate,
+                      double priceAdjustmentFactor,
+                      double regenAdjustmentFactor,
+                      double decayRate,
+                      double productivity,
+                      long lastActivity,
+                      List<BigDecimal> priceHistory) {
         this.category = category;
         this.material = material;
         this.slot = slot;
@@ -23,10 +46,17 @@ public class MarketItem {
         this.priceSell = priceSell;
         this.priceSellRatio = priceSellRatio;
         this.amount = amount;
-        price_history = priceHistory;
+        this.maxAmount = maxAmount;
+        this.regenerationRate = regenerationRate;
+        this.priceAdjustmentFactor = priceAdjustmentFactor;
+        this.regenAdjustmentFactor = regenAdjustmentFactor;
+        this.decayRate = decayRate;
+        this.productivity = productivity;
+        this.lastActivity = lastActivity;
+        this.priceHistory = priceHistory;
     }
 
-    // Getters
+    // Getters (all fields) -------------------------------------
     public String getCategory() { return category; }
     public Material getMaterial() { return material; }
     public int getSlot() { return slot; }
@@ -34,5 +64,19 @@ public class MarketItem {
     public BigDecimal getPriceSell() { return priceSell; }
     public Double getPriceSellRatio() { return priceSellRatio; }
     public int getAmount() { return amount; }
-    public List<BigDecimal> getPriceHistory() { return price_history; }
+    public int getMaxAmount() { return maxAmount; }
+    public double getRegenerationRate() { return regenerationRate; }
+    public double getPriceAdjustmentFactor() { return priceAdjustmentFactor; }
+    public double getRegenAdjustmentFactor() { return regenAdjustmentFactor; }
+    public double getDecayRate() { return decayRate; }
+    public double getProductivity() { return productivity; }
+    public long getLastActivity() { return lastActivity; }
+    public List<BigDecimal> getPriceHistory() { return priceHistory; }
+
+    // Setters (mutable fields only) ----------------------------
+    public void setPrice(BigDecimal price) { this.price = price; }
+    public void setPriceSell(BigDecimal priceSell) { this.priceSell = priceSell; }
+    public void setAmount(int amount) { this.amount = amount; }
+    public void setLastActivity(long lastActivity) { this.lastActivity = lastActivity; }
+    public void setPriceHistory(List<BigDecimal> priceHistory) { this.priceHistory = priceHistory; }
 }

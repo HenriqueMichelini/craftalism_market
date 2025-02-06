@@ -5,6 +5,7 @@ import io.github.HenriqueMichelini.craftalism_economy.economy.EconomyManager;
 import io.github.HenriqueMichelini.craftalism_market.command.MarketCommand;
 import io.github.HenriqueMichelini.craftalism_market.gui.GUIManager;
 import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
+import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -24,6 +25,7 @@ public class CraftalismMarket extends JavaPlugin {
 
     private DataLoader dataLoader;
     private GUIManager guiManager;
+    private MarketManager marketManager;
 
     @Override
     public void onEnable() {
@@ -41,8 +43,9 @@ public class CraftalismMarket extends JavaPlugin {
         dataLoader = new DataLoader(this);
         dataLoader.loadMarketCategories();
         dataLoader.loadItemsData();
+        marketManager = new MarketManager(dataLoader);
 
-        guiManager = new GUIManager(dataLoader, this);
+        guiManager = new GUIManager(dataLoader, this, marketManager);
 
         this.getCommand("market").setExecutor(new MarketCommand(guiManager));
 
