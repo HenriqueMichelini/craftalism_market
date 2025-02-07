@@ -19,8 +19,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class GUIManager {
     // Constants
@@ -160,7 +162,7 @@ public class GUIManager {
 
     private List<Component> createItemLore(MarketItem item) {
         return List.of(
-                Component.text("Price: $" + item.getPrice(), NamedTextColor.WHITE),
+                Component.text("Price: " + formatPrice(item.getPrice()), NamedTextColor.WHITE),
                 Component.text("Stock: " + item.getAmount(), NamedTextColor.AQUA)
         );
     }
@@ -176,8 +178,8 @@ public class GUIManager {
 
     private List<Component> createDetailedLore(MarketItem item) {
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Buy Price: $" + item.getPrice(), NamedTextColor.GREEN));
-        lore.add(Component.text("Sell Price: $" + item.getPriceSell(), NamedTextColor.RED));
+        lore.add(Component.text("Buy Price: " + formatPrice(item.getPrice()), NamedTextColor.GREEN));
+        lore.add(Component.text("Sell Price: " + formatPrice(item.getPriceSell()), NamedTextColor.RED));
         lore.add(Component.text("Stock: " + item.getAmount(), NamedTextColor.AQUA));
         lore.add(Component.empty());
         addPriceHistory(lore, item);
@@ -193,7 +195,7 @@ public class GUIManager {
 
         lore.add(Component.text("Price History:", NamedTextColor.GOLD));
         history.forEach(price ->
-                lore.add(Component.text("  - $" + price, NamedTextColor.GRAY))
+                lore.add(Component.text("  - " + formatPrice(price), NamedTextColor.GRAY))
         );
     }
 
@@ -229,9 +231,9 @@ public class GUIManager {
         BigDecimal total = price.multiply(BigDecimal.valueOf(amountOfItemsSelected));
 
         return List.of(
-                Component.text("Price/item: $" + price, NamedTextColor.WHITE),
+                Component.text("Price/item: " + formatPrice(price), NamedTextColor.WHITE),
                 Component.text("Quantity: " + amountOfItemsSelected, NamedTextColor.WHITE),
-                Component.text("Total: $" + total, NamedTextColor.YELLOW)
+                Component.text("Total: " + formatPrice(total), NamedTextColor.YELLOW)
         );
     }
 
@@ -341,5 +343,13 @@ public class GUIManager {
 
     public void resetAmountOfItemsSelected() {
         setAmountOfItemsSelected(1);
+    }
+
+    private String formatPrice(BigDecimal price) {
+        // Create a locale-specific formatter (e.g., for European-style formatting)
+        NumberFormat formatter = NumberFormat.getInstance(Locale.GERMANY); // Uses . for thousands and , for decimals
+        formatter.setMinimumFractionDigits(2); // Always show 2 decimal places
+        formatter.setMaximumFractionDigits(2); // Never show more than 2 decimal places
+        return "$" + formatter.format(price.doubleValue()); // Use € symbol (or $ if preferred)
     }
 }

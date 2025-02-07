@@ -7,6 +7,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.UUID;
 
 public class Transaction {
@@ -39,7 +41,7 @@ public class Transaction {
 
         // Check balance and stock
         if (!economyManager.hasBalance(playerUUID, totalPrice)) {
-            player.sendMessage(Component.text("You don't have enough money to buy " + amount + " of " + itemName + ". (must be $" + totalPrice + " but you only have $" + economyManager.getBalance(playerUUID), NamedTextColor.RED));
+            player.sendMessage(Component.text("You don't have enough money to buy " + amount + " of " + itemName + ". (must be " + formatPrice(totalPrice) + " but you only have $" + economyManager.getBalance(playerUUID), NamedTextColor.RED));
             return false;
         }
 
@@ -60,7 +62,7 @@ public class Transaction {
                 player.sendMessage(Component.text("There isn't enough inventory space to comport " + amount + " of " + itemName + ". The remaining was dropped in the floor.", NamedTextColor.GOLD));
             }
 
-            player.sendMessage(Component.text("Successfully purchased " + amount + " " + itemName + " for $" + totalPrice, NamedTextColor.GREEN));
+            player.sendMessage(Component.text("Successfully purchased " + amount + " " + itemName + " for " + formatPrice(totalPrice), NamedTextColor.GREEN));
             marketManager.handlePurchase(item, amount);
 
             return true;
@@ -103,10 +105,18 @@ public class Transaction {
         // Deposit money
         economyManager.deposit(playerUUID, totalEarnings);
 
-        player.sendMessage(Component.text("Successfully sold " + amount + " " + itemName + " for $" + totalEarnings, NamedTextColor.GREEN));
+        player.sendMessage(Component.text("Successfully sold " + amount + " " + itemName + " for " + formatPrice(totalEarnings), NamedTextColor.GREEN));
 
         marketManager.handleSale(item, amount);
 
         return true;
+    }
+
+    private String formatPrice(BigDecimal price) {
+        // Create a locale-specific formatter (e.g., for European-style formatting)
+        NumberFormat formatter = NumberFormat.getInstance(Locale.GERMANY); // Uses . for thousands and , for decimals
+        formatter.setMinimumFractionDigits(2); // Always show 2 decimal places
+        formatter.setMaximumFractionDigits(2); // Never show more than 2 decimal places
+        return "$" + formatter.format(price.doubleValue()); // Use € symbol (or $ if preferred)
     }
 }
