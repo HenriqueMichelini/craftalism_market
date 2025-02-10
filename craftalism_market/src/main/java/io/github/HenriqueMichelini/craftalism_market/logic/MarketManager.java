@@ -2,6 +2,7 @@ package io.github.HenriqueMichelini.craftalism_market.logic;
 
 import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class MarketManager {
@@ -11,49 +12,40 @@ public class MarketManager {
         this.dataLoader = dataLoader;
     }
 
-    // Called when an item is bought
-    public void handlePurchase(MarketItem item, int quantity) {
-        // Update stock
-        int newAmount = item.getAmount() - quantity;
-        if (newAmount < 0) newAmount = 0;
-        item.setAmount(newAmount);
+    public void setItemPrice(MarketItem item, BigDecimal lastItemPrice) {
+        item.setCurrentBuyPrice(lastItemPrice);
 
-        // Adjust price upwards based on demand
-        BigDecimal priceIncrease = item.getPrice()
-                .multiply(BigDecimal.valueOf(item.getPriceAdjustmentFactor()));
-        BigDecimal newPrice = item.getPrice().add(priceIncrease);
-        item.setPrice(newPrice);
-
-        // Update price history
-        updatePriceHistory(item, newPrice);
-
-        // Save changes
-        dataLoader.saveItemsData();
     }
 
-    // Called when an item is sold
-    public void handleSale(MarketItem item, int quantity) {
-        // Update stock (capped at maxAmount)
-        int newAmount = item.getAmount() + quantity;
-        if (newAmount > item.getMaxAmount()) newAmount = item.getMaxAmount();
-        item.setAmount(newAmount);
+    public BigDecimal getTotalPriceOfItem(MarketItem item, int termNumber) {
+        BigDecimal firstTerm = item.getCurrentBuyPrice();
+        BigDecimal lastTerm = getLastPriceOfItem(item, termNumber);
 
-        // Adjust price downwards based on supply
-        BigDecimal priceDecrease = item.getPrice().multiply(BigDecimal.valueOf(item.getPriceAdjustmentFactor()));
-        BigDecimal newPrice = item.getPrice().subtract(priceDecrease);
-        if (newPrice.compareTo(BigDecimal.ZERO) < 0) newPrice = BigDecimal.ZERO;
-        item.setPrice(newPrice);
-
-        // Update price history
-        updatePriceHistory(item, newPrice);
-
-        // Save changes
-        dataLoader.saveItemsData();
+        return getArithmeticSequenceSumOfTerms(firstTerm, lastTerm, termNumber);
     }
 
-    private void updatePriceHistory(MarketItem item, BigDecimal newPrice) {
+    public BigDecimal getLastPriceOfItem(MarketItem item, int termNumber) {
+        BigDecimal firstTerm = item.getCurrentBuyPrice();
+        BigDecimal buySellMultiplier = BigDecimal.ONE.add(item.getBuySellPriceRatio()); // (1 + ratio)
+        BigDecimal secondTerm = firstTerm.multiply(buySellMultiplier);
+        BigDecimal commonDifference = secondTerm.subtract(firstTerm);
+
+        return getArithmeticSequenceTerm(firstTerm, commonDifference, termNumber);
+    }
+
+    public BigDecimal getArithmeticSequenceSumOfTerms(BigDecimal firstTerm, BigDecimal lastTerm, int numberOfTerms) {
+        return firstTerm.add(lastTerm) // (firstTerm + lastTerm)
+                .multiply(BigDecimal.valueOf(numberOfTerms)) // * numberOfTerms
+                .divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP); // / 2
+    }
+
+    public BigDecimal getArithmeticSequenceTerm(BigDecimal firstTerm, BigDecimal commonDifference, int termNumber) {
+        return firstTerm.add(commonDifference.multiply(BigDecimal.valueOf(termNumber - 1)));
+    }
+
+    public void updatePriceHistory(MarketItem item, BigDecimal newPrice) {
         List<BigDecimal> history = item.getPriceHistory();
-        history.add(0, newPrice); // Add new price to front
+        history.addFirst(newPrice); // Add new price to front
 
         // Keep only last 10 entries
         if (history.size() > 10) {
@@ -62,5 +54,4 @@ public class MarketManager {
         item.setPriceHistory(history);
     }
 
-    // Add other economic simulations as needed
 }

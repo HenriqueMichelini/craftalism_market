@@ -162,8 +162,8 @@ public class GUIManager {
 
     private List<Component> createItemLore(MarketItem item) {
         return List.of(
-                Component.text("Price: " + formatPrice(item.getPrice()), NamedTextColor.WHITE),
-                Component.text("Stock: " + item.getAmount(), NamedTextColor.AQUA)
+                Component.text("Price: " + formatPrice(item.getCurrentBuyPrice()), NamedTextColor.WHITE),
+                Component.text("Stock: " + item.getCurrentAmount(), NamedTextColor.AQUA)
         );
     }
 
@@ -178,9 +178,9 @@ public class GUIManager {
 
     private List<Component> createDetailedLore(MarketItem item) {
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Buy Price: " + formatPrice(item.getPrice()), NamedTextColor.GREEN));
-        lore.add(Component.text("Sell Price: " + formatPrice(item.getPriceSell()), NamedTextColor.RED));
-        lore.add(Component.text("Stock: " + item.getAmount(), NamedTextColor.AQUA));
+        lore.add(Component.text("Buy Price: " + formatPrice(item.getCurrentBuyPrice()), NamedTextColor.GREEN));
+        lore.add(Component.text("Sell Price: " + formatPrice(item.getCurrentSellPrice()), NamedTextColor.RED));
+        lore.add(Component.text("Stock: " + item.getCurrentAmount(), NamedTextColor.AQUA));
         lore.add(Component.empty());
         addPriceHistory(lore, item);
         return lore;
@@ -227,8 +227,8 @@ public class GUIManager {
 
     private List<Component> createTransactionLore(String itemName, String action) {
         MarketItem item = getValidMarketItem(itemName);
-        BigDecimal price = action.equalsIgnoreCase("buy") ? item.getPrice() : item.getPriceSell();
-        BigDecimal total = price.multiply(BigDecimal.valueOf(amountOfItemsSelected));
+        BigDecimal price = action.equalsIgnoreCase("buy") ? item.getCurrentBuyPrice() : item.getCurrentSellPrice();
+        BigDecimal total = marketManager.getTotalPriceOfItem(item, amountOfItemsSelected);
 
         return List.of(
                 Component.text("Price/item: " + formatPrice(price), NamedTextColor.WHITE),

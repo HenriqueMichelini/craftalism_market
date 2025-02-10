@@ -37,7 +37,7 @@ public class Transaction {
             return false;
         }
 
-        BigDecimal totalPrice = item.getPrice().multiply(BigDecimal.valueOf(amount));
+        BigDecimal totalPrice = marketManager.getTotalPriceOfItem(item, amount);
 
         // Check balance and stock
         if (!economyManager.hasBalance(playerUUID, totalPrice)) {
@@ -45,10 +45,10 @@ public class Transaction {
             return false;
         }
 
-        if (item.getAmount() < amount) {
-            player.sendMessage(Component.text("The amount selected (" + amount + ") is more than available in the stock (" + item.getAmount() + "). Buying all the stock.", NamedTextColor.GOLD));
-            amount = item.getAmount();
-            totalPrice = item.getPrice().multiply(BigDecimal.valueOf(amount));
+        if (item.getCurrentAmount() < amount) {
+            player.sendMessage(Component.text("The amount selected (" + amount + ") is more than available in the stock (" + item.getCurrentAmount() + "). Buying all the stock.", NamedTextColor.GOLD));
+            amount = item.getCurrentAmount();
+            totalPrice = marketManager.getTotalPriceOfItem(item, amount);
         }
 
         // Perform transaction
@@ -63,7 +63,13 @@ public class Transaction {
             }
 
             player.sendMessage(Component.text("Successfully purchased " + amount + " " + itemName + " for " + formatPrice(totalPrice), NamedTextColor.GREEN));
-            marketManager.handlePurchase(item, amount);
+
+            //  Set the last price negotiated
+            BigDecimal lastPriceOfItem = marketManager.getLastPriceOfItem(item, amount);
+
+            item.setCurrentBuyPrice(lastPriceOfItem);
+            item.setCurrentSellPrice(lastPriceOfItem.multiply(BigDecimal.valueOf(0.8)));
+            marketManager.updatePriceHistory(item, marketManager.getTotalPriceOfItem(item, amount));
 
             return true;
         }
@@ -92,7 +98,7 @@ public class Transaction {
             amount = playerItems;
         }
 
-        BigDecimal totalEarnings = item.getPriceSell().multiply(BigDecimal.valueOf(amount));
+        BigDecimal totalEarnings = item.getCurrentSellPrice().multiply(BigDecimal.valueOf(amount));
 
         // Remove items from inventory
         boolean removed = InventoryManager.removeItemFromPlayer(player, item.getMaterial(), amount);
@@ -107,7 +113,7 @@ public class Transaction {
 
         player.sendMessage(Component.text("Successfully sold " + amount + " " + itemName + " for " + formatPrice(totalEarnings), NamedTextColor.GREEN));
 
-        marketManager.handleSale(item, amount);
+        //marketManager.handleSale(item, amount);
 
         return true;
     }

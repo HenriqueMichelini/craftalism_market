@@ -83,16 +83,10 @@ public class DataLoader {
             String category = itemData.getString("category");
             String materialName = itemData.getString("material");
             int slot = itemData.getInt("slot");
-            BigDecimal price = BigDecimal.valueOf(itemData.getDouble("price"));
-            BigDecimal priceSell = BigDecimal.valueOf(itemData.getDouble("priceSell"));
-            Double priceSellRatio = itemData.getDouble("priceSellRatio");
-            int amount = itemData.getInt("amount");
-            int maxAmount = itemData.getInt("maxAmount");
-            double regenerationRate = itemData.getDouble("regenerationRate");
-            double priceAdjustmentFactor = itemData.getDouble("priceAdjustmentFactor");
-            double regenAdjustmentFactor = itemData.getDouble("regenAdjustmentFactor");
-            double decayRate = itemData.getDouble("decayRate");
-            double productivity = itemData.getDouble("productivity");
+            BigDecimal currentBuyPrice = BigDecimal.valueOf(itemData.getDouble("currentBuyPrice"));
+            BigDecimal currentSellPrice = BigDecimal.valueOf(itemData.getDouble("currentSellPrice"));
+            BigDecimal buySellPriceRatio = BigDecimal.valueOf(itemData.getDouble("buySellPriceRatio"));
+            int currentAmount = itemData.getInt("currentAmount");
             long lastActivity = itemData.getLong("lastActivity");
 
             // Load price_history
@@ -117,16 +111,10 @@ public class DataLoader {
                     category,
                     material,
                     slot,
-                    price,
-                    priceSell,
-                    priceSellRatio,
-                    amount,
-                    maxAmount,
-                    regenerationRate,
-                    priceAdjustmentFactor,
-                    regenAdjustmentFactor,
-                    decayRate,
-                    productivity,
+                    currentBuyPrice,
+                    currentSellPrice,
+                    buySellPriceRatio,
+                    currentAmount,
                     lastActivity,
                     priceHistory
             ));
@@ -147,16 +135,10 @@ public class DataLoader {
             itemSection.set("category", item.getCategory());
             itemSection.set("material", item.getMaterial().name());
             itemSection.set("slot", item.getSlot());
-            itemSection.set("price", item.getPrice().doubleValue());
-            itemSection.set("priceSell", item.getPriceSell().doubleValue());
-            itemSection.set("priceSellRatio", item.getPriceSellRatio());
-            itemSection.set("amount", item.getAmount());
-            itemSection.set("maxAmount", item.getMaxAmount());
-            itemSection.set("regenerationRate", item.getRegenerationRate());
-            itemSection.set("priceAdjustmentFactor", item.getPriceAdjustmentFactor());
-            itemSection.set("regenAdjustmentFactor", item.getRegenAdjustmentFactor());
-            itemSection.set("decayRate", item.getDecayRate());
-            itemSection.set("productivity", item.getProductivity());
+            itemSection.set("currentBuyPrice", item.getCurrentBuyPrice().doubleValue());
+            itemSection.set("currentSellPrice", item.getCurrentSellPrice().doubleValue());
+            itemSection.set("buySellPriceRatio", item.getBuySellPriceRatio());
+            itemSection.set("currentAmount", item.getCurrentAmount());
             itemSection.set("lastActivity", item.getLastActivity());
 
             // Convert BigDecimal price history to Double list
