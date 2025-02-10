@@ -69,7 +69,7 @@ public class Transaction {
 
             item.setCurrentBuyPrice(lastPriceOfItem);
             item.setCurrentSellPrice(lastPriceOfItem.multiply(BigDecimal.valueOf(0.8)));
-            marketManager.updatePriceHistory(item, marketManager.getTotalPriceOfItem(item, amount));
+            marketManager.updatePriceHistory(item, lastPriceOfItem);
 
             return true;
         }
