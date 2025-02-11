@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -177,9 +178,10 @@ public class GUIManager {
     }
 
     private List<Component> createDetailedLore(MarketItem item) {
+        String sellTax = item.getSellTax().multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP) + "%";
         List<Component> lore = new ArrayList<>();
         lore.add(Component.text("Buy Price: " + formatPrice(item.getBasePrice()), NamedTextColor.GREEN));
-        lore.add(Component.text("Sell Price: " + formatPrice(item.getBasePrice()), NamedTextColor.RED));
+        lore.add(Component.text("Sell tax: " + sellTax, NamedTextColor.RED));
         lore.add(Component.text("Stock: " + item.getAmount(), NamedTextColor.AQUA));
         lore.add(Component.empty());
         addPriceHistory(lore, item);
@@ -227,11 +229,23 @@ public class GUIManager {
 
     private List<Component> createTransactionLore(String itemName, String action) {
         MarketItem item = getValidMarketItem(itemName);
-        BigDecimal price = action.equalsIgnoreCase("buy") ? item.getBasePrice() : item.getBasePrice();
-        BigDecimal total = marketManager.getTotalPriceOfItem(item, amountOfItemsSelected, true);
+        BigDecimal price = item.getBasePrice();
+        BigDecimal totalBuyPrice = marketManager.getTotalPriceOfItem(item, amountOfItemsSelected, true);
+        BigDecimal totalSellPrice = marketManager.getTotalPriceOfItem(item, amountOfItemsSelected, false).multiply(BigDecimal.ONE.subtract(item.getSellTax()));
+        //BigDecimal total = action.equalsIgnoreCase("buy") ? totalBuyPrice : totalSellPrice;
+        BigDecimal total = action.equalsIgnoreCase("buy") ? totalBuyPrice : totalSellPrice;
+
+        if (action.equalsIgnoreCase("buy")){
+            return List.of(
+                    Component.text("Price per item: " + formatPrice(price), NamedTextColor.WHITE),
+                    Component.text("Quantity: " + amountOfItemsSelected, NamedTextColor.WHITE),
+                    Component.text("Total: " + formatPrice(total), NamedTextColor.YELLOW)
+            );
+        }
 
         return List.of(
-                Component.text("Price/item: " + formatPrice(price), NamedTextColor.WHITE),
+                Component.text("Price per item: " + formatPrice(price), NamedTextColor.WHITE),
+                Component.text("Tax: " + formatPrice(totalBuyPrice.subtract(totalSellPrice)), NamedTextColor.RED),
                 Component.text("Quantity: " + amountOfItemsSelected, NamedTextColor.WHITE),
                 Component.text("Total: " + formatPrice(total), NamedTextColor.YELLOW)
         );
