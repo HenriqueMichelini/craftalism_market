@@ -83,10 +83,10 @@ public class DataLoader {
             String category = itemData.getString("category");
             String materialName = itemData.getString("material");
             int slot = itemData.getInt("slot");
-            BigDecimal currentBuyPrice = BigDecimal.valueOf(itemData.getDouble("currentBuyPrice"));
-            BigDecimal currentSellPrice = BigDecimal.valueOf(itemData.getDouble("currentSellPrice"));
-            BigDecimal buySellPriceRatio = BigDecimal.valueOf(itemData.getDouble("buySellPriceRatio"));
-            int currentAmount = itemData.getInt("currentAmount");
+            BigDecimal basePrice = BigDecimal.valueOf(itemData.getDouble("basePrice"));
+            BigDecimal priceVariationPerOperation = BigDecimal.valueOf(itemData.getDouble("priceVariationPerOperation"));
+            BigDecimal sellTax = BigDecimal.valueOf(itemData.getDouble("sellTax"));
+            int amount = itemData.getInt("amount");
             long lastActivity = itemData.getLong("lastActivity");
 
             // Load price_history
@@ -111,10 +111,10 @@ public class DataLoader {
                     category,
                     material,
                     slot,
-                    currentBuyPrice,
-                    currentSellPrice,
-                    buySellPriceRatio,
-                    currentAmount,
+                    basePrice,
+                    priceVariationPerOperation,
+                    sellTax,
+                    amount,
                     lastActivity,
                     priceHistory
             ));
@@ -135,10 +135,10 @@ public class DataLoader {
             itemSection.set("category", item.getCategory());
             itemSection.set("material", item.getMaterial().name());
             itemSection.set("slot", item.getSlot());
-            itemSection.set("currentBuyPrice", item.getCurrentBuyPrice().doubleValue());
-            itemSection.set("currentSellPrice", item.getCurrentSellPrice().doubleValue());
-            itemSection.set("buySellPriceRatio", item.getBuySellPriceRatio());
-            itemSection.set("currentAmount", item.getCurrentAmount());
+            itemSection.set("basePrice", item.getBasePrice().doubleValue());
+            itemSection.set("priceVariationPerOperation", item.getPriceVariationPerOperation());
+            itemSection.set("sellTax", item.getSellTax());
+            itemSection.set("amount", item.getAmount());
             itemSection.set("lastActivity", item.getLastActivity());
 
             // Convert BigDecimal price history to Double list

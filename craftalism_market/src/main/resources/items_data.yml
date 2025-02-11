@@ -3,9 +3,9 @@ items:
     material: COBBLESTONE
     category: "Natural Resources"
     slot: 0
-    currentBuyPrice: 0.37
-    currentSellPrice: 0.296 # default is 80% of currentBuyPrice
-    buySellPriceRatio: "0.000015"  # Multiplier for price adjustments (0.015% increase when buying, 0.015% decrease when selling)
-    currentAmount: 2000
+    basePrice: 0.37
+    priceVariationPerOperation: 0.0015
+    sellTax: 0.15
+    amount: 2000
     lastActivity: 0
     price_history: [0.37]

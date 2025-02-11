@@ -7,6 +7,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.UUID;
@@ -37,7 +38,7 @@ public class Transaction {
             return false;
         }
 
-        BigDecimal totalPrice = marketManager.getTotalPriceOfItem(item, amount);
+        BigDecimal totalPrice = marketManager.getTotalPriceOfItem(item, amount, true);
 
         // Check balance and stock
         if (!economyManager.hasBalance(playerUUID, totalPrice)) {
@@ -45,10 +46,10 @@ public class Transaction {
             return false;
         }
 
-        if (item.getCurrentAmount() < amount) {
-            player.sendMessage(Component.text("The amount selected (" + amount + ") is more than available in the stock (" + item.getCurrentAmount() + "). Buying all the stock.", NamedTextColor.GOLD));
-            amount = item.getCurrentAmount();
-            totalPrice = marketManager.getTotalPriceOfItem(item, amount);
+        if (item.getAmount() < amount) {
+            player.sendMessage(Component.text("The amount selected (" + amount + ") is more than available in the stock (" + item.getAmount() + "). Buying all the stock.", NamedTextColor.GOLD));
+            amount = item.getAmount();
+            totalPrice = marketManager.getTotalPriceOfItem(item, amount, true);
         }
 
         // Perform transaction
@@ -65,10 +66,9 @@ public class Transaction {
             player.sendMessage(Component.text("Successfully purchased " + amount + " " + itemName + " for " + formatPrice(totalPrice), NamedTextColor.GREEN));
 
             //  Set the last price negotiated
-            BigDecimal lastPriceOfItem = marketManager.getLastPriceOfItem(item, amount);
+            BigDecimal lastPriceOfItem = marketManager.getLastPriceOfItem(item, amount, true);
 
-            item.setCurrentBuyPrice(lastPriceOfItem);
-            item.setCurrentSellPrice(lastPriceOfItem.multiply(BigDecimal.valueOf(0.8)));
+            item.setBasePrice(lastPriceOfItem);
             marketManager.updatePriceHistory(item, lastPriceOfItem);
 
             return true;
@@ -98,8 +98,6 @@ public class Transaction {
             amount = playerItems;
         }
 
-        BigDecimal totalEarnings = item.getCurrentSellPrice().multiply(BigDecimal.valueOf(amount));
-
         // Remove items from inventory
         boolean removed = InventoryManager.removeItemFromPlayer(player, item.getMaterial(), amount);
 
@@ -108,21 +106,24 @@ public class Transaction {
             return false;
         }
 
+        BigDecimal totalEarningsBeforeTax = marketManager.getTotalPriceOfItem(item, amount, false);
+        BigDecimal taxPercentage = item.getSellTax();
+        BigDecimal totalEarningsAfterTax = totalEarningsBeforeTax.multiply(BigDecimal.ONE.subtract(taxPercentage));
+        BigDecimal tax = totalEarningsBeforeTax.subtract(totalEarningsAfterTax)
+                .setScale(2, RoundingMode.HALF_UP);
+
         // Deposit money
-        economyManager.deposit(playerUUID, totalEarnings);
+        economyManager.deposit(playerUUID, totalEarningsAfterTax);
+        item.setBasePrice(marketManager.getLastPriceOfItem(item, amount, false));
 
-        player.sendMessage(Component.text("Successfully sold " + amount + " " + itemName + " for " + formatPrice(totalEarnings), NamedTextColor.GREEN));
-
-        //marketManager.handleSale(item, amount);
+        player.sendMessage(Component.text("Successfully sold " + amount + " " + itemName + " for " + formatPrice(totalEarningsAfterTax) + ". Tax of " + formatPrice(tax) + " deducted.", NamedTextColor.GREEN));
 
         return true;
     }
 
     private String formatPrice(BigDecimal price) {
-        // Create a locale-specific formatter (e.g., for European-style formatting)
-        NumberFormat formatter = NumberFormat.getInstance(Locale.GERMANY); // Uses . for thousands and , for decimals
-        formatter.setMinimumFractionDigits(2); // Always show 2 decimal places
-        formatter.setMaximumFractionDigits(2); // Never show more than 2 decimal places
-        return "$" + formatter.format(price.doubleValue()); // Use € symbol (or $ if preferred)
+        // Use BigDecimal's scaling instead:
+        price = price.setScale(2, RoundingMode.HALF_UP);
+        return "$" + price.toPlainString();
     }
 }

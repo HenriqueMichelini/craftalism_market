@@ -6,31 +6,31 @@ import java.math.RoundingMode;
 import java.util.List;
 
 public class MarketManager {
-    private final DataLoader dataLoader;
 
     public MarketManager(DataLoader dataLoader) {
-        this.dataLoader = dataLoader;
     }
 
-    public void setItemPrice(MarketItem item, BigDecimal lastItemPrice) {
-        item.setCurrentBuyPrice(lastItemPrice);
-
+    // Use geometric series for total price
+    public BigDecimal getTotalPriceOfItem(MarketItem item, int amount, boolean isAdding) {
+        BigDecimal multiplier = getMultiplier(item, isAdding);
+        BigDecimal numerator = item.getBasePrice().multiply(
+                multiplier.pow(amount).subtract(BigDecimal.ONE)
+        );
+        BigDecimal denominator = multiplier.subtract(BigDecimal.ONE);
+        return numerator.divide(denominator, RoundingMode.HALF_UP);
     }
 
-    public BigDecimal getTotalPriceOfItem(MarketItem item, int termNumber) {
-        BigDecimal firstTerm = item.getCurrentBuyPrice();
-        BigDecimal lastTerm = getLastPriceOfItem(item, termNumber);
-
-        return getArithmeticSequenceSumOfTerms(firstTerm, lastTerm, termNumber);
+    private BigDecimal getMultiplier(MarketItem item, boolean isAdding) {
+        return isAdding
+                ? BigDecimal.ONE.add(item.getPriceVariationPerOperation())
+                : BigDecimal.ONE.subtract(item.getPriceVariationPerOperation());
     }
 
-    public BigDecimal getLastPriceOfItem(MarketItem item, int termNumber) {
-        BigDecimal firstTerm = item.getCurrentBuyPrice();
-        BigDecimal buySellMultiplier = BigDecimal.ONE.add(item.getBuySellPriceRatio()); // (1 + ratio)
-        BigDecimal secondTerm = firstTerm.multiply(buySellMultiplier);
-        BigDecimal commonDifference = secondTerm.subtract(firstTerm);
-
-        return getArithmeticSequenceTerm(firstTerm, commonDifference, termNumber);
+    public BigDecimal getLastPriceOfItem(MarketItem item, int termNumber, boolean isAdding) {
+        BigDecimal multiplier = isAdding
+                ? BigDecimal.ONE.add(item.getPriceVariationPerOperation())
+                : BigDecimal.ONE.subtract(item.getPriceVariationPerOperation());
+        return item.getBasePrice().multiply(multiplier.pow(termNumber));
     }
 
     public BigDecimal getArithmeticSequenceSumOfTerms(BigDecimal firstTerm, BigDecimal lastTerm, int numberOfTerms) {
