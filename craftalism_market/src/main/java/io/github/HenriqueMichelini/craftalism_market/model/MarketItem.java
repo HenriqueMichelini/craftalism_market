@@ -1,5 +1,6 @@
 package io.github.HenriqueMichelini.craftalism_market.model;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import java.math.BigDecimal;
 import java.util.List;
@@ -48,6 +49,7 @@ public class MarketItem {
     public int getAmount() { return amount; }
     public long getLastActivity() { return lastActivity; }
     public List<BigDecimal> getPriceHistory() { return priceHistory; }
+    public String getName() { return this.material.translationKey(); }
 
     // Setters (mutable fields only) ----------------------------
     public void setBasePrice(BigDecimal basePrice) { this.basePrice = basePrice; }

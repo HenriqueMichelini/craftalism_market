@@ -14,7 +14,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

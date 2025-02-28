@@ -24,8 +24,6 @@ public class CraftalismMarket extends JavaPlugin {
     private FileConfiguration marketCategoryConfig;
 
     private DataLoader dataLoader;
-    private GuiManager guiManager;
-    private MarketManager marketManager;
 
     @Override
     public void onEnable() {
@@ -40,12 +38,13 @@ public class CraftalismMarket extends JavaPlugin {
         }
 
         instance = this;
+
         dataLoader = new DataLoader(this);
         dataLoader.loadMarketCategories();
         dataLoader.loadItemsData();
-        marketManager = new MarketManager(dataLoader);
-        //DataLoader dataLoader, CraftalismMarket plugin, MarketManager marketManager, Player player
-        guiManager = new GuiManager(dataLoader, this, marketManager);
+
+        MarketManager marketManager = new MarketManager(dataLoader);
+        GuiManager guiManager = new GuiManager(dataLoader, this, marketManager);
 
         this.getCommand("market").setExecutor(new MarketCommand(guiManager));
 

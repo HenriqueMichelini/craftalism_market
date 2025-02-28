@@ -19,111 +19,150 @@ public class Transaction {
     private final Player player;
 
     public Transaction(Player player, EconomyManager economyManager, DataLoader dataLoader, MarketManager marketManager) {
-        if (economyManager == null) {
-            throw new IllegalStateException("EconomyManager not initialized!");
+        if (economyManager == null || marketManager == null || dataLoader == null || player == null) {
+            throw new IllegalArgumentException("All parameters must be non-null");
         }
-
         this.economyManager = economyManager;
         this.marketManager = marketManager;
         this.dataLoader = dataLoader;
         this.player = player;
     }
 
-    public boolean performBuyTransaction(String itemName, int amount) {
-        UUID playerUUID = player.getUniqueId();
-        MarketItem item = dataLoader.getMarketItems().get(itemName);
+    public boolean performBuyTransaction(String itemName, int requestedAmount) {
+        MarketItem item = getItemOrSendError(itemName);
+        if (item == null) return false;
 
-        if (item == null) {
-            player.sendMessage(Component.text("Item not found!", NamedTextColor.RED));
-            return false;
-        }
+        int adjustedAmount = adjustAmountBasedOnStock(item, requestedAmount);
+        BigDecimal totalPrice = calculateTotalPrice(item, adjustedAmount, true);
 
-        BigDecimal totalPrice = marketManager.getTotalPriceOfItem(item, amount, true);
+        if (!checkBalance(totalPrice, itemName, adjustedAmount)) return false;
 
-        // Check balance and stock
-        if (!economyManager.hasBalance(playerUUID, totalPrice)) {
-            player.sendMessage(Component.text("You don't have enough money to buy " + amount + " of " + itemName + ". (must be " + formatPrice(totalPrice) + " but you only have $" + economyManager.getBalance(playerUUID), NamedTextColor.RED));
-            return false;
-        }
+        if (!processPurchase(item, adjustedAmount, totalPrice)) return false;
 
-        if (item.getAmount() < amount) {
-            player.sendMessage(Component.text("The amount selected (" + amount + ") is more than available in the stock (" + item.getAmount() + "). Buying all the stock.", NamedTextColor.GOLD));
-            amount = item.getAmount();
-            totalPrice = marketManager.getTotalPriceOfItem(item, amount, true);
-        }
-
-        // Perform transaction
-        if (economyManager.withdraw(playerUUID, totalPrice)) {
-            // Add items to player's inventory
-            boolean success = InventoryManager.addItemToPlayer(player, item.getMaterial(), amount);
-
-            if (!success) {
-                // Refund if inventory is full
-                economyManager.deposit(playerUUID, totalPrice);
-                player.sendMessage(Component.text("There isn't enough inventory space to comport " + amount + " of " + itemName + ". The remaining was dropped in the floor.", NamedTextColor.GOLD));
-            }
-
-            player.sendMessage(Component.text("Successfully purchased " + amount + " " + itemName + " for " + formatPrice(totalPrice), NamedTextColor.GREEN));
-
-            //  Set the last price negotiated
-            BigDecimal lastPriceOfItem = marketManager.getLastPriceOfItem(item, amount, true);
-
-            item.setBasePrice(lastPriceOfItem);
-            marketManager.updatePriceHistory(item, lastPriceOfItem);
-
-            return true;
-        }
-        return false;
-    }
-
-    public boolean performSellTransaction(String itemName, int amount) {
-        UUID playerUUID = player.getUniqueId();
-        MarketItem item = dataLoader.getMarketItems().get(itemName);
-
-        if (item == null) {
-            player.sendMessage(Component.text("Item not found!", NamedTextColor.RED));
-            return false;
-        }
-
-        int playerItems = InventoryManager.countItems(player, item.getMaterial());
-
-        if (playerItems <= 0) {
-            player.sendMessage(Component.text("You don't have any of " + itemName, NamedTextColor.RED));
-            return false;
-        }
-
-        // Check if player has enough items
-        if (!InventoryManager.hasItems(player, item.getMaterial(), amount)) {
-            player.sendMessage(Component.text("The amount selected (" + amount + ") is more than available in your inventory (" + playerItems + "). Selling every " + itemName + " of your inventory.", NamedTextColor.GOLD));
-            amount = playerItems;
-        }
-
-        // Remove items from inventory
-        boolean removed = InventoryManager.removeItemFromPlayer(player, item.getMaterial(), amount);
-
-        if (!removed) {
-            player.sendMessage(Component.text("Failed to remove items from inventory!", NamedTextColor.RED));
-            return false;
-        }
-
-        BigDecimal totalEarningsBeforeTax = marketManager.getTotalPriceOfItem(item, amount, false);
-        BigDecimal taxPercentage = item.getSellTax();
-        BigDecimal totalEarningsAfterTax = totalEarningsBeforeTax.multiply(BigDecimal.ONE.subtract(taxPercentage));
-        BigDecimal tax = totalEarningsBeforeTax.subtract(totalEarningsAfterTax)
-                .setScale(2, RoundingMode.HALF_UP);
-
-        // Deposit money
-        economyManager.deposit(playerUUID, totalEarningsAfterTax);
-        item.setBasePrice(marketManager.getLastPriceOfItem(item, amount, false));
-
-        player.sendMessage(Component.text("Successfully sold " + amount + " " + itemName + " for " + formatPrice(totalEarningsAfterTax) + ". Tax of " + formatPrice(tax) + " deducted.", NamedTextColor.GREEN));
-
+        updateMarketItemPriceAndStock(item, adjustedAmount, true);
+        sendSuccess("Successfully purchased %d %s for %s".formatted(adjustedAmount, itemName, formatPrice(totalPrice)));
         return true;
     }
 
-    private String formatPrice(BigDecimal price) {
-        // Use BigDecimal's scaling instead:
-        price = price.setScale(2, RoundingMode.HALF_UP);
-        return "$" + price.toPlainString();
+    public boolean performSellTransaction(String itemName, int requestedAmount) {
+        MarketItem item = getItemOrSendError(itemName);
+        if (item == null) return false;
+
+        int adjustedAmount = adjustAmountBasedOnInventory(item, requestedAmount);
+        if (adjustedAmount <= 0) return false;
+
+        if (!removeItemsFromInventory(item, adjustedAmount)) return false;
+
+        TransactionResult result = calculateTransactionResult(item, adjustedAmount);
+        completeSellTransaction(item, adjustedAmount, result);
+        sendSuccess("Successfully sold %d %s for %s. Tax of %s deducted."
+                .formatted(adjustedAmount, itemName, formatPrice(result.earningsAfterTax()), formatPrice(result.tax())));
+        return true;
     }
+
+    private MarketItem getItemOrSendError(String itemName) {
+        MarketItem item = dataLoader.getMarketItems().get(itemName);
+        if (item == null) sendError("Item not found!");
+        return item;
+    }
+
+    private int adjustAmountBasedOnStock(MarketItem item, int requestedAmount) {
+        int availableStock = item.getAmount();
+        if (availableStock >= requestedAmount) return requestedAmount;
+
+        sendWarning("The amount selected (%d) exceeds stock (%d). Buying %d."
+                .formatted(requestedAmount, availableStock, availableStock));
+        return availableStock;
+    }
+
+    private BigDecimal calculateTotalPrice(MarketItem item, int amount, boolean isBuy) {
+        return marketManager.getTotalPriceOfItem(item, amount, isBuy);
+    }
+
+    private boolean checkBalance(BigDecimal totalPrice, String itemName, int amount) {
+        UUID playerId = player.getUniqueId();
+        if (economyManager.hasBalance(playerId, totalPrice)) return true;
+
+        sendError("Insufficient funds for %d %s. Needed: %s, Available: %s"
+                .formatted(amount, itemName, formatPrice(totalPrice), formatPrice(economyManager.getBalance(playerId))));
+        return false;
+    }
+
+    private boolean processPurchase(MarketItem item, int amount, BigDecimal totalPrice) {
+        UUID playerId = player.getUniqueId();
+        if (!economyManager.withdraw(playerId, totalPrice)) {
+            sendError("Failed to process payment");
+            return false;
+        }
+
+        if (!InventoryManager.addItemToPlayer(player, item.getMaterial(), amount)) {
+            economyManager.deposit(playerId, totalPrice);
+            sendWarning("Inventory full for %d %s. Transaction cancelled.".formatted(amount, item.getMaterial()));
+            return false;
+        }
+        return true;
+    }
+
+    private void updateMarketItemPriceAndStock(MarketItem item, int soldAmount, boolean isBuy) {
+        BigDecimal lastPrice = marketManager.getLastPriceOfItem(item, soldAmount, isBuy);
+        item.setBasePrice(lastPrice);
+        item.setAmount(item.getAmount() + (isBuy ? -soldAmount : soldAmount));
+        marketManager.updatePriceHistory(item, lastPrice);
+    }
+
+    private int adjustAmountBasedOnInventory(MarketItem item, int requestedAmount) {
+        int playerItems = InventoryManager.countItems(player, item.getMaterial());
+        if (playerItems <= 0) {
+            sendError("You have no %s to sell".formatted(item.getMaterial()));
+            return 0;
+        }
+
+        int adjustedAmount = Math.min(requestedAmount, playerItems);
+        if (adjustedAmount < requestedAmount) {
+            sendWarning("Attempting to sell %d, only %d available".formatted(requestedAmount, playerItems));
+        }
+        return adjustedAmount;
+    }
+
+    private boolean removeItemsFromInventory(MarketItem item, int amount) {
+        if (!InventoryManager.removeItemFromPlayer(player, item.getMaterial(), amount)) {
+            sendError("Failed to remove items from inventory");
+            return false;
+        }
+        return true;
+    }
+
+    private TransactionResult calculateTransactionResult(MarketItem item, int amount) {
+        BigDecimal totalBeforeTax = calculateTotalPrice(item, amount, false);
+        BigDecimal tax = totalBeforeTax.multiply(item.getSellTax())
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal earningsAfterTax = totalBeforeTax.subtract(tax);
+        return new TransactionResult(earningsAfterTax, tax);
+    }
+
+    private void completeSellTransaction(MarketItem item, int amount, TransactionResult result) {
+        economyManager.deposit(player.getUniqueId(), result.earningsAfterTax());
+        updateMarketItemPriceAndStock(item, amount, false);
+    }
+
+    private String formatPrice(BigDecimal price) {
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
+        currencyFormat.setRoundingMode(RoundingMode.HALF_UP);
+        currencyFormat.setMinimumFractionDigits(2);
+        return currencyFormat.format(price);
+    }
+
+    private void sendError(String message) {
+        player.sendMessage(Component.text(message, NamedTextColor.RED));
+    }
+
+    private void sendWarning(String message) {
+        player.sendMessage(Component.text(message, NamedTextColor.GOLD));
+    }
+
+    private void sendSuccess(String message) {
+        player.sendMessage(Component.text(message, NamedTextColor.GREEN));
+    }
+
+    private record TransactionResult(BigDecimal earningsAfterTax, BigDecimal tax) {}
 }

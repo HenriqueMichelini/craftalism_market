@@ -115,42 +115,42 @@ public class DataLoader {
         }
     }
 
-    /**
-     * Saves market items to the configuration file.
-     */
-    public void saveItemsData() {
-        File file = new File(plugin.getDataFolder(), "items_data.yml");
-        YamlConfiguration config = new YamlConfiguration();
-
-        ConfigurationSection itemsSection = config.createSection("items");
-
-        for (Map.Entry<String, MarketItem> entry : marketItems.entrySet()) {
-            String itemKey = entry.getKey();
-            MarketItem item = entry.getValue();
-
-            ConfigurationSection itemSection = itemsSection.createSection(itemKey);
-            itemSection.set("category", item.getCategory());
-            itemSection.set("material", item.getMaterial().name());
-            itemSection.set("slot", item.getSlot());
-            itemSection.set("basePrice", item.getBasePrice().toString()); // Preserve precision
-            itemSection.set("priceVariationPerOperation", item.getPriceVariationPerOperation().toString());
-            itemSection.set("sellTax", item.getSellTax().toString());
-            itemSection.set("amount", item.getAmount());
-            itemSection.set("lastActivity", item.getLastActivity());
-
-            List<String> priceHistory = item.getPriceHistory().stream()
-                    .map(BigDecimal::toString)
-                    .collect(Collectors.toList());
-            itemSection.set("price_history", priceHistory);
-        }
-
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            plugin.getLogger().severe("Failed to save items_data.yml: " + e.getMessage());
-            throw new RuntimeException("Failed to save items_data.yml", e); // Rethrow for caller handling
-        }
-    }
+//    /**
+//     * Saves market items to the configuration file.
+//     */
+//    public void saveItemsData() {
+//        File file = new File(plugin.getDataFolder(), "items_data.yml");
+//        YamlConfiguration config = new YamlConfiguration();
+//
+//        ConfigurationSection itemsSection = config.createSection("items");
+//
+//        for (Map.Entry<String, MarketItem> entry : marketItems.entrySet()) {
+//            String itemKey = entry.getKey();
+//            MarketItem item = entry.getValue();
+//
+//            ConfigurationSection itemSection = itemsSection.createSection(itemKey);
+//            itemSection.set("category", item.getCategory());
+//            itemSection.set("material", item.getMaterial().name());
+//            itemSection.set("slot", item.getSlot());
+//            itemSection.set("basePrice", item.getBasePrice().toString()); // Preserve precision
+//            itemSection.set("priceVariationPerOperation", item.getPriceVariationPerOperation().toString());
+//            itemSection.set("sellTax", item.getSellTax().toString());
+//            itemSection.set("amount", item.getAmount());
+//            itemSection.set("lastActivity", item.getLastActivity());
+//
+//            List<String> priceHistory = item.getPriceHistory().stream()
+//                    .map(BigDecimal::toString)
+//                    .collect(Collectors.toList());
+//            itemSection.set("price_history", priceHistory);
+//        }
+//
+//        try {
+//            config.save(file);
+//        } catch (IOException e) {
+//            plugin.getLogger().severe("Failed to save items_data.yml: " + e.getMessage());
+//            throw new RuntimeException("Failed to save items_data.yml", e); // Rethrow for caller handling
+//        }
+//    }
 
     /**
      * Returns an unmodifiable view of the market categories.

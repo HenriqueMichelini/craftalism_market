@@ -33,15 +33,15 @@ public class MarketManager {
         return item.getBasePrice().multiply(multiplier.pow(termNumber));
     }
 
-    public BigDecimal getArithmeticSequenceSumOfTerms(BigDecimal firstTerm, BigDecimal lastTerm, int numberOfTerms) {
-        return firstTerm.add(lastTerm) // (firstTerm + lastTerm)
-                .multiply(BigDecimal.valueOf(numberOfTerms)) // * numberOfTerms
-                .divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP); // / 2
-    }
-
-    public BigDecimal getArithmeticSequenceTerm(BigDecimal firstTerm, BigDecimal commonDifference, int termNumber) {
-        return firstTerm.add(commonDifference.multiply(BigDecimal.valueOf(termNumber - 1)));
-    }
+//    public BigDecimal getArithmeticSequenceSumOfTerms(BigDecimal firstTerm, BigDecimal lastTerm, int numberOfTerms) {
+//        return firstTerm.add(lastTerm) // (firstTerm + lastTerm)
+//                .multiply(BigDecimal.valueOf(numberOfTerms)) // * numberOfTerms
+//                .divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP); // / 2
+//    }
+//
+//    public BigDecimal getArithmeticSequenceTerm(BigDecimal firstTerm, BigDecimal commonDifference, int termNumber) {
+//        return firstTerm.add(commonDifference.multiply(BigDecimal.valueOf(termNumber - 1)));
+//    }
 
     public void updatePriceHistory(MarketItem item, BigDecimal newPrice) {
         List<BigDecimal> history = item.getPriceHistory();
