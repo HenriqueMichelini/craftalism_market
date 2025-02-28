@@ -34,7 +34,7 @@ public class GuiManager {
         this.marketGui = new MarketGui(
                 plugin,
                 dataLoader,
-                (player, category) -> handleCategorySelection(player, category)
+                this::handleCategorySelection
         );
 
         // Preload category GUIs
@@ -47,11 +47,6 @@ public class GuiManager {
                     this::openMarket
             ));
         });
-    }
-
-    public void reloadGUIs() {
-        categoryGuis.clear();
-        initializeGUIs();
     }
 
     // Region: Public Interface

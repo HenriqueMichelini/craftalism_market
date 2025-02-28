@@ -51,18 +51,6 @@ public abstract class BaseGui {
         return new GuiItem(item, e -> onClick.accept((Player) e.getWhoClicked()));
     }
 
-    protected String formatPrice(BigDecimal price) {
-        // Create a locale-specific formatter (e.g., for European-style formatting)
-        NumberFormat formatter = NumberFormat.getInstance(Locale.GERMANY); // Uses . for thousands and , for decimals
-        formatter.setMinimumFractionDigits(2); // Always show 2 decimal places
-        formatter.setMaximumFractionDigits(2); // Never show more than 2 decimal places
-        return "$" + formatter.format(price.doubleValue()); // Use € symbol (or $ if preferred)
-    }
-
-    protected String formatPercentage(BigDecimal sellTax) {
-        return sellTax.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP) + "%";
-    }
-
     protected void addBackButton(Consumer<Player> onBack) {
         gui.setItem(BACK_BUTTON_SLOT, createButton(
                 Material.BARRIER,
@@ -70,5 +58,16 @@ public abstract class BaseGui {
                 List.of(),
                 onBack
         ));
+    }
+
+    protected String formatPrice(BigDecimal price) {
+        NumberFormat formatter = NumberFormat.getInstance(Locale.GERMANY);
+        formatter.setMinimumFractionDigits(2);
+        formatter.setMaximumFractionDigits(2);
+        return "$" + formatter.format(price.doubleValue());
+    }
+
+    protected String formatPercentage(BigDecimal sellTax) {
+        return sellTax.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP) + "%";
     }
 }

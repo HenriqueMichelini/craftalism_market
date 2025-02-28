@@ -9,7 +9,6 @@ import io.github.HenriqueMichelini.craftalism_market.logic.Transaction;
 import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -82,7 +81,6 @@ public class ItemNegotiationGui extends BaseGui {
     private void configureCloseHandler() {
         gui.setCloseGuiAction(event -> {
             resetAmount();
-            // No reopening of other GUIs
         });
     }
 
@@ -170,9 +168,7 @@ public class ItemNegotiationGui extends BaseGui {
                 material,
                 Component.text(action + " " + amount, color),
                 List.of(),
-                event -> {
-                    InventoryClickEvent clickEvent = (InventoryClickEvent) event; // Explicit cast
-                    Player player = (Player) clickEvent.getWhoClicked(); // Now this will work
+                player -> { // 'player' is already the correct type (Player)
                     handleAmountChange(amount, isAddition, player);
                 }
         );
