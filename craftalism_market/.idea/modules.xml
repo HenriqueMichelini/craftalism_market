@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/craftalism_market.main.iml" filepath="$PROJECT_DIR$/.idea/modules/craftalism_market.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/craftalism_market.test.iml" filepath="$PROJECT_DIR$/.idea/modules/craftalism_market.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.github.HenriqueMichelini.craftalism_market.main.iml" filepath="$PROJECT_DIR$/.idea/modules/io.github.HenriqueMichelini.craftalism_market.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/io.github.HenriqueMichelini.craftalism_market.test.iml" filepath="$PROJECT_DIR$/.idea/modules/io.github.HenriqueMichelini.craftalism_market.test.iml" />
     </modules>
   </component>
 </project>

@@ -1,0 +1,56 @@
+package io.github.HenriqueMichelini.craftalism_market.gui.components;
+
+import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
+import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
+import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.entity.Player;
+
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+public class CategoryItemsGui extends BaseGui {
+    private final DataLoader dataLoader;
+    private final BiConsumer<Player, String> onItemSelect;
+
+    public CategoryItemsGui(
+            String category,
+            CraftalismMarket plugin,
+            DataLoader dataLoader,
+            BiConsumer<Player, String> onItemSelect,
+            Consumer<Player> onBack
+    ) {
+        super(category, 6, plugin);
+        this.dataLoader = dataLoader;
+        this.onItemSelect = onItemSelect;
+        populateItems(category);
+        addBackButton(onBack);
+    }
+
+    private void populateItems(String category) {
+        dataLoader.getMarketItems().entrySet().stream()
+                .filter(entry -> entry.getValue().getCategory().equals(category))
+                .forEach(entry -> addItemButton(entry.getKey(), entry.getValue()));
+    }
+
+    private List<Component> createItemLore(MarketItem item) {
+        return List.of(
+                Component.text("Price: " + formatPrice(item.getBasePrice()), NamedTextColor.WHITE),
+                Component.text("Stock: " + item.getAmount(), NamedTextColor.AQUA)
+        );
+    }
+
+    private void addItemButton(String itemName, MarketItem item) {
+        gui.setItem(item.getSlot(), createButton(
+                item.getMaterial(),
+                Component.text(itemName, NamedTextColor.GREEN),
+                createItemLore(item),
+                event -> {
+                        Player player = event.getPlayer();
+                        onItemSelect.accept(player, itemName);
+                }
+        ));
+    }
+}

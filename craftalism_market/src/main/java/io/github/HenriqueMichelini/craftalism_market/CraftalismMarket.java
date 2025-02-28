@@ -3,7 +3,7 @@ package io.github.HenriqueMichelini.craftalism_market;
 import io.github.HenriqueMichelini.craftalism_economy.CraftalismEconomy;
 import io.github.HenriqueMichelini.craftalism_economy.economy.EconomyManager;
 import io.github.HenriqueMichelini.craftalism_market.command.MarketCommand;
-import io.github.HenriqueMichelini.craftalism_market.gui.GUIManager;
+import io.github.HenriqueMichelini.craftalism_market.gui.GuiManager;
 import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
 import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
 import org.bukkit.Bukkit;
@@ -24,7 +24,7 @@ public class CraftalismMarket extends JavaPlugin {
     private FileConfiguration marketCategoryConfig;
 
     private DataLoader dataLoader;
-    private GUIManager guiManager;
+    private GuiManager guiManager;
     private MarketManager marketManager;
 
     @Override
@@ -44,8 +44,8 @@ public class CraftalismMarket extends JavaPlugin {
         dataLoader.loadMarketCategories();
         dataLoader.loadItemsData();
         marketManager = new MarketManager(dataLoader);
-
-        guiManager = new GUIManager(dataLoader, this, marketManager);
+        //DataLoader dataLoader, CraftalismMarket plugin, MarketManager marketManager, Player player
+        guiManager = new GuiManager(dataLoader, this, marketManager);
 
         this.getCommand("market").setExecutor(new MarketCommand(guiManager));
 
@@ -54,9 +54,6 @@ public class CraftalismMarket extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (guiManager != null) {
-            guiManager.resetAmountOfItemsSelected(); // Add this method to GUIManager
-        }
         getLogger().info("Craftalism Market Plugin Disabled!");
     }
 
