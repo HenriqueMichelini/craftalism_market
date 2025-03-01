@@ -27,19 +27,17 @@ public class MarketGui extends BaseGui {
     }
 
     private void populateCategories() {
-        dataLoader.getMarketCategories().values().forEach(category -> {
-            gui.setItem(category.getSlot(), createCategoryButton(category));
-        });
+        dataLoader.getMarketCategories().values().forEach(category -> gui.setItem(category.slot(), createCategoryButton(category)));
     }
 
     private GuiItem createCategoryButton(MarketCategoryItem category) {
         return createButton(
-                category.getMaterial(),
-                Component.text(category.getTitle(), NamedTextColor.GREEN),
+                category.material(),
+                Component.text(category.title(), NamedTextColor.GREEN),
                 List.of(),
                 event -> {
                         Player player = event.getPlayer();
-                        onCategorySelect.accept(player, category.getTitle());
+                        onCategorySelect.accept(player, category.title());
                 }
         );
     }

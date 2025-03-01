@@ -40,7 +40,7 @@ public class Transaction {
         if (!processPurchase(item, adjustedAmount, totalPrice)) return false;
 
         updateMarketItemPriceAndStock(item, adjustedAmount, true);
-        sendSuccess("Successfully purchased %d %s for %s".formatted(adjustedAmount, itemName, formatPrice(totalPrice)));
+        sendSuccess("Successfully purchased %d %s for %s".formatted(adjustedAmount, item.getName(), formatPrice(totalPrice)));
         return true;
     }
 
@@ -56,7 +56,7 @@ public class Transaction {
         TransactionResult result = calculateTransactionResult(item, adjustedAmount);
         completeSellTransaction(item, adjustedAmount, result);
         sendSuccess("Successfully sold %d %s for %s. Tax of %s deducted."
-                .formatted(adjustedAmount, itemName, formatPrice(result.earningsAfterTax()), formatPrice(result.tax())));
+                .formatted(adjustedAmount, item.getName(), formatPrice(result.earningsAfterTax()), formatPrice(result.tax())));
         return true;
     }
 
@@ -68,9 +68,13 @@ public class Transaction {
 
     private int adjustAmountBasedOnStock(MarketItem item, int requestedAmount) {
         int availableStock = item.getAmount();
+        if (availableStock == 0) {
+            sendError("There is no stock available");
+            return 0;
+        }
         if (availableStock >= requestedAmount) return requestedAmount;
 
-        sendWarning("The amount selected (%d) exceeds stock (%d). Buying %d."
+        sendWarning("The amount selected (%d) exceeds stock (%d). Buying only %d."
                 .formatted(requestedAmount, availableStock, availableStock));
         return availableStock;
     }
@@ -91,14 +95,13 @@ public class Transaction {
     private boolean processPurchase(MarketItem item, int amount, BigDecimal totalPrice) {
         UUID playerId = player.getUniqueId();
         if (!economyManager.withdraw(playerId, totalPrice)) {
-            sendError("Failed to process payment");
+            //sendError("Failed to process payment");
             return false;
         }
 
         if (!InventoryManager.addItemToPlayer(player, item.getMaterial(), amount)) {
             economyManager.deposit(playerId, totalPrice);
-            sendWarning("Inventory full for %d %s. Transaction cancelled.".formatted(amount, item.getMaterial()));
-            return false;
+            sendWarning("Inventory full for %d %s. Dropping the exceeds.".formatted(amount, item.getName()));
         }
         return true;
     }
@@ -113,7 +116,7 @@ public class Transaction {
     private int adjustAmountBasedOnInventory(MarketItem item, int requestedAmount) {
         int playerItems = InventoryManager.countItems(player, item.getMaterial());
         if (playerItems <= 0) {
-            sendError("You have no %s to sell".formatted(item.getMaterial()));
+            sendError("You have no %s to sell".formatted(item.getName()));
             return 0;
         }
 

@@ -32,7 +32,7 @@ public class CategoryItemsGui extends BaseGui {
     private void populateItems(String category) {
         dataLoader.getMarketItems().entrySet().stream()
                 .filter(entry -> entry.getValue().getCategory().equals(category))
-                .forEach(entry -> addItemButton(entry.getKey(), entry.getValue()));
+                .forEach(entry -> addItemButton(entry.getValue()));
     }
 
     private List<Component> createItemLore(MarketItem item) {
@@ -42,14 +42,15 @@ public class CategoryItemsGui extends BaseGui {
         );
     }
 
-    private void addItemButton(String itemName, MarketItem item) {
+    private void addItemButton(MarketItem item) {
+        String itemMaterialName = item.getMaterial().name().toLowerCase();
         gui.setItem(item.getSlot(), createButton(
                 item.getMaterial(),
-                Component.text(itemName, NamedTextColor.GREEN),
+                Component.text(item.getName(), NamedTextColor.GREEN),
                 createItemLore(item),
                 event -> {
                         Player player = event.getPlayer();
-                        onItemSelect.accept(player, itemName);
+                        onItemSelect.accept(player, itemMaterialName);
                 }
         ));
     }

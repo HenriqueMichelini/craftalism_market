@@ -1,11 +1,386 @@
 items:
   cobblestone:
     material: COBBLESTONE
-    category: "Natural Resources"
+    category: Natural Resources
     slot: 0
     basePrice: 0.37
     priceVariationPerOperation: 0.0015
     sellTax: 0.15
     amount: 2000
     lastActivity: 0
-    price_history: [0.37]
+    price_history:
+      - 0.37
+  dirt:
+    material: DIRT
+    category: Natural Resources
+    slot: 1
+    basePrice: 0.1
+    priceVariationPerOperation: 5.0E-4
+    sellTax: 0.1
+    amount: 5000
+    lastActivity: 0
+    price_history:
+      - 0.1
+  sand:
+    material: SAND
+    category: Natural Resources
+    slot: 2
+    basePrice: 0.25
+    priceVariationPerOperation: 0.001
+    sellTax: 0.12
+    amount: 3000
+    lastActivity: 0
+    price_history:
+      - 0.25
+  gravel:
+    material: GRAVEL
+    category: Natural Resources
+    slot: 3
+    basePrice: 0.2
+    priceVariationPerOperation: 8.0E-4
+    sellTax: 0.12
+    amount: 2500
+    lastActivity: 0
+    price_history:
+      - 0.2
+  clay_ball:
+    material: CLAY_BALL
+    category: Natural Resources
+    slot: 4
+    basePrice: 0.5
+    priceVariationPerOperation: 0.002
+    sellTax: 0.15
+    amount: 1000
+    lastActivity: 0
+    price_history:
+      - 0.5
+  coal:
+    material: COAL
+    category: Ores
+    slot: 0
+    basePrice: 1.0
+    priceVariationPerOperation: 0.005
+    sellTax: 0.2
+    amount: 1500
+    lastActivity: 0
+    price_history:
+      - 1.0
+  iron_ingot:
+    material: IRON_INGOT
+    category: Ores
+    slot: 1
+    basePrice: 5.0
+    priceVariationPerOperation: 0.01
+    sellTax: 0.25
+    amount: 800
+    lastActivity: 0
+    price_history:
+      - 5.0
+  gold_ingot:
+    material: GOLD_INGOT
+    category: Ores
+    slot: 2
+    basePrice: 10.0
+    priceVariationPerOperation: 0.02
+    sellTax: 0.3
+    amount: 500
+    lastActivity: 0
+    price_history:
+      - 10.0
+  diamond:
+    material: DIAMOND
+    category: Ores
+    slot: 3
+    basePrice: 50.0
+    priceVariationPerOperation: 0.05
+    sellTax: 0.35
+    amount: 200
+    lastActivity: 0
+    price_history:
+      - 50.0
+  emerald:
+    material: EMERALD
+    category: Ores
+    slot: 4
+    basePrice: 100.0
+    priceVariationPerOperation: 0.1
+    sellTax: 0.4
+    amount: 100
+    lastActivity: 0
+    price_history:
+      - 100.0
+  string:
+    material: STRING
+    category: Mob Drops
+    slot: 0
+    basePrice: 0.5
+    priceVariationPerOperation: 0.002
+    sellTax: 0.15
+    amount: 1500
+    lastActivity: 0
+    price_history:
+      - 0.5
+  spider_eye:
+    material: SPIDER_EYE
+    category: Mob Drops
+    slot: 1
+    basePrice: 1.5
+    priceVariationPerOperation: 0.005
+    sellTax: 0.2
+    amount: 1000
+    lastActivity: 0
+    price_history:
+      - 1.5
+  bone:
+    material: BONE
+    category: Mob Drops
+    slot: 2
+    basePrice: 0.75
+    priceVariationPerOperation: 0.003
+    sellTax: 0.18
+    amount: 1200
+    lastActivity: 0
+    price_history:
+      - 0.75
+  gunpowder:
+    material: GUNPOWDER
+    category: Mob Drops
+    slot: 3
+    basePrice: 2.0
+    priceVariationPerOperation: 0.0075
+    sellTax: 0.22
+    amount: 800
+    lastActivity: 0
+    price_history:
+      - 2.0
+  ender_pearl:
+    material: ENDER_PEARL
+    category: Mob Drops
+    slot: 4
+    basePrice: 10.0
+    priceVariationPerOperation: 0.02
+    sellTax: 0.3
+    amount: 300
+    lastActivity: 0
+    price_history:
+      - 10.0
+  oak_log:
+    material: OAK_LOG
+    category: Woods
+    slot: 0
+    basePrice: 0.5
+    priceVariationPerOperation: 0.002
+    sellTax: 0.15
+    amount: 2000
+    lastActivity: 0
+    price_history:
+      - 0.5
+  spruce_log:
+    material: SPRUCE_LOG
+    category: Woods
+    slot: 1
+    basePrice: 0.55
+    priceVariationPerOperation: 0.0022
+    sellTax: 0.15
+    amount: 1800
+    lastActivity: 0
+    price_history:
+      - 0.55
+  birch_log:
+    material: BIRCH_LOG
+    category: Woods
+    slot: 2
+    basePrice: 0.6
+    priceVariationPerOperation: 0.0025
+    sellTax: 0.15
+    amount: 1600
+    lastActivity: 0
+    price_history:
+      - 0.6
+  jungle_log:
+    material: JUNGLE_LOG
+    category: Woods
+    slot: 3
+    basePrice: 0.65
+    priceVariationPerOperation: 0.0028
+    sellTax: 0.15
+    amount: 1400
+    lastActivity: 0
+    price_history:
+      - 0.65
+  acacia_log:
+    material: ACACIA_LOG
+    category: Woods
+    slot: 4
+    basePrice: 0.7
+    priceVariationPerOperation: 0.003
+    sellTax: 0.15
+    amount: 1200
+    lastActivity: 0
+    price_history:
+      - 0.7
+  red_dye:
+    material: RED_DYE
+    category: Dyes
+    slot: 0
+    basePrice: 1.0
+    priceVariationPerOperation: 0.005
+    sellTax: 0.2
+    amount: 1000
+    lastActivity: 0
+    price_history:
+      - 1.0
+  blue_dye:
+    material: BLUE_DYE
+    category: Dyes
+    slot: 1
+    basePrice: 1.0
+    priceVariationPerOperation: 0.005
+    sellTax: 0.2
+    amount: 1000
+    lastActivity: 0
+    price_history:
+      - 1.0
+  green_dye:
+    material: GREEN_DYE
+    category: Dyes
+    slot: 2
+    basePrice: 1.0
+    priceVariationPerOperation: 0.005
+    sellTax: 0.2
+    amount: 1000
+    lastActivity: 0
+    price_history:
+      - 1.0
+  yellow_dye:
+    material: YELLOW_DYE
+    category: Dyes
+    slot: 3
+    basePrice: 1.0
+    priceVariationPerOperation: 0.005
+    sellTax: 0.2
+    amount: 1000
+    lastActivity: 0
+    price_history:
+      - 1.0
+  purple_dye:
+    material: PURPLE_DYE
+    category: Dyes
+    slot: 4
+    basePrice: 1.0
+    priceVariationPerOperation: 0.005
+    sellTax: 0.2
+    amount: 1000
+    lastActivity: 0
+    price_history:
+      - 1.0
+  wheat:
+    material: WHEAT
+    category: Livestock
+    slot: 0
+    basePrice: 0.3
+    priceVariationPerOperation: 0.001
+    sellTax: 0.1
+    amount: 3000
+    lastActivity: 0
+    price_history:
+      - 0.3
+  carrot:
+    material: CARROT
+    category: Livestock
+    slot: 1
+    basePrice: 0.5
+    priceVariationPerOperation: 0.002
+    sellTax: 0.15
+    amount: 2000
+    lastActivity: 0
+    price_history:
+      - 0.5
+  potato:
+    material: POTATO
+    category: Livestock
+    slot: 2
+    basePrice: 0.4
+    priceVariationPerOperation: 0.0015
+    sellTax: 0.12
+    amount: 2500
+    lastActivity: 0
+    price_history:
+      - 0.4
+  beef:
+    material: BEEF
+    category: Livestock
+    slot: 3
+    basePrice: 2.0
+    priceVariationPerOperation: 0.0075
+    sellTax: 0.2
+    amount: 1000
+    lastActivity: 0
+    price_history:
+      - 2.0
+  chicken:
+    material: CHICKEN
+    category: Livestock
+    slot: 4
+    basePrice: 1.5
+    priceVariationPerOperation: 0.005
+    sellTax: 0.18
+    amount: 1200
+    lastActivity: 0
+    price_history:
+      - 1.5
+  white_wool:
+    material: WHITE_WOOL
+    category: Wools
+    slot: 0
+    basePrice: 0.75
+    priceVariationPerOperation: 0.003
+    sellTax: 0.15
+    amount: 1500
+    lastActivity: 0
+    price_history:
+      - 0.75
+  black_wool:
+    material: BLACK_WOOL
+    category: Wools
+    slot: 1
+    basePrice: 1.0
+    priceVariationPerOperation: 0.005
+    sellTax: 0.2
+    amount: 1200
+    lastActivity: 0
+    price_history:
+      - 1.0
+  red_wool:
+    material: RED_WOOL
+    category: Wools
+    slot: 2
+    basePrice: 1.0
+    priceVariationPerOperation: 0.005
+    sellTax: 0.2
+    amount: 1200
+    lastActivity: 0
+    price_history:
+      - 1.0
+  blue_wool:
+    material: BLUE_WOOL
+    category: Wools
+    slot: 3
+    basePrice: 1.0
+    priceVariationPerOperation: 0.005
+    sellTax: 0.2
+    amount: 1200
+    lastActivity: 0
+    price_history:
+      - 1.0
+  green_wool:
+    material: GREEN_WOOL
+    category: Wools
+    slot: 4
+    basePrice: 1.0
+    priceVariationPerOperation: 0.005
+    sellTax: 0.2
+    amount: 1200
+    lastActivity: 0
+    price_history:
+      - 1.0

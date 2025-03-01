@@ -1,6 +1,7 @@
 package io.github.HenriqueMichelini.craftalism_market.model;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import java.math.BigDecimal;
 import java.util.List;
@@ -49,8 +50,15 @@ public class MarketItem {
     public int getAmount() { return amount; }
     public long getLastActivity() { return lastActivity; }
     public List<BigDecimal> getPriceHistory() { return priceHistory; }
-    public String getName() { return this.material.translationKey(); }
+    public String getName() {
+        String translationKey = material.isBlock()
+                ? "block.minecraft." + material.name().toLowerCase()
+                : "item.minecraft." + material.name().toLowerCase();
 
+        Component translatedComponent = Component.translatable(translationKey);
+
+        return PlainTextComponentSerializer.plainText().serialize(translatedComponent);
+    }
     // Setters (mutable fields only) ----------------------------
     public void setBasePrice(BigDecimal basePrice) { this.basePrice = basePrice; }
     public void setAmount(int amount) { this.amount = amount; }

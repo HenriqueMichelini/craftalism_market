@@ -38,15 +38,13 @@ public class GuiManager {
         );
 
         // Preload category GUIs
-        dataLoader.getMarketCategories().values().forEach(category -> {
-            categoryGuis.put(category.getTitle(), new CategoryItemsGui(
-                    category.getTitle(),
-                    plugin,
-                    dataLoader,
-                    this::handleItemSelection,
-                    this::openMarket
-            ));
-        });
+        dataLoader.getMarketCategories().values().forEach(category -> categoryGuis.put(category.title(), new CategoryItemsGui(
+                category.title(),
+                plugin,
+                dataLoader,
+                this::handleItemSelection,
+                this::openMarket
+        )));
     }
 
     // Region: Public Interface

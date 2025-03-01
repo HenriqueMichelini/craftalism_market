@@ -5,10 +5,8 @@ import io.github.HenriqueMichelini.craftalism_market.model.MarketCategoryItem;
 import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.file.FileConfiguration;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,89 +22,84 @@ public class DataLoader {
     private final Map<String, MarketCategoryItem> marketCategories = new HashMap<>();
     private final Map<String, MarketItem> marketItems = new HashMap<>();
 
-    /**
-     * Initializes the DataLoader with the plugin instance.
-     *
-     * @param plugin The CraftalismMarket plugin instance.
-     */
     public DataLoader(CraftalismMarket plugin) {
         this.plugin = plugin;
     }
 
     /**
-     * Loads market category items from the configuration file.
+     * Loads market category items from configuration
+     * @param config The FileConfiguration to load from
      */
-    public void loadMarketCategories() {
-        ConfigurationSection itemsSection = loadConfigurationSection(
-                new File(plugin.getDataFolder(), "market_category_items.yml"),
-                "market_category_items.yml",
-                "items"
-        );
+    public void loadMarketCategories(FileConfiguration config) {
+        ConfigurationSection itemsSection = getConfigurationSection(config, "items");
         if (itemsSection == null) return;
 
         for (String itemKey : itemsSection.getKeys(false)) {
             ConfigurationSection itemData = itemsSection.getConfigurationSection(itemKey);
             if (itemData == null) continue;
 
-            String materialName = itemData.getString("material");
-            String title = itemData.getString("title");
-            int slot = itemData.getInt("slot");
-
-            if (materialName == null || title == null) {
-                plugin.getLogger().warning("Invalid data for item: " + itemKey);
-                continue;
-            }
-
-            Material material = validateMaterial(materialName, itemKey);
-            if (material == null) continue;
-
-            marketCategories.put(itemKey, new MarketCategoryItem(material, title, slot));
+            processMarketCategoryItem(itemKey, itemData);
         }
     }
 
     /**
-     * Loads market items from the configuration file.
+     * Loads market items from configuration
+     * @param config The FileConfiguration to load from
      */
-    public void loadItemsData() {
-        ConfigurationSection itemsSection = loadConfigurationSection(
-                new File(plugin.getDataFolder(), "items_data.yml"),
-                "items_data.yml",
-                "items"
-        );
+    public void loadItemsData(FileConfiguration config) {
+        ConfigurationSection itemsSection = getConfigurationSection(config, "items");
         if (itemsSection == null) return;
 
         for (String itemKey : itemsSection.getKeys(false)) {
             ConfigurationSection itemData = itemsSection.getConfigurationSection(itemKey);
             if (itemData == null) continue;
 
-            String category = itemData.getString("category");
-            String materialName = itemData.getString("material");
-            int slot = itemData.getInt("slot");
-            BigDecimal basePrice = BigDecimal.valueOf(itemData.getDouble("basePrice"));
-            BigDecimal priceVariationPerOperation = BigDecimal.valueOf(itemData.getDouble("priceVariationPerOperation"));
-            BigDecimal sellTax = BigDecimal.valueOf(itemData.getDouble("sellTax"));
-            int amount = itemData.getInt("amount");
-            long lastActivity = itemData.getLong("lastActivity");
+            processMarketItem(itemKey, itemData);
+        }
+    }
 
-            List<Double> priceHistoryDouble = itemData.getDoubleList("price_history");
-            List<BigDecimal> priceHistory = priceHistoryDouble.stream()
-                    .map(BigDecimal::valueOf)
-                    .collect(Collectors.toList());
+    private void processMarketCategoryItem(String itemKey, ConfigurationSection itemData) {
+        String materialName = itemData.getString("material");
+        String title = itemData.getString("title");
+        int slot = itemData.getInt("slot");
 
-            if (category == null || materialName == null) {
-                plugin.getLogger().warning("Invalid data for item: " + itemKey);
-                continue;
-            }
+        if (materialName == null || title == null) {
+            logInvalidItem(itemKey);
+            return;
+        }
 
-            Material material = validateMaterial(materialName, itemKey);
-            if (material == null) continue;
+        Material material = validateMaterial(materialName, itemKey);
+        if (material != null) {
+            marketCategories.put(itemKey, new MarketCategoryItem(material, title, slot));
+        }
+    }
 
+    private void processMarketItem(String itemKey, ConfigurationSection itemData) {
+        String category = itemData.getString("category");
+        String materialName = itemData.getString("material");
+        int slot = itemData.getInt("slot");
+
+        BigDecimal basePrice = getBigDecimal(itemData, "basePrice");
+        BigDecimal priceVariation = getBigDecimal(itemData, "priceVariationPerOperation");
+        BigDecimal sellTax = getBigDecimal(itemData, "sellTax");
+
+        int amount = itemData.getInt("amount");
+        long lastActivity = itemData.getLong("lastActivity");
+        List<BigDecimal> priceHistory = getPriceHistory(itemData);
+
+        if (category == null || materialName == null) {
+            logInvalidItem(itemKey);
+            return;
+        }
+
+        Material material = validateMaterial(materialName, itemKey);
+        if (material != null) {
             marketItems.put(itemKey, new MarketItem(
                     category,
                     material,
                     slot,
                     basePrice,
-                    priceVariationPerOperation,
+                    priceVariation,
                     sellTax,
                     amount,
                     lastActivity,
@@ -115,95 +108,41 @@ public class DataLoader {
         }
     }
 
-//    /**
-//     * Saves market items to the configuration file.
-//     */
-//    public void saveItemsData() {
-//        File file = new File(plugin.getDataFolder(), "items_data.yml");
-//        YamlConfiguration config = new YamlConfiguration();
-//
-//        ConfigurationSection itemsSection = config.createSection("items");
-//
-//        for (Map.Entry<String, MarketItem> entry : marketItems.entrySet()) {
-//            String itemKey = entry.getKey();
-//            MarketItem item = entry.getValue();
-//
-//            ConfigurationSection itemSection = itemsSection.createSection(itemKey);
-//            itemSection.set("category", item.getCategory());
-//            itemSection.set("material", item.getMaterial().name());
-//            itemSection.set("slot", item.getSlot());
-//            itemSection.set("basePrice", item.getBasePrice().toString()); // Preserve precision
-//            itemSection.set("priceVariationPerOperation", item.getPriceVariationPerOperation().toString());
-//            itemSection.set("sellTax", item.getSellTax().toString());
-//            itemSection.set("amount", item.getAmount());
-//            itemSection.set("lastActivity", item.getLastActivity());
-//
-//            List<String> priceHistory = item.getPriceHistory().stream()
-//                    .map(BigDecimal::toString)
-//                    .collect(Collectors.toList());
-//            itemSection.set("price_history", priceHistory);
-//        }
-//
-//        try {
-//            config.save(file);
-//        } catch (IOException e) {
-//            plugin.getLogger().severe("Failed to save items_data.yml: " + e.getMessage());
-//            throw new RuntimeException("Failed to save items_data.yml", e); // Rethrow for caller handling
-//        }
-//    }
-
-    /**
-     * Returns an unmodifiable view of the market categories.
-     *
-     * @return An unmodifiable map of market categories.
-     */
-    public Map<String, MarketCategoryItem> getMarketCategories() {
-        return Collections.unmodifiableMap(marketCategories);
-    }
-
-    /**
-     * Returns an unmodifiable view of the market items.
-     *
-     * @return An unmodifiable map of market items.
-     */
-    public Map<String, MarketItem> getMarketItems() {
-        return Collections.unmodifiableMap(marketItems);
-    }
-
-    /**
-     * Loads a configuration section from a file.
-     *
-     * @param file       The file to load.
-     * @param fileName   The name of the file (for logging).
-     * @param sectionPath The path to the configuration section.
-     * @return The loaded configuration section, or null if the file or section is invalid.
-     */
-    private ConfigurationSection loadConfigurationSection(File file, String fileName, String sectionPath) {
-        if (!file.exists()) {
-            plugin.getLogger().warning(fileName + " does not exist!");
-            return null;
-        }
-
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        ConfigurationSection section = config.getConfigurationSection(sectionPath);
+    private ConfigurationSection getConfigurationSection(FileConfiguration config, String path) {
+        ConfigurationSection section = config.getConfigurationSection(path);
         if (section == null) {
-            plugin.getLogger().warning("Invalid section in " + fileName);
+            plugin.getLogger().warning("Missing configuration section: " + path);
         }
         return section;
     }
 
-    /**
-     * Validates a material name and logs a warning if invalid.
-     *
-     * @param materialName The name of the material.
-     * @param itemKey      The key of the item (for logging).
-     * @return The validated Material, or null if invalid.
-     */
+    private BigDecimal getBigDecimal(ConfigurationSection section, String path) {
+        return BigDecimal.valueOf(section.getDouble(path));
+    }
+
+    private List<BigDecimal> getPriceHistory(ConfigurationSection itemData) {
+        return itemData.getDoubleList("price_history").stream()
+                .map(BigDecimal::valueOf)
+                .collect(Collectors.toList());
+    }
+
+    private void logInvalidItem(String itemKey) {
+        plugin.getLogger().warning("Skipping invalid item configuration: " + itemKey);
+    }
+
     private Material validateMaterial(String materialName, String itemKey) {
         Material material = Material.matchMaterial(materialName);
         if (material == null) {
-            plugin.getLogger().warning("Invalid material: " + materialName + " for item: " + itemKey);
+            plugin.getLogger().warning("Invalid material '" + materialName + "' for item: " + itemKey);
         }
         return material;
+    }
+
+    public Map<String, MarketCategoryItem> getMarketCategories() {
+        return Collections.unmodifiableMap(marketCategories);
+    }
+
+    public Map<String, MarketItem> getMarketItems() {
+        return Collections.unmodifiableMap(marketItems);
     }
 }

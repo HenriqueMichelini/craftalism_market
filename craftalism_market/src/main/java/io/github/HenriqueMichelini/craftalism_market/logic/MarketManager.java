@@ -7,9 +7,6 @@ import java.util.List;
 
 public class MarketManager {
 
-    public MarketManager(DataLoader dataLoader) {
-    }
-
     // Use geometric series for total price
     public BigDecimal getTotalPriceOfItem(MarketItem item, int amount, boolean isAdding) {
         BigDecimal multiplier = getMultiplier(item, isAdding);

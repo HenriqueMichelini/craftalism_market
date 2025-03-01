@@ -78,9 +78,7 @@ public class ItemNegotiationGui extends BaseGui {
     }
 
     private void configureCloseHandler() {
-        gui.setCloseGuiAction(event -> {
-            resetAmount();
-        });
+        gui.setCloseGuiAction(event -> resetAmount());
     }
 
     // Region: Item Display
