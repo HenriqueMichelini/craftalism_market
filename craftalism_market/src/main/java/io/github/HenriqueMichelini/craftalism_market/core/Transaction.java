@@ -1,7 +1,10 @@
-package io.github.HenriqueMichelini.craftalism_market.logic;
+package io.github.HenriqueMichelini.craftalism_market.core;
 
 import io.github.HenriqueMichelini.craftalism_economy.economy.EconomyManager;
-import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
+import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
+import io.github.HenriqueMichelini.craftalism_market.logic.InventoryManager;
+import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
+import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;

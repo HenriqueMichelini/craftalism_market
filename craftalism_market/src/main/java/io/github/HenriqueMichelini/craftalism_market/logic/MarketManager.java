@@ -1,54 +1,79 @@
 package io.github.HenriqueMichelini.craftalism_market.logic;
 
-import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
+import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Objects;
 
 public class MarketManager {
+    private static final int PRICE_SCALE = 2;
+    private static final int MAX_HISTORY_ENTRIES = 10;
+    private static final BigDecimal ONE = BigDecimal.ONE;
 
-    // Use geometric series for total price
+    /**
+     * Calculates total price for a transaction using geometric progression
+     * @throws IllegalArgumentException if item is null or amount is negative
+     */
     public BigDecimal getTotalPriceOfItem(MarketItem item, int amount, boolean isAdding) {
+        validateInput(item, amount);
+
         BigDecimal multiplier = getMultiplier(item, isAdding);
-        BigDecimal numerator = item.getBasePrice().multiply(
-                multiplier.pow(amount).subtract(BigDecimal.ONE)
-        );
-        BigDecimal denominator = multiplier.subtract(BigDecimal.ONE);
-        return numerator.divide(denominator, RoundingMode.HALF_UP);
-    }
-
-    private BigDecimal getMultiplier(MarketItem item, boolean isAdding) {
-        return isAdding
-                ? BigDecimal.ONE.add(item.getPriceVariationPerOperation())
-                : BigDecimal.ONE.subtract(item.getPriceVariationPerOperation());
-    }
-
-    public BigDecimal getLastPriceOfItem(MarketItem item, int termNumber, boolean isAdding) {
-        BigDecimal multiplier = isAdding
-                ? BigDecimal.ONE.add(item.getPriceVariationPerOperation())
-                : BigDecimal.ONE.subtract(item.getPriceVariationPerOperation());
-        return item.getBasePrice().multiply(multiplier.pow(termNumber));
-    }
-
-//    public BigDecimal getArithmeticSequenceSumOfTerms(BigDecimal firstTerm, BigDecimal lastTerm, int numberOfTerms) {
-//        return firstTerm.add(lastTerm) // (firstTerm + lastTerm)
-//                .multiply(BigDecimal.valueOf(numberOfTerms)) // * numberOfTerms
-//                .divide(BigDecimal.valueOf(2), RoundingMode.HALF_UP); // / 2
-//    }
-//
-//    public BigDecimal getArithmeticSequenceTerm(BigDecimal firstTerm, BigDecimal commonDifference, int termNumber) {
-//        return firstTerm.add(commonDifference.multiply(BigDecimal.valueOf(termNumber - 1)));
-//    }
-
-    public void updatePriceHistory(MarketItem item, BigDecimal newPrice) {
-        List<BigDecimal> history = item.getPriceHistory();
-        history.addFirst(newPrice); // Add new price to front
-
-        // Keep only last 10 entries
-        if (history.size() > 10) {
-            history = history.subList(0, 10);
+        if (multiplier.compareTo(ONE) == 0) {
+            return item.getBasePrice().multiply(BigDecimal.valueOf(amount));
         }
-        item.setPriceHistory(history);
+
+        BigDecimal powered = multiplier.pow(amount);
+        BigDecimal numerator = item.getBasePrice().multiply(powered.subtract(ONE));
+        BigDecimal denominator = multiplier.subtract(ONE);
+
+        return numerator.divide(denominator, PRICE_SCALE, RoundingMode.HALF_UP);
     }
 
+    /**
+     * Gets the multiplier for price calculation
+     */
+    private BigDecimal getMultiplier(MarketItem item, boolean isAdding) {
+        BigDecimal variation = item.getPriceVariationPerOperation();
+        return isAdding ? ONE.add(variation) : ONE.subtract(variation);
+    }
+
+    /**
+     * Calculates the last price in the sequence
+     * @throws IllegalArgumentException if item is null or termNumber is negative
+     */
+    public BigDecimal getLastPriceOfItem(MarketItem item, int termNumber, boolean isAdding) {
+        validateInput(item, termNumber);
+        BigDecimal multiplier = getMultiplier(item, isAdding);
+        return item.getBasePrice()
+                .multiply(multiplier.pow(termNumber))
+                .setScale(PRICE_SCALE, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Updates price history with new price entry
+     * Maintains only the last MAX_HISTORY_ENTRIES prices
+     */
+    public void updatePriceHistory(MarketItem item, BigDecimal newPrice) {
+        Objects.requireNonNull(item, "MarketItem cannot be null");
+        Objects.requireNonNull(newPrice, "New price cannot be null");
+
+        LinkedList<BigDecimal> history = new LinkedList<>(item.getPriceHistory());
+        history.addFirst(newPrice);
+
+        // Trim history to max size
+        while (history.size() > MAX_HISTORY_ENTRIES) {
+            history.removeLast();
+        }
+
+        item.setPriceHistory(new ArrayList<>(history));
+    }
+
+    private void validateInput(MarketItem item, int number) {
+        Objects.requireNonNull(item, "MarketItem cannot be null");
+        if (number < 0) {
+            throw new IllegalArgumentException("Amount/term number cannot be negative");
+        }
+    }
 }

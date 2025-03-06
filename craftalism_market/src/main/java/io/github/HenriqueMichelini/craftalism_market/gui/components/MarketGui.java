@@ -3,7 +3,7 @@ package io.github.HenriqueMichelini.craftalism_market.gui.components;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
-import io.github.HenriqueMichelini.craftalism_market.model.MarketCategoryItem;
+import io.github.HenriqueMichelini.craftalism_market.models.Category;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -30,7 +30,7 @@ public class MarketGui extends BaseGui {
         dataLoader.getMarketCategories().values().forEach(category -> gui.setItem(category.slot(), createCategoryButton(category)));
     }
 
-    private GuiItem createCategoryButton(MarketCategoryItem category) {
+    private GuiItem createCategoryButton(Category category) {
         return createButton(
                 category.material(),
                 Component.text(category.title(), NamedTextColor.GREEN),

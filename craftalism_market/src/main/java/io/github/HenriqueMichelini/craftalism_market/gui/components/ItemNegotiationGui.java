@@ -5,8 +5,8 @@ import dev.triumphteam.gui.guis.GuiItem;
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
 import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
-import io.github.HenriqueMichelini.craftalism_market.logic.Transaction;
-import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
+import io.github.HenriqueMichelini.craftalism_market.core.Transaction;
+import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -140,6 +140,7 @@ public class ItemNegotiationGui extends BaseGui {
 
         if ("sell".equalsIgnoreCase(action)) {
             BigDecimal tax = calculateTaxAmount(totalPrice);
+            lore.add(Component.text("Before tax: " + formatPrice(totalPrice), NamedTextColor.WHITE));
             lore.add(Component.text("Tax: " + formatPrice(tax), NamedTextColor.RED));
             lore.add(Component.text("Total: " + formatPrice(totalPrice.subtract(tax)), NamedTextColor.YELLOW));
         } else {

@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 
 public class FileManager {
     private static final Logger LOGGER = Logger.getLogger(FileManager.class.getName());
-    private static final String MARKET_CATEGORY_FILE_NAME = "market_category_items.yml";
-    private static final String ITEMS_DATA_FILE_NAME = "items_data.yml";
+    private static final String MARKET_CATEGORY_FILE_NAME = "categories.yml";
+    private static final String ITEMS_DATA_FILE_NAME = "items.yml";
 
     private final File marketCategoryFile;
     private FileConfiguration marketCategoryConfig;

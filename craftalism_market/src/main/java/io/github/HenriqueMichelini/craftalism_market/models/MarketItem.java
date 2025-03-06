@@ -1,4 +1,4 @@
-package io.github.HenriqueMichelini.craftalism_market.model;
+package io.github.HenriqueMichelini.craftalism_market.models;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;

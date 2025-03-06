@@ -2,7 +2,7 @@ package io.github.HenriqueMichelini.craftalism_market.gui.components;
 
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
-import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
+import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;

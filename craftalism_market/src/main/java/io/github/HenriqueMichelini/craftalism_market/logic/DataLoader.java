@@ -1,8 +1,8 @@
 package io.github.HenriqueMichelini.craftalism_market.logic;
 
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
-import io.github.HenriqueMichelini.craftalism_market.model.MarketCategoryItem;
-import io.github.HenriqueMichelini.craftalism_market.model.MarketItem;
+import io.github.HenriqueMichelini.craftalism_market.models.Category;
+import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public class DataLoader {
     private final CraftalismMarket plugin;
-    private final Map<String, MarketCategoryItem> marketCategories = new HashMap<>();
+    private final Map<String, Category> marketCategories = new HashMap<>();
     private final Map<String, MarketItem> marketItems = new HashMap<>();
 
     public DataLoader(CraftalismMarket plugin) {
@@ -70,7 +70,7 @@ public class DataLoader {
 
         Material material = validateMaterial(materialName, itemKey);
         if (material != null) {
-            marketCategories.put(itemKey, new MarketCategoryItem(material, title, slot));
+            marketCategories.put(itemKey, new Category(material, title, slot));
         }
     }
 
@@ -138,7 +138,7 @@ public class DataLoader {
         return material;
     }
 
-    public Map<String, MarketCategoryItem> getMarketCategories() {
+    public Map<String, Category> getMarketCategories() {
         return Collections.unmodifiableMap(marketCategories);
     }
 
