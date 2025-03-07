@@ -11,11 +11,11 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class MarketGui extends BaseGui {
+public class MarketGUI extends BaseGUI {
     private final DataLoader dataLoader;
     private final BiConsumer<Player, String> onCategorySelect;
 
-    public MarketGui(
+    public MarketGUI(
             CraftalismMarket plugin,
             DataLoader dataLoader,
             BiConsumer<Player, String> onCategorySelect

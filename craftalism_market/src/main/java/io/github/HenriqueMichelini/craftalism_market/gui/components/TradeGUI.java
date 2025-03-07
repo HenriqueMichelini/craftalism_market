@@ -3,7 +3,7 @@ package io.github.HenriqueMichelini.craftalism_market.gui.components;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
-import io.github.HenriqueMichelini.craftalism_market.gui.GuiManager;
+import io.github.HenriqueMichelini.craftalism_market.gui.manager.GuiManager;
 import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
 import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
 import io.github.HenriqueMichelini.craftalism_market.core.Transaction;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ItemNegotiationGui extends BaseGui {
+public class TradeGUI extends BaseGUI {
     // Region: Constants
     private static final int
             CENTER_SLOT = 13,
@@ -45,7 +45,7 @@ public class ItemNegotiationGui extends BaseGui {
     private int selectedAmount = MIN_AMOUNT;
 
     // Region: Constructor
-    public ItemNegotiationGui(
+    public TradeGUI(
             String itemName,
             CraftalismMarket plugin,
             DataLoader dataLoader,

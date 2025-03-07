@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class CategoryItemsGui extends BaseGui {
+public class CategoryGUI extends BaseGUI {
     private final DataLoader dataLoader;
     private final BiConsumer<Player, String> onItemSelect;
 
-    public CategoryItemsGui(
+    public CategoryGUI(
             String category,
             CraftalismMarket plugin,
             DataLoader dataLoader,

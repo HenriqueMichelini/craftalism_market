@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public abstract class BaseGui {
+public abstract class BaseGUI {
     protected final Gui gui;
     protected final CraftalismMarket plugin;
 
     protected static final int BACK_BUTTON_SLOT = 49;
 
-    public BaseGui(String title, int rows, CraftalismMarket plugin) {
+    public BaseGUI(String title, int rows, CraftalismMarket plugin) {
         this.gui = Gui.gui()
                 .title(Component.text(title, NamedTextColor.GREEN))
                 .rows(rows)
