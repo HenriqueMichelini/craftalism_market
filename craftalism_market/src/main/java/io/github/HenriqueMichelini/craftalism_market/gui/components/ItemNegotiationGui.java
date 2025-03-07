@@ -3,6 +3,7 @@ package io.github.HenriqueMichelini.craftalism_market.gui.components;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
+import io.github.HenriqueMichelini.craftalism_market.gui.GuiManager;
 import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
 import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
 import io.github.HenriqueMichelini.craftalism_market.core.Transaction;
@@ -40,6 +41,7 @@ public class ItemNegotiationGui extends BaseGui {
     private final String itemName;
     private final DataLoader dataLoader;
     private final MarketManager marketManager;
+    private final GuiManager guiManager;
     private int selectedAmount = MIN_AMOUNT;
 
     // Region: Constructor
@@ -48,13 +50,14 @@ public class ItemNegotiationGui extends BaseGui {
             CraftalismMarket plugin,
             DataLoader dataLoader,
             MarketManager marketManager,
-            Consumer<Player> onBack
+            Consumer<Player> onBack, GuiManager guiManager
     ) {
         super("Market", 6, plugin);
         this.itemName = itemName;
         this.dataLoader = dataLoader;
         this.marketManager = marketManager;
         this.item = validateItem(itemName);
+        this.guiManager = guiManager;
         initialize(onBack);
     }
 
@@ -201,6 +204,7 @@ public class ItemNegotiationGui extends BaseGui {
 
         if (transaction.performBuyTransaction(itemName, selectedAmount)) {
             playTransactionSound(player, "buy");
+            guiManager.refreshCategoryItem(item.getCategory(), itemName);
             gui.close(player); // Close the GUI
         } else {
             player.sendMessage(Component.text("Failed to complete purchase!", NamedTextColor.RED));
@@ -217,6 +221,7 @@ public class ItemNegotiationGui extends BaseGui {
 
         if (transaction.performSellTransaction(itemName, selectedAmount)) {
             playTransactionSound(player, "sell");
+            guiManager.refreshCategoryItem(item.getCategory(), itemName);
             gui.close(player); // Close the GUI
         } else {
             player.sendMessage(Component.text("Failed to complete sale!", NamedTextColor.RED));

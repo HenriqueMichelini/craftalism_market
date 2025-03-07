@@ -54,4 +54,16 @@ public class CategoryItemsGui extends BaseGui {
                 }
         ));
     }
+
+    public void refreshItem(String itemName) {
+        MarketItem updatedItem = dataLoader.getMarketItems().get(itemName);
+        if (updatedItem != null) {
+            gui.updateItem(updatedItem.getSlot(), createButton(
+                    updatedItem.getMaterial(),
+                    Component.text(updatedItem.getName(), NamedTextColor.GREEN),
+                    createItemLore(updatedItem),
+                    event -> onItemSelect.accept(event.getPlayer(), itemName)
+            ));
+        }
+    }
 }

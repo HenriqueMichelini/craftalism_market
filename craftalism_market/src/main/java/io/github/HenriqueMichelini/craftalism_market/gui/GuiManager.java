@@ -68,7 +68,7 @@ public class GuiManager {
                 plugin,
                 dataLoader,
                 marketManager,
-                p -> returnToCategory(p, getItemCategory(itemName))  // Use lambda parameter
+                p -> returnToCategory(p, getItemCategory(itemName)), this
         ).open(player);
     }
 
@@ -82,6 +82,13 @@ public class GuiManager {
                 openMarket(player);
             }
         }, 1L);
+    }
+
+    public void refreshCategoryItem(String category, String itemName) {
+        CategoryItemsGui categoryGui = categoryGuis.get(category);
+        if (categoryGui != null) {
+            categoryGui.refreshItem(itemName);
+        }
     }
 
     private String getItemCategory(String itemName) {
