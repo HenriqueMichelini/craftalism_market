@@ -2,7 +2,7 @@ package io.github.HenriqueMichelini.craftalism_market.gui.components;
 
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
-import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
+import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.models.Category;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -12,22 +12,22 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 public class MarketGUI extends BaseGUI {
-    private final DataLoader dataLoader;
+    private final ConfigManager configManager;
     private final BiConsumer<Player, String> onCategorySelect;
 
     public MarketGUI(
             CraftalismMarket plugin,
-            DataLoader dataLoader,
+            ConfigManager configManager,
             BiConsumer<Player, String> onCategorySelect
     ) {
         super("Market", 6, plugin);
-        this.dataLoader = dataLoader;
+        this.configManager = configManager;
         this.onCategorySelect = onCategorySelect;
         populateCategories();
     }
 
     private void populateCategories() {
-        dataLoader.getMarketCategories().values().forEach(category -> gui.setItem(category.slot(), createCategoryButton(category)));
+        configManager.getCategories().values().forEach(this::createCategoryButton);
     }
 
     private GuiItem createCategoryButton(Category category) {

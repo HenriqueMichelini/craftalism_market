@@ -1,5 +1,5 @@
 package io.github.HenriqueMichelini.craftalism_market.command;
-import io.github.HenriqueMichelini.craftalism_market.gui.GuiManager;
+import io.github.HenriqueMichelini.craftalism_market.gui.manager.GuiManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

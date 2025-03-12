@@ -1,7 +1,7 @@
 package io.github.HenriqueMichelini.craftalism_market.core;
 
 import io.github.HenriqueMichelini.craftalism_economy.economy.EconomyManager;
-import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
+import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.logic.InventoryManager;
 import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
@@ -18,16 +18,16 @@ import java.util.UUID;
 public class Transaction {
     private final EconomyManager economyManager;
     private final MarketManager marketManager;
-    private final DataLoader dataLoader;
+    private final ConfigManager configManager;
     private final Player player;
 
-    public Transaction(Player player, EconomyManager economyManager, DataLoader dataLoader, MarketManager marketManager) {
-        if (economyManager == null || marketManager == null || dataLoader == null || player == null) {
+    public Transaction(Player player, EconomyManager economyManager, ConfigManager configManager, MarketManager marketManager) {
+        if (economyManager == null || marketManager == null || configManager == null || player == null) {
             throw new IllegalArgumentException("All parameters must be non-null");
         }
         this.economyManager = economyManager;
         this.marketManager = marketManager;
-        this.dataLoader = dataLoader;
+        this.configManager = configManager;
         this.player = player;
     }
 
@@ -64,7 +64,7 @@ public class Transaction {
     }
 
     private MarketItem getItemOrSendError(String itemName) {
-        MarketItem item = dataLoader.getMarketItems().get(itemName);
+        MarketItem item = configManager.getItems().get(itemName);
         if (item == null) sendError("Item not found!");
         return item;
     }

@@ -3,8 +3,8 @@ package io.github.HenriqueMichelini.craftalism_market.gui.components;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.GuiItem;
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
+import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.gui.manager.GuiManager;
-import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
 import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
 import io.github.HenriqueMichelini.craftalism_market.core.Transaction;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
@@ -39,7 +39,7 @@ public class TradeGUI extends BaseGUI {
     // Region: Fields
     private final MarketItem item;
     private final String itemName;
-    private final DataLoader dataLoader;
+    private final ConfigManager configManager;
     private final MarketManager marketManager;
     private final GuiManager guiManager;
     private int selectedAmount = MIN_AMOUNT;
@@ -48,13 +48,13 @@ public class TradeGUI extends BaseGUI {
     public TradeGUI(
             String itemName,
             CraftalismMarket plugin,
-            DataLoader dataLoader,
+            ConfigManager configManager,
             MarketManager marketManager,
             Consumer<Player> onBack, GuiManager guiManager
     ) {
         super("Market", 6, plugin);
         this.itemName = itemName;
-        this.dataLoader = dataLoader;
+        this.configManager = configManager;
         this.marketManager = marketManager;
         this.item = validateItem(itemName);
         this.guiManager = guiManager;
@@ -73,7 +73,7 @@ public class TradeGUI extends BaseGUI {
     }
 
     private MarketItem validateItem(String itemName) {
-        MarketItem item = dataLoader.getMarketItems().get(itemName);
+        MarketItem item = configManager.getItems().get(itemName);
         if (item == null) {
             plugin.getLogger().severe("Invalid item: " + itemName);
         }
@@ -198,7 +198,7 @@ public class TradeGUI extends BaseGUI {
         Transaction transaction = new Transaction(
                 player,
                 plugin.getEconomyManager(),
-                dataLoader,
+                configManager,
                 marketManager
         );
 
@@ -215,7 +215,7 @@ public class TradeGUI extends BaseGUI {
         Transaction transaction = new Transaction(
                 player,
                 plugin.getEconomyManager(),
-                dataLoader,
+                configManager,
                 marketManager
         );
 

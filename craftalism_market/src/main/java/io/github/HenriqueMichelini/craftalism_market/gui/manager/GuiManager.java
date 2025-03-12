@@ -1,8 +1,8 @@
-package io.github.HenriqueMichelini.craftalism_market.gui;
+package io.github.HenriqueMichelini.craftalism_market.gui.manager;
 
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
+import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.gui.components.*;
-import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
 import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -13,16 +13,16 @@ import java.util.Map;
 
 public class GuiManager {
     // Region: Dependencies
-    private final DataLoader dataLoader;
+    private final ConfigManager configManager;
     private final CraftalismMarket plugin;
     private final MarketManager marketManager;
 
     // Region: GUI Components
-    private MarketGui marketGui;
-    private final Map<String, CategoryItemsGui> categoryGuis = new HashMap<>();
+    private MarketGUI marketGui;
+    private final Map<String, CategoryGUI> categoryGuis = new HashMap<>();
 
-    public GuiManager(DataLoader dataLoader, CraftalismMarket plugin, MarketManager marketManager) {
-        this.dataLoader = dataLoader;
+    public GuiManager(ConfigManager configManager, CraftalismMarket plugin, MarketManager marketManager) {
+        this.configManager = configManager;
         this.plugin = plugin;
         this.marketManager = marketManager;
         initializeGUIs();
@@ -31,20 +31,22 @@ public class GuiManager {
     // Region: Initialization
     private void initializeGUIs() {
         // Initialize main market GUI
-        this.marketGui = new MarketGui(
+        this.marketGui = new MarketGUI(
                 plugin,
-                dataLoader,
+                configManager,
                 this::handleCategorySelection
         );
 
         // Preload category GUIs
-        dataLoader.getMarketCategories().values().forEach(category -> categoryGuis.put(category.title(), new CategoryItemsGui(
-                category.title(),
-                plugin,
-                dataLoader,
-                this::handleItemSelection,
-                this::openMarket
-        )));
+        configManager.getCategories().values().forEach(category ->
+                categoryGuis.put(category.title(), new CategoryGUI(
+                        category.title(),
+                        plugin,
+                        configManager,
+                        this::handleItemSelection,
+                        this::openMarket
+                ))
+        );
     }
 
     // Region: Public Interface
@@ -53,7 +55,7 @@ public class GuiManager {
     }
 
     private void handleCategorySelection(Player player, String category) {
-        CategoryItemsGui categoryGui = categoryGuis.get(category);
+        CategoryGUI categoryGui = categoryGuis.get(category);
         if (categoryGui != null) {
             categoryGui.open(player);
         } else {
@@ -63,10 +65,10 @@ public class GuiManager {
     }
 
     private void handleItemSelection(Player player, String itemName) {
-        new ItemNegotiationGui(
+        new TradeGUI(
                 itemName,
                 plugin,
-                dataLoader,
+                configManager,
                 marketManager,
                 p -> returnToCategory(p, getItemCategory(itemName)), this
         ).open(player);
@@ -75,7 +77,7 @@ public class GuiManager {
     // Region: Navigation Helpers
     private void returnToCategory(Player player, String category) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            CategoryItemsGui categoryGui = categoryGuis.get(category);
+            CategoryGUI categoryGui = categoryGuis.get(category);
             if (categoryGui != null && player.isOnline()) {
                 categoryGui.open(player);
             } else if (player.isOnline()) {
@@ -85,13 +87,13 @@ public class GuiManager {
     }
 
     public void refreshCategoryItem(String category, String itemName) {
-        CategoryItemsGui categoryGui = categoryGuis.get(category);
+        CategoryGUI categoryGui = categoryGuis.get(category);
         if (categoryGui != null) {
             categoryGui.refreshItem(itemName);
         }
     }
 
     private String getItemCategory(String itemName) {
-        return dataLoader.getMarketItems().get(itemName).getCategory();
+        return configManager.getItems().get(itemName).getCategory();
     }
 }

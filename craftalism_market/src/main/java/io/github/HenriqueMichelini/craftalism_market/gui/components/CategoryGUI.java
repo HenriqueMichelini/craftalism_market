@@ -1,7 +1,7 @@
 package io.github.HenriqueMichelini.craftalism_market.gui.components;
 
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
-import io.github.HenriqueMichelini.craftalism_market.logic.DataLoader;
+import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -12,27 +12,27 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class CategoryGUI extends BaseGUI {
-    private final DataLoader dataLoader;
+    private final ConfigManager configManager;
     private final BiConsumer<Player, String> onItemSelect;
 
     public CategoryGUI(
             String category,
             CraftalismMarket plugin,
-            DataLoader dataLoader,
+            ConfigManager configManager,
             BiConsumer<Player, String> onItemSelect,
             Consumer<Player> onBack
     ) {
         super(category, 6, plugin);
-        this.dataLoader = dataLoader;
+        this.configManager = configManager;
         this.onItemSelect = onItemSelect;
         populateItems(category);
         addBackButton(onBack);
     }
 
     private void populateItems(String category) {
-        dataLoader.getMarketItems().entrySet().stream()
-                .filter(entry -> entry.getValue().getCategory().equals(category))
-                .forEach(entry -> addItemButton(entry.getValue()));
+        configManager.getItems().values().stream()
+                .filter(item -> item.getCategory().equals(category))
+                .forEach(this::addItemButton);
     }
 
     private List<Component> createItemLore(MarketItem item) {
@@ -56,7 +56,7 @@ public class CategoryGUI extends BaseGUI {
     }
 
     public void refreshItem(String itemName) {
-        MarketItem updatedItem = dataLoader.getMarketItems().get(itemName);
+        MarketItem updatedItem = configManager.getItems().get(itemName);
         if (updatedItem != null) {
             gui.updateItem(updatedItem.getSlot(), createButton(
                     updatedItem.getMaterial(),
