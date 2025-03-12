@@ -14,9 +14,9 @@ import java.util.Objects;
 /**
  * Utility class for handling player inventory operations with thread safety and null-safety.
  */
-public final class InventoryManager {
+public final class InventoryHandler {
 
-    private InventoryManager() {
+    private InventoryHandler() {
         throw new AssertionError("Utility class should not be instantiated");
     }
 

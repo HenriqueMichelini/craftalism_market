@@ -3,7 +3,7 @@ package io.github.HenriqueMichelini.craftalism_market.gui.manager;
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.gui.components.*;
-import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
+import io.github.HenriqueMichelini.craftalism_market.logic.MarketUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -15,16 +15,16 @@ public class GuiManager {
     // Region: Dependencies
     private final ConfigManager configManager;
     private final CraftalismMarket plugin;
-    private final MarketManager marketManager;
+    private final MarketUtils marketUtils;
 
     // Region: GUI Components
     private MarketGUI marketGui;
     private final Map<String, CategoryGUI> categoryGuis = new HashMap<>();
 
-    public GuiManager(ConfigManager configManager, CraftalismMarket plugin, MarketManager marketManager) {
+    public GuiManager(ConfigManager configManager, CraftalismMarket plugin, MarketUtils marketUtils) {
         this.configManager = configManager;
         this.plugin = plugin;
-        this.marketManager = marketManager;
+        this.marketUtils = marketUtils;
         initializeGUIs();
     }
 
@@ -69,7 +69,7 @@ public class GuiManager {
                 itemName,
                 plugin,
                 configManager,
-                marketManager,
+                marketUtils,
                 p -> returnToCategory(p, getItemCategory(itemName)), this
         ).open(player);
     }

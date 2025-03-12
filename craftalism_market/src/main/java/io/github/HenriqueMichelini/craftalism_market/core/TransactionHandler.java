@@ -2,8 +2,8 @@ package io.github.HenriqueMichelini.craftalism_market.core;
 
 import io.github.HenriqueMichelini.craftalism_economy.economy.EconomyManager;
 import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
-import io.github.HenriqueMichelini.craftalism_market.logic.InventoryManager;
-import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
+import io.github.HenriqueMichelini.craftalism_market.logic.InventoryHandler;
+import io.github.HenriqueMichelini.craftalism_market.logic.MarketUtils;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -15,18 +15,18 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.UUID;
 
-public class Transaction {
+public class TransactionHandler {
     private final EconomyManager economyManager;
-    private final MarketManager marketManager;
+    private final MarketUtils marketUtils;
     private final ConfigManager configManager;
     private final Player player;
 
-    public Transaction(Player player, EconomyManager economyManager, ConfigManager configManager, MarketManager marketManager) {
-        if (economyManager == null || marketManager == null || configManager == null || player == null) {
+    public TransactionHandler(Player player, EconomyManager economyManager, ConfigManager configManager, MarketUtils marketUtils) {
+        if (economyManager == null || marketUtils == null || configManager == null || player == null) {
             throw new IllegalArgumentException("All parameters must be non-null");
         }
         this.economyManager = economyManager;
-        this.marketManager = marketManager;
+        this.marketUtils = marketUtils;
         this.configManager = configManager;
         this.player = player;
     }
@@ -83,7 +83,7 @@ public class Transaction {
     }
 
     private BigDecimal calculateTotalPrice(MarketItem item, int amount, boolean isBuy) {
-        return marketManager.getTotalPriceOfItem(item, amount, isBuy);
+        return marketUtils.getTotalPriceOfItem(item, amount, isBuy);
     }
 
     private boolean checkBalance(BigDecimal totalPrice, String itemName, int amount) {
@@ -102,7 +102,7 @@ public class Transaction {
             return false;
         }
 
-        if (!InventoryManager.addItemToPlayer(player, item.getMaterial(), amount)) {
+        if (!InventoryHandler.addItemToPlayer(player, item.getMaterial(), amount)) {
             economyManager.deposit(playerId, totalPrice);
             sendWarning("Inventory full for %d %s. Dropping the exceeds.".formatted(amount, item.getName()));
         }
@@ -110,14 +110,14 @@ public class Transaction {
     }
 
     private void updateMarketItemPriceAndStock(MarketItem item, int soldAmount, boolean isBuy) {
-        BigDecimal lastPrice = marketManager.getLastPriceOfItem(item, soldAmount, isBuy);
+        BigDecimal lastPrice = marketUtils.getLastPriceOfItem(item, soldAmount, isBuy);
         item.setBasePrice(lastPrice);
         item.setAmount(item.getAmount() + (isBuy ? -soldAmount : soldAmount));
-        marketManager.updatePriceHistory(item, lastPrice);
+        marketUtils.updatePriceHistory(item, lastPrice);
     }
 
     private int adjustAmountBasedOnInventory(MarketItem item, int requestedAmount) {
-        int playerItems = InventoryManager.countItems(player, item.getMaterial());
+        int playerItems = InventoryHandler.countItems(player, item.getMaterial());
         if (playerItems <= 0) {
             sendError("You have no %s to sell".formatted(item.getName()));
             return 0;
@@ -131,7 +131,7 @@ public class Transaction {
     }
 
     private boolean removeItemsFromInventory(MarketItem item, int amount) {
-        if (!InventoryManager.removeItemFromPlayer(player, item.getMaterial(), amount)) {
+        if (!InventoryHandler.removeItemFromPlayer(player, item.getMaterial(), amount)) {
             sendError("Failed to remove items from inventory");
             return false;
         }

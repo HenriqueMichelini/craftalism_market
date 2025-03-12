@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Objects;
 
-public class MarketManager {
+public class MarketUtils {
     private static final int PRICE_SCALE = 2;
     private static final int MAX_HISTORY_ENTRIES = 10;
     private static final BigDecimal ONE = BigDecimal.ONE;

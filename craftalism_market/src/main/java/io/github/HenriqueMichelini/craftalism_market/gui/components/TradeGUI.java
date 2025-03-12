@@ -5,8 +5,8 @@ import dev.triumphteam.gui.guis.GuiItem;
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.gui.manager.GuiManager;
-import io.github.HenriqueMichelini.craftalism_market.logic.MarketManager;
-import io.github.HenriqueMichelini.craftalism_market.core.Transaction;
+import io.github.HenriqueMichelini.craftalism_market.logic.MarketUtils;
+import io.github.HenriqueMichelini.craftalism_market.core.TransactionHandler;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -40,7 +40,7 @@ public class TradeGUI extends BaseGUI {
     private final MarketItem item;
     private final String itemName;
     private final ConfigManager configManager;
-    private final MarketManager marketManager;
+    private final MarketUtils marketUtils;
     private final GuiManager guiManager;
     private int selectedAmount = MIN_AMOUNT;
 
@@ -49,13 +49,13 @@ public class TradeGUI extends BaseGUI {
             String itemName,
             CraftalismMarket plugin,
             ConfigManager configManager,
-            MarketManager marketManager,
+            MarketUtils marketUtils,
             Consumer<Player> onBack, GuiManager guiManager
     ) {
         super("Market", 6, plugin);
         this.itemName = itemName;
         this.configManager = configManager;
-        this.marketManager = marketManager;
+        this.marketUtils = marketUtils;
         this.item = validateItem(itemName);
         this.guiManager = guiManager;
         initialize(onBack);
@@ -183,7 +183,7 @@ public class TradeGUI extends BaseGUI {
 
     // Region: Core Logic
     private BigDecimal calculateTotalPrice(String action) {
-        return marketManager.getTotalPriceOfItem(
+        return marketUtils.getTotalPriceOfItem(
                 item,
                 selectedAmount,
                 "buy".equalsIgnoreCase(action)
@@ -195,14 +195,14 @@ public class TradeGUI extends BaseGUI {
     }
 
     private void handleBuy(Player player) {
-        Transaction transaction = new Transaction(
+        TransactionHandler transactionHandler = new TransactionHandler(
                 player,
                 plugin.getEconomyManager(),
                 configManager,
-                marketManager
+                marketUtils
         );
 
-        if (transaction.performBuyTransaction(itemName, selectedAmount)) {
+        if (transactionHandler.performBuyTransaction(itemName, selectedAmount)) {
             playTransactionSound(player, "buy");
             guiManager.refreshCategoryItem(item.getCategory(), itemName);
             gui.close(player); // Close the GUI
@@ -212,14 +212,14 @@ public class TradeGUI extends BaseGUI {
     }
 
     private void handleSell(Player player) {
-        Transaction transaction = new Transaction(
+        TransactionHandler transactionHandler = new TransactionHandler(
                 player,
                 plugin.getEconomyManager(),
                 configManager,
-                marketManager
+                marketUtils
         );
 
-        if (transaction.performSellTransaction(itemName, selectedAmount)) {
+        if (transactionHandler.performSellTransaction(itemName, selectedAmount)) {
             playTransactionSound(player, "sell");
             guiManager.refreshCategoryItem(item.getCategory(), itemName);
             gui.close(player); // Close the GUI
