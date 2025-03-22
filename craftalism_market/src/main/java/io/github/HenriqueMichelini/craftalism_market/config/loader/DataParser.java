@@ -32,6 +32,7 @@ public class DataParser {
             ConfigurationSection catSection = section.getConfigurationSection(key);
             Category category = new Category(
                     Material.matchMaterial(Objects.requireNonNull(catSection.getString("material"))),
+                    catSection.getString("category"),
                     catSection.getString("title"),
                     catSection.getInt("slot")
             );

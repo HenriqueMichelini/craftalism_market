@@ -39,8 +39,8 @@ public class GuiManager {
 
         // Preload category GUIs
         configManager.getCategories().values().forEach(category ->
-                categoryGuis.put(category.title(), new CategoryGUI(
-                        category.title(),
+                categoryGuis.put(category.category(), new CategoryGUI(
+                        category.category(),
                         plugin,
                         configManager,
                         this::handleItemSelection,

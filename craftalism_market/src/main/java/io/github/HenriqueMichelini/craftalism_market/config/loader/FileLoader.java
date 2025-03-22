@@ -46,7 +46,7 @@ public class FileLoader {
     private void createDefaultCategories(File file) throws IOException, InvalidConfigurationException {
         String defaultConfig =
                 """
-                        items:
+                        categories:
                           stone:
                             material: STONE
                             category: natural_resources
@@ -90,426 +90,394 @@ public class FileLoader {
 
     private void createDefaultItems(File file) throws IOException, InvalidConfigurationException {
         String defaultConfig =
-                "items:\n" +
-                        "  cobblestone:\n" +
-                        "    material: COBBLESTONE\n" +
-                        "    category: natural_resources\n" +
-                        "    slot: 0\n" +
-                        "    base_price: 0.37\n" +
-                        "    price_variation: 0.0015\n" +
-                        "    tax_rate: 0.15\n" +
-                        "    stock: 2000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.37\n" +
-
-                        "  dirt:\n" +
-                        "    material: DIRT\n" +
-                        "    category: natural_resources\n" +
-                        "    slot: 1\n" +
-                        "    base_price: 0.1\n" +
-                        "    price_variation: 0.0005\n" +
-                        "    tax_rate: 0.1\n" +
-                        "    stock: 5000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.1\n" +
-
-                        "  sand:\n" +
-                        "    material: SAND\n" +
-                        "    category: natural_resources\n" +
-                        "    slot: 2\n" +
-                        "    base_price: 0.25\n" +
-                        "    price_variation: 0.001\n" +
-                        "    tax_rate: 0.12\n" +
-                        "    stock: 3000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.25\n" +
-
-                        "  gravel:\n" +
-                        "    material: GRAVEL\n" +
-                        "    category: natural_resources\n" +
-                        "    slot: 3\n" +
-                        "    base_price: 0.2\n" +
-                        "    price_variation: 0.0008\n" +
-                        "    tax_rate: 0.12\n" +
-                        "    stock: 2500\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.2\n" +
-
-                        "  clay_ball:\n" +
-                        "    material: CLAY_BALL\n" +
-                        "    category: natural_resources\n" +
-                        "    slot: 4\n" +
-                        "    base_price: 0.5\n" +
-                        "    price_variation: 0.002\n" +
-                        "    tax_rate: 0.15\n" +
-                        "    stock: 1000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.5\n" +
-
-                        "  coal:\n" +
-                        "    material: COAL\n" +
-                        "    category: Ores\n" +
-                        "    slot: 0\n" +
-                        "    base_price: 1.00\n" +
-                        "    price_variation: 0.0050\n" +
-                        "    tax_rate: 0.20\n" +
-                        "    stock: 1500\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 1.00\n" +
-
-                        "  iron_ingot:\n" +
-                        "    material: IRON_INGOT\n" +
-                        "    category: Ores\n" +
-                        "    slot: 1\n" +
-                        "    base_price: 5.00\n" +
-                        "    price_variation: 0.0100\n" +
-                        "    tax_rate: 0.25\n" +
-                        "    stock: 800\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 5.00\n" +
-
-                        "  gold_ingot:\n" +
-                        "    material: GOLD_INGOT\n" +
-                        "    category: Ores\n" +
-                        "    slot: 2\n" +
-                        "    base_price: 10.00\n" +
-                        "    price_variation: 0.0200\n" +
-                        "    tax_rate: 0.30\n" +
-                        "    stock: 500\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 10.00\n" +
-
-                        "  diamond:\n" +
-                        "    material: DIAMOND\n" +
-                        "    category: Ores\n" +
-                        "    slot: 3\n" +
-                        "    base_price: 50.00\n" +
-                        "    price_variation: 0.0500\n" +
-                        "    tax_rate: 0.35\n" +
-                        "    stock: 200\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 50.00\n" +
-
-                        "  emerald:\n" +
-                        "    material: EMERALD\n" +
-                        "    category: Ores\n" +
-                        "    slot: 4\n" +
-                        "    base_price: 100.00\n" +
-                        "    price_variation: 0.1000\n" +
-                        "    tax_rate: 0.40\n" +
-                        "    stock: 100\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 100.00\n" +
-
-                        "  string:\n" +
-                        "    material: STRING\n" +
-                        "    category: Mob Drops\n" +
-                        "    slot: 0\n" +
-                        "    base_price: 0.50\n" +
-                        "    price_variation: 0.0020\n" +
-                        "    tax_rate: 0.15\n" +
-                        "    stock: 1500\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.50\n" +
-
-                        "  spider_eye:\n" +
-                        "    material: SPIDER_EYE\n" +
-                        "    category: Mob Drops\n" +
-                        "    slot: 1\n" +
-                        "    base_price: 1.50\n" +
-                        "    price_variation: 0.0050\n" +
-                        "    tax_rate: 0.20\n" +
-                        "    stock: 1000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 1.50\n" +
-
-                        "  bone:\n" +
-                        "    material: BONE\n" +
-                        "    category: Mob Drops\n" +
-                        "    slot: 2\n" +
-                        "    base_price: 0.75\n" +
-                        "    price_variation: 0.0030\n" +
-                        "    tax_rate: 0.18\n" +
-                        "    stock: 1200\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.75\n" +
-
-                        "  gunpowder:\n" +
-                        "    material: GUNPOWDER\n" +
-                        "    category: Mob Drops\n" +
-                        "    slot: 3\n" +
-                        "    base_price: 2.00\n" +
-                        "    price_variation: 0.0075\n" +
-                        "    tax_rate: 0.22\n" +
-                        "    stock: 800\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 2.00\n" +
-
-                        "  ender_pearl:\n" +
-                        "    material: ENDER_PEARL\n" +
-                        "    category: Mob Drops\n" +
-                        "    slot: 4\n" +
-                        "    base_price: 10.00\n" +
-                        "    price_variation: 0.0200\n" +
-                        "    tax_rate: 0.30\n" +
-                        "    stock: 300\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 10.00\n" +
-
-                        "  oak_log:\n" +
-                        "    material: OAK_LOG\n" +
-                        "    category: Woods\n" +
-                        "    slot: 0\n" +
-                        "    base_price: 0.50\n" +
-                        "    price_variation: 0.0020\n" +
-                        "    tax_rate: 0.15\n" +
-                        "    stock: 2000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.50\n" +
-
-                        "  spruce_log:\n" +
-                        "    material: SPRUCE_LOG\n" +
-                        "    category: Woods\n" +
-                        "    slot: 1\n" +
-                        "    base_price: 0.55\n" +
-                        "    price_variation: 0.0022\n" +
-                        "    tax_rate: 0.15\n" +
-                        "    stock: 1800\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.55\n" +
-
-                        "  birch_log:\n" +
-                        "    material: BIRCH_LOG\n" +
-                        "    category: Woods\n" +
-                        "    slot: 2\n" +
-                        "    base_price: 0.60\n" +
-                        "    price_variation: 0.0025\n" +
-                        "    tax_rate: 0.15\n" +
-                        "    stock: 1600\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.60\n" +
-
-                        "  jungle_log:\n" +
-                        "    material: JUNGLE_LOG\n" +
-                        "    category: Woods\n" +
-                        "    slot: 3\n" +
-                        "    base_price: 0.65\n" +
-                        "    price_variation: 0.0028\n" +
-                        "    tax_rate: 0.15\n" +
-                        "    stock: 1400\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.65\n" +
-
-                        "  acacia_log:\n" +
-                        "    material: ACACIA_LOG\n" +
-                        "    category: Woods\n" +
-                        "    slot: 4\n" +
-                        "    base_price: 0.70\n" +
-                        "    price_variation: 0.0030\n" +
-                        "    tax_rate: 0.15\n" +
-                        "    stock: 1200\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.70\n" +
-
-                        "  red_dye:\n" +
-                        "    material: RED_DYE\n" +
-                        "    category: Dyes\n" +
-                        "    slot: 0\n" +
-                        "    base_price: 1.00\n" +
-                        "    price_variation: 0.0050\n" +
-                        "    tax_rate: 0.20\n" +
-                        "    stock: 1000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 1.00\n" +
-
-                        "  blue_dye:\n" +
-                        "    material: BLUE_DYE\n" +
-                        "    category: Dyes\n" +
-                        "    slot: 1\n" +
-                        "    base_price: 1.00\n" +
-                        "    price_variation: 0.0050\n" +
-                        "    tax_rate: 0.20\n" +
-                        "    stock: 1000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 1.00\n" +
-
-                        "  green_dye:\n" +
-                        "    material: GREEN_DYE\n" +
-                        "    category: Dyes\n" +
-                        "    slot: 2\n" +
-                        "    base_price: 1.00\n" +
-                        "    price_variation: 0.0050\n" +
-                        "    tax_rate: 0.20\n" +
-                        "    stock: 1000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 1.00\n" +
-
-                        "  yellow_dye:\n" +
-                        "    material: YELLOW_DYE\n" +
-                        "    category: Dyes\n" +
-                        "    slot: 3\n" +
-                        "    base_price: 1.00\n" +
-                        "    price_variation: 0.0050\n" +
-                        "    tax_rate: 0.20\n" +
-                        "    stock: 1000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 1.00\n" +
-
-                        "  purple_dye:\n" +
-                        "    material: PURPLE_DYE\n" +
-                        "    category: Dyes\n" +
-                        "    slot: 4\n" +
-                        "    base_price: 1.00\n" +
-                        "    price_variation: 0.0050\n" +
-                        "    tax_rate: 0.20\n" +
-                        "    stock: 1000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 1.00\n" +
-
-                        "  wheat:\n" +
-                        "    material: WHEAT\n" +
-                        "    category: Livestock\n" +
-                        "    slot: 0\n" +
-                        "    base_price: 0.30\n" +
-                        "    price_variation: 0.0010\n" +
-                        "    tax_rate: 0.10\n" +
-                        "    stock: 3000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.30\n" +
-
-                        "  carrot:\n" +
-                        "    material: CARROT\n" +
-                        "    category: Livestock\n" +
-                        "    slot: 1\n" +
-                        "    base_price: 0.50\n" +
-                        "    price_variation: 0.0020\n" +
-                        "    tax_rate: 0.15\n" +
-                        "    stock: 2000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.50\n" +
-
-                        "  potato:\n" +
-                        "    material: POTATO\n" +
-                        "    category: Livestock\n" +
-                        "    slot: 2\n" +
-                        "    base_price: 0.40\n" +
-                        "    price_variation: 0.0015\n" +
-                        "    tax_rate: 0.12\n" +
-                        "    stock: 2500\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.40\n" +
-
-                        "  beef:\n" +
-                        "    material: BEEF\n" +
-                        "    category: Livestock\n" +
-                        "    slot: 3\n" +
-                        "    base_price: 2.00\n" +
-                        "    price_variation: 0.0075\n" +
-                        "    tax_rate: 0.20\n" +
-                        "    stock: 1000\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 2.00\n" +
-
-                        "  chicken:\n" +
-                        "    material: CHICKEN\n" +
-                        "    category: Livestock\n" +
-                        "    slot: 4\n" +
-                        "    base_price: 1.50\n" +
-                        "    price_variation: 0.0050\n" +
-                        "    tax_rate: 0.18\n" +
-                        "    stock: 1200\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 1.50\n" +
-
-                        "  white_wool:\n" +
-                        "    material: WHITE_WOOL\n" +
-                        "    category: Wools\n" +
-                        "    slot: 0\n" +
-                        "    base_price: 0.75\n" +
-                        "    price_variation: 0.0030\n" +
-                        "    tax_rate: 0.15\n" +
-                        "    stock: 1500\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 0.75\n" +
-
-                        "  black_wool:\n" +
-                        "    material: BLACK_WOOL\n" +
-                        "    category: Wools\n" +
-                        "    slot: 1\n" +
-                        "    base_price: 1.00\n" +
-                        "    price_variation: 0.0050\n" +
-                        "    tax_rate: 0.20\n" +
-                        "    stock: 1200\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 1.00\n" +
-
-                        "  red_wool:\n" +
-                        "    material: RED_WOOL\n" +
-                        "    category: Wools\n" +
-                        "    slot: 2\n" +
-                        "    base_price: 1.00\n" +
-                        "    price_variation: 0.0050\n" +
-                        "    tax_rate: 0.20\n" +
-                        "    stock: 1200\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 1.00\n" +
-
-                        "  blue_wool:\n" +
-                        "    material: BLUE_WOOL\n" +
-                        "    category: Wools\n" +
-                        "    slot: 3\n" +
-                        "    base_price: 1.00\n" +
-                        "    price_variation: 0.0050\n" +
-                        "    tax_rate: 0.20\n" +
-                        "    stock: 1200\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 1.00\n" +
-
-                        "  green_wool:\n" +
-                        "    material: GREEN_WOOL\n" +
-                        "    category: Wools\n" +
-                        "    slot: 4\n" +
-                        "    base_price: 1.00\n" +
-                        "    price_variation: 0.0050\n" +
-                        "    tax_rate: 0.20\n" +
-                        "    stock: 1200\n" +
-                        "    last_activity: 0\n" +
-                        "    price_history:\n" +
-                        "      - 1.00\n";
+                """
+                        items:
+                          cobblestone:
+                            material: COBBLESTONE
+                            category: natural_resources
+                            slot: 0
+                            base_price: 0.37
+                            price_variation: 0.0015
+                            tax_rate: 0.15
+                            stock: 2000
+                            last_activity: 0
+                            price_history:
+                              - 0.37
+                          dirt:
+                            material: DIRT
+                            category: natural_resources
+                            slot: 1
+                            base_price: 0.1
+                            price_variation: 0.0005
+                            tax_rate: 0.1
+                            stock: 5000
+                            last_activity: 0
+                            price_history:
+                              - 0.1
+                          sand:
+                            material: SAND
+                            category: natural_resources
+                            slot: 2
+                            base_price: 0.25
+                            price_variation: 0.001
+                            tax_rate: 0.12
+                            stock: 3000
+                            last_activity: 0
+                            price_history:
+                              - 0.25
+                          gravel:
+                            material: GRAVEL
+                            category: natural_resources
+                            slot: 3
+                            base_price: 0.2
+                            price_variation: 0.0008
+                            tax_rate: 0.12
+                            stock: 2500
+                            last_activity: 0
+                            price_history:
+                              - 0.2
+                          clay_ball:
+                            material: CLAY_BALL
+                            category: natural_resources
+                            slot: 4
+                            base_price: 0.5
+                            price_variation: 0.002
+                            tax_rate: 0.15
+                            stock: 1000
+                            last_activity: 0
+                            price_history:
+                              - 0.5
+                          coal:
+                            material: COAL
+                            category: ores
+                            slot: 0
+                            base_price: 1.00
+                            price_variation: 0.0050
+                            tax_rate: 0.20
+                            stock: 1500
+                            last_activity: 0
+                            price_history:
+                              - 1.00
+                          iron_ingot:
+                            material: IRON_INGOT
+                            category: ores
+                            slot: 1
+                            base_price: 5.00
+                            price_variation: 0.0100
+                            tax_rate: 0.25
+                            stock: 800
+                            last_activity: 0
+                            price_history:
+                              - 5.00
+                          gold_ingot:
+                            material: GOLD_INGOT
+                            category: ores
+                            slot: 2
+                            base_price: 10.00
+                            price_variation: 0.0200
+                            tax_rate: 0.30
+                            stock: 500
+                            last_activity: 0
+                            price_history:
+                              - 10.00
+                          diamond:
+                            material: DIAMOND
+                            category: ores
+                            slot: 3
+                            base_price: 50.00
+                            price_variation: 0.0500
+                            tax_rate: 0.35
+                            stock: 200
+                            last_activity: 0
+                            price_history:
+                              - 50.00
+                          emerald:
+                            material: EMERALD
+                            category: ores
+                            slot: 4
+                            base_price: 100.00
+                            price_variation: 0.1000
+                            tax_rate: 0.40
+                            stock: 100
+                            last_activity: 0
+                            price_history:
+                              - 100.00
+                          string:
+                            material: STRING
+                            category: mob_drops
+                            slot: 0
+                            base_price: 0.50
+                            price_variation: 0.0020
+                            tax_rate: 0.15
+                            stock: 1500
+                            last_activity: 0
+                            price_history:
+                              - 0.50
+                          spider_eye:
+                            material: SPIDER_EYE
+                            category: mob_drops
+                            slot: 1
+                            base_price: 1.50
+                            price_variation: 0.0050
+                            tax_rate: 0.20
+                            stock: 1000
+                            last_activity: 0
+                            price_history:
+                              - 1.50
+                          bone:
+                            material: BONE
+                            category: mob_drops
+                            slot: 2
+                            base_price: 0.75
+                            price_variation: 0.0030
+                            tax_rate: 0.18
+                            stock: 1200
+                            last_activity: 0
+                            price_history:
+                              - 0.75
+                          gunpowder:
+                            material: GUNPOWDER
+                            category: mob_drops
+                            slot: 3
+                            base_price: 2.00
+                            price_variation: 0.0075
+                            tax_rate: 0.22
+                            stock: 800
+                            last_activity: 0
+                            price_history:
+                              - 2.00
+                          ender_pearl:
+                            material: ENDER_PEARL
+                            category: mob_drops
+                            slot: 4
+                            base_price: 10.00
+                            price_variation: 0.0200
+                            tax_rate: 0.30
+                            stock: 300
+                            last_activity: 0
+                            price_history:
+                              - 10.00
+                          oak_log:
+                            material: OAK_LOG
+                            category: woods
+                            slot: 0
+                            base_price: 0.50
+                            price_variation: 0.0020
+                            tax_rate: 0.15
+                            stock: 2000
+                            last_activity: 0
+                            price_history:
+                              - 0.50
+                          spruce_log:
+                            material: SPRUCE_LOG
+                            category: woods
+                            slot: 1
+                            base_price: 0.55
+                            price_variation: 0.0022
+                            tax_rate: 0.15
+                            stock: 1800
+                            last_activity: 0
+                            price_history:
+                              - 0.55
+                          birch_log:
+                            material: BIRCH_LOG
+                            category: woods
+                            slot: 2
+                            base_price: 0.60
+                            price_variation: 0.0025
+                            tax_rate: 0.15
+                            stock: 1600
+                            last_activity: 0
+                            price_history:
+                              - 0.60
+                          jungle_log:
+                            material: JUNGLE_LOG
+                            category: woods
+                            slot: 3
+                            base_price: 0.65
+                            price_variation: 0.0028
+                            tax_rate: 0.15
+                            stock: 1400
+                            last_activity: 0
+                            price_history:
+                              - 0.65
+                          acacia_log:
+                            material: ACACIA_LOG
+                            category: woods
+                            slot: 4
+                            base_price: 0.70
+                            price_variation: 0.0030
+                            tax_rate: 0.15
+                            stock: 1200
+                            last_activity: 0
+                            price_history:
+                              - 0.70
+                          red_dye:
+                            material: RED_DYE
+                            category: Dyes
+                            slot: 0
+                            base_price: 1.00
+                            price_variation: 0.0050
+                            tax_rate: 0.20
+                            stock: 1000
+                            last_activity: 0
+                            price_history:
+                              - 1.00
+                          blue_dye:
+                            material: BLUE_DYE
+                            category: Dyes
+                            slot: 1
+                            base_price: 1.00
+                            price_variation: 0.0050
+                            tax_rate: 0.20
+                            stock: 1000
+                            last_activity: 0
+                            price_history:
+                              - 1.00
+                          green_dye:
+                            material: GREEN_DYE
+                            category: Dyes
+                            slot: 2
+                            base_price: 1.00
+                            price_variation: 0.0050
+                            tax_rate: 0.20
+                            stock: 1000
+                            last_activity: 0
+                            price_history:
+                              - 1.00
+                          yellow_dye:
+                            material: YELLOW_DYE
+                            category: Dyes
+                            slot: 3
+                            base_price: 1.00
+                            price_variation: 0.0050
+                            tax_rate: 0.20
+                            stock: 1000
+                            last_activity: 0
+                            price_history:
+                              - 1.00
+                          purple_dye:
+                            material: PURPLE_DYE
+                            category: Dyes
+                            slot: 4
+                            base_price: 1.00
+                            price_variation: 0.0050
+                            tax_rate: 0.20
+                            stock: 1000
+                            last_activity: 0
+                            price_history:
+                              - 1.00
+                          wheat:
+                            material: WHEAT
+                            category: Livestock
+                            slot: 0
+                            base_price: 0.30
+                            price_variation: 0.0010
+                            tax_rate: 0.10
+                            stock: 3000
+                            last_activity: 0
+                            price_history:
+                              - 0.30
+                          carrot:
+                            material: CARROT
+                            category: Livestock
+                            slot: 1
+                            base_price: 0.50
+                            price_variation: 0.0020
+                            tax_rate: 0.15
+                            stock: 2000
+                            last_activity: 0
+                            price_history:
+                              - 0.50
+                          potato:
+                            material: POTATO
+                            category: Livestock
+                            slot: 2
+                            base_price: 0.40
+                            price_variation: 0.0015
+                            tax_rate: 0.12
+                            stock: 2500
+                            last_activity: 0
+                            price_history:
+                              - 0.40
+                          beef:
+                            material: BEEF
+                            category: Livestock
+                            slot: 3
+                            base_price: 2.00
+                            price_variation: 0.0075
+                            tax_rate: 0.20
+                            stock: 1000
+                            last_activity: 0
+                            price_history:
+                              - 2.00
+                          chicken:
+                            material: CHICKEN
+                            category: Livestock
+                            slot: 4
+                            base_price: 1.50
+                            price_variation: 0.0050
+                            tax_rate: 0.18
+                            stock: 1200
+                            last_activity: 0
+                            price_history:
+                              - 1.50
+                          white_wool:
+                            material: WHITE_WOOL
+                            category: wools
+                            slot: 0
+                            base_price: 0.75
+                            price_variation: 0.0030
+                            tax_rate: 0.15
+                            stock: 1500
+                            last_activity: 0
+                            price_history:
+                              - 0.75
+                          black_wool:
+                            material: BLACK_WOOL
+                            category: wools
+                            slot: 1
+                            base_price: 1.00
+                            price_variation: 0.0050
+                            tax_rate: 0.20
+                            stock: 1200
+                            last_activity: 0
+                            price_history:
+                              - 1.00
+                          red_wool:
+                            material: RED_WOOL
+                            category: wools
+                            slot: 2
+                            base_price: 1.00
+                            price_variation: 0.0050
+                            tax_rate: 0.20
+                            stock: 1200
+                            last_activity: 0
+                            price_history:
+                              - 1.00
+                          blue_wool:
+                            material: BLUE_WOOL
+                            category: wools
+                            slot: 3
+                            base_price: 1.00
+                            price_variation: 0.0050
+                            tax_rate: 0.20
+                            stock: 1200
+                            last_activity: 0
+                            price_history:
+                              - 1.00
+                          green_wool:
+                            material: GREEN_WOOL
+                            category: wools
+                            slot: 4
+                            base_price: 1.00
+                            price_variation: 0.0050
+                            tax_rate: 0.20
+                            stock: 1200
+                            last_activity: 0
+                            price_history:
+                              - 1.00
+                        """;
 
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(defaultConfig);

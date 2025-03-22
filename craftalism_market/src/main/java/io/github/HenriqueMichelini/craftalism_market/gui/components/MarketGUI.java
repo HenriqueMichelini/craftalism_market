@@ -30,15 +30,18 @@ public class MarketGUI extends BaseGUI {
         configManager.getCategories().values().forEach(this::createCategoryButton);
     }
 
-    private GuiItem createCategoryButton(Category category) {
-        return createButton(
+    private void createCategoryButton(Category category) {
+        GuiItem button = createButton(
                 category.material(),
                 Component.text(category.title(), NamedTextColor.GREEN),
                 List.of(),
                 event -> {
-                        Player player = event.getPlayer();
-                        onCategorySelect.accept(player, category.title());
+                    Player player = event.getPlayer();
+                    onCategorySelect.accept(player, category.category());
                 }
         );
+
+        // Set the button in the specific slot from the category
+        gui.setItem(category.slot(), button);
     }
 }
