@@ -1,36 +1,36 @@
 categories:
   stone:
     material: STONE
-    category: "Natural Resources"
-    title: "Natural Resources"
+    category: natural_resources
+    title: Natural Resources
     slot: 19
   cyan_dye:
     material: CYAN_DYE
-    category: "Dyes"
-    title: "Dyes"
+    category: dyes
+    title: dyes
     slot: 29
   oak_log:
     material: OAK_LOG
-    category: "Woods"
-    title: "Woods"
+    category: woods
+    title: Woods
     slot: 21
   wheat:
     material: WHEAT
-    category: "Livestock"
-    title: "Livestock"
+    category: livestock
+    title: Livestock
     slot: 31
   purple_wool:
     material: PURPLE_WOOL
-    category: "Wools"
-    title: "Wools"
+    category: wools
+    title: Wools
     slot: 23
   string:
     material: STRING
-    category: "Mob Drops"
-    title: "Mob Drops"
+    category: mob_drops
+    title: Mob Drops
     slot: 33
   emerald:
     material: EMERALD
-    category: "Ores"
-    title: "Ores"
+    category: ores
+    title: Ores
     slot: 25

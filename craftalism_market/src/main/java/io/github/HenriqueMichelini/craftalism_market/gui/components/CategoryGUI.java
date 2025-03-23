@@ -37,8 +37,8 @@ public class CategoryGUI extends BaseGUI {
 
     private List<Component> createItemLore(MarketItem item) {
         return List.of(
-                Component.text("Price: " + formatPrice(item.getBasePrice()), NamedTextColor.WHITE),
-                Component.text("Stock: " + item.getAmount(), NamedTextColor.AQUA)
+                Component.text("Price: " + formatPrice(item.getCurrentPrice()), NamedTextColor.WHITE),
+                Component.text("Stock: " + item.getCurrentStock(), NamedTextColor.AQUA)
         );
     }
 

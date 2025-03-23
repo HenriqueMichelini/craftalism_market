@@ -21,11 +21,11 @@ public class MarketUtils {
 
         BigDecimal multiplier = getMultiplier(item, isAdding);
         if (multiplier.compareTo(ONE) == 0) {
-            return item.getBasePrice().multiply(BigDecimal.valueOf(amount));
+            return item.getCurrentPrice().multiply(BigDecimal.valueOf(amount));
         }
 
         BigDecimal powered = multiplier.pow(amount);
-        BigDecimal numerator = item.getBasePrice().multiply(powered.subtract(ONE));
+        BigDecimal numerator = item.getCurrentPrice().multiply(powered.subtract(ONE));
         BigDecimal denominator = multiplier.subtract(ONE);
 
         return numerator.divide(denominator, PRICE_SCALE, RoundingMode.HALF_UP);
@@ -46,7 +46,7 @@ public class MarketUtils {
     public BigDecimal getLastPriceOfItem(MarketItem item, int termNumber, boolean isAdding) {
         validateInput(item, termNumber);
         BigDecimal multiplier = getMultiplier(item, isAdding);
-        return item.getBasePrice()
+        return item.getCurrentPrice()
                 .multiply(multiplier.pow(termNumber))
                 .setScale(PRICE_SCALE, RoundingMode.HALF_UP);
     }

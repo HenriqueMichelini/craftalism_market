@@ -70,7 +70,7 @@ public class TransactionHandler {
     }
 
     private int adjustAmountBasedOnStock(MarketItem item, int requestedAmount) {
-        int availableStock = item.getAmount();
+        int availableStock = item.getCurrentStock();
         if (availableStock == 0) {
             sendError("There is no stock available");
             return 0;
@@ -111,8 +111,8 @@ public class TransactionHandler {
 
     private void updateMarketItemPriceAndStock(MarketItem item, int soldAmount, boolean isBuy) {
         BigDecimal lastPrice = marketUtils.getLastPriceOfItem(item, soldAmount, isBuy);
-        item.setBasePrice(lastPrice);
-        item.setAmount(item.getAmount() + (isBuy ? -soldAmount : soldAmount));
+        item.setCurrentPrice(lastPrice);
+        item.setCurrentStock(item.getCurrentStock() + (isBuy ? -soldAmount : soldAmount));
         marketUtils.updatePriceHistory(item, lastPrice);
     }
 
@@ -140,7 +140,7 @@ public class TransactionHandler {
 
     private TransactionResult calculateTransactionResult(MarketItem item, int amount) {
         BigDecimal totalBeforeTax = calculateTotalPrice(item, amount, false);
-        BigDecimal tax = totalBeforeTax.multiply(item.getSellTax())
+        BigDecimal tax = totalBeforeTax.multiply(item.getTaxRate())
                 .setScale(2, RoundingMode.HALF_UP);
         BigDecimal earningsAfterTax = totalBeforeTax.subtract(tax);
         return new TransactionResult(earningsAfterTax, tax);

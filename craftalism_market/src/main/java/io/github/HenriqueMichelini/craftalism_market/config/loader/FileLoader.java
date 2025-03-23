@@ -55,7 +55,7 @@ public class FileLoader {
                           cyan_dye:
                             material: CYAN_DYE
                             category: dyes
-                            title: Dyes
+                            title: dyes
                             slot: 29
                           oak_log:
                             material: OAK_LOG
@@ -97,9 +97,11 @@ public class FileLoader {
                             category: natural_resources
                             slot: 0
                             base_price: 0.37
+                            current_price: 0.37
                             price_variation: 0.0015
                             tax_rate: 0.15
-                            stock: 2000
+                            base_stock: 2000
+                            current_stock: 2000
                             last_activity: 0
                             price_history:
                               - 0.37
@@ -108,9 +110,11 @@ public class FileLoader {
                             category: natural_resources
                             slot: 1
                             base_price: 0.1
+                            current_price: 0.1
                             price_variation: 0.0005
                             tax_rate: 0.1
-                            stock: 5000
+                            base_stock: 5000
+                            current_stock: 5000
                             last_activity: 0
                             price_history:
                               - 0.1
@@ -119,9 +123,11 @@ public class FileLoader {
                             category: natural_resources
                             slot: 2
                             base_price: 0.25
+                            current_price: 0.25
                             price_variation: 0.001
                             tax_rate: 0.12
-                            stock: 3000
+                            base_stock: 3000
+                            current_stock: 3000
                             last_activity: 0
                             price_history:
                               - 0.25
@@ -130,9 +136,11 @@ public class FileLoader {
                             category: natural_resources
                             slot: 3
                             base_price: 0.2
+                            current_price: 0.2
                             price_variation: 0.0008
                             tax_rate: 0.12
-                            stock: 2500
+                            base_stock: 2500
+                            current_stock: 2500
                             last_activity: 0
                             price_history:
                               - 0.2
@@ -141,9 +149,11 @@ public class FileLoader {
                             category: natural_resources
                             slot: 4
                             base_price: 0.5
+                            current_price: 0.5
                             price_variation: 0.002
                             tax_rate: 0.15
-                            stock: 1000
+                            base_stock: 1000
+                            current_stock: 1000
                             last_activity: 0
                             price_history:
                               - 0.5
@@ -152,9 +162,11 @@ public class FileLoader {
                             category: ores
                             slot: 0
                             base_price: 1.00
+                            current_price: 1.00
                             price_variation: 0.0050
                             tax_rate: 0.20
-                            stock: 1500
+                            base_stock: 1500
+                            current_stock: 1500
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -163,9 +175,11 @@ public class FileLoader {
                             category: ores
                             slot: 1
                             base_price: 5.00
+                            current_price: 5.00
                             price_variation: 0.0100
                             tax_rate: 0.25
-                            stock: 800
+                            base_stock: 800
+                            current_stock: 800
                             last_activity: 0
                             price_history:
                               - 5.00
@@ -174,9 +188,11 @@ public class FileLoader {
                             category: ores
                             slot: 2
                             base_price: 10.00
+                            current_price: 10.00
                             price_variation: 0.0200
                             tax_rate: 0.30
-                            stock: 500
+                            base_stock: 500
+                            current_stock: 500
                             last_activity: 0
                             price_history:
                               - 10.00
@@ -185,9 +201,11 @@ public class FileLoader {
                             category: ores
                             slot: 3
                             base_price: 50.00
+                            current_price: 50.00
                             price_variation: 0.0500
                             tax_rate: 0.35
-                            stock: 200
+                            base_stock: 200
+                            current_stock: 200
                             last_activity: 0
                             price_history:
                               - 50.00
@@ -196,9 +214,11 @@ public class FileLoader {
                             category: ores
                             slot: 4
                             base_price: 100.00
+                            current_price: 100.00
                             price_variation: 0.1000
                             tax_rate: 0.40
-                            stock: 100
+                            base_stock: 100
+                            current_stock: 100
                             last_activity: 0
                             price_history:
                               - 100.00
@@ -207,9 +227,11 @@ public class FileLoader {
                             category: mob_drops
                             slot: 0
                             base_price: 0.50
+                            current_price: 0.50
                             price_variation: 0.0020
                             tax_rate: 0.15
-                            stock: 1500
+                            base_stock: 1500
+                            current_stock: 1500
                             last_activity: 0
                             price_history:
                               - 0.50
@@ -218,9 +240,11 @@ public class FileLoader {
                             category: mob_drops
                             slot: 1
                             base_price: 1.50
+                            current_price: 1.50
                             price_variation: 0.0050
                             tax_rate: 0.20
-                            stock: 1000
+                            base_stock: 1000
+                            current_stock: 1000
                             last_activity: 0
                             price_history:
                               - 1.50
@@ -229,9 +253,11 @@ public class FileLoader {
                             category: mob_drops
                             slot: 2
                             base_price: 0.75
+                            current_price: 0.75
                             price_variation: 0.0030
                             tax_rate: 0.18
-                            stock: 1200
+                            base_stock: 1200
+                            current_stock: 1200
                             last_activity: 0
                             price_history:
                               - 0.75
@@ -240,9 +266,11 @@ public class FileLoader {
                             category: mob_drops
                             slot: 3
                             base_price: 2.00
+                            current_price: 2.00
                             price_variation: 0.0075
                             tax_rate: 0.22
-                            stock: 800
+                            base_stock: 800
+                            current_stock: 800
                             last_activity: 0
                             price_history:
                               - 2.00
@@ -251,9 +279,11 @@ public class FileLoader {
                             category: mob_drops
                             slot: 4
                             base_price: 10.00
+                            current_price: 10.00
                             price_variation: 0.0200
                             tax_rate: 0.30
-                            stock: 300
+                            base_stock: 300
+                            current_stock: 300
                             last_activity: 0
                             price_history:
                               - 10.00
@@ -262,9 +292,11 @@ public class FileLoader {
                             category: woods
                             slot: 0
                             base_price: 0.50
+                            current_price: 0.50
                             price_variation: 0.0020
                             tax_rate: 0.15
-                            stock: 2000
+                            base_stock: 2000
+                            current_stock: 2000
                             last_activity: 0
                             price_history:
                               - 0.50
@@ -273,9 +305,11 @@ public class FileLoader {
                             category: woods
                             slot: 1
                             base_price: 0.55
+                            current_price: 0.55
                             price_variation: 0.0022
                             tax_rate: 0.15
-                            stock: 1800
+                            base_stock: 1800
+                            current_stock: 1800
                             last_activity: 0
                             price_history:
                               - 0.55
@@ -284,9 +318,11 @@ public class FileLoader {
                             category: woods
                             slot: 2
                             base_price: 0.60
+                            current_price: 0.60
                             price_variation: 0.0025
                             tax_rate: 0.15
-                            stock: 1600
+                            base_stock: 1600
+                            current_stock: 1600
                             last_activity: 0
                             price_history:
                               - 0.60
@@ -295,9 +331,11 @@ public class FileLoader {
                             category: woods
                             slot: 3
                             base_price: 0.65
+                            current_price: 0.65
                             price_variation: 0.0028
                             tax_rate: 0.15
-                            stock: 1400
+                            base_stock: 1400
+                            current_stock: 1400
                             last_activity: 0
                             price_history:
                               - 0.65
@@ -306,119 +344,141 @@ public class FileLoader {
                             category: woods
                             slot: 4
                             base_price: 0.70
+                            current_price: 0.70
                             price_variation: 0.0030
                             tax_rate: 0.15
-                            stock: 1200
+                            base_stock: 1200
+                            current_stock: 1200
                             last_activity: 0
                             price_history:
                               - 0.70
                           red_dye:
                             material: RED_DYE
-                            category: Dyes
+                            category: dyes
                             slot: 0
                             base_price: 1.00
+                            current_price: 1.00
                             price_variation: 0.0050
                             tax_rate: 0.20
-                            stock: 1000
+                            base_stock: 1000
+                            current_stock: 1000
                             last_activity: 0
                             price_history:
                               - 1.00
                           blue_dye:
                             material: BLUE_DYE
-                            category: Dyes
+                            category: dyes
                             slot: 1
                             base_price: 1.00
+                            current_price: 1.00
                             price_variation: 0.0050
                             tax_rate: 0.20
-                            stock: 1000
+                            base_stock: 1000
+                            current_stock: 1000
                             last_activity: 0
                             price_history:
                               - 1.00
                           green_dye:
                             material: GREEN_DYE
-                            category: Dyes
+                            category: dyes
                             slot: 2
                             base_price: 1.00
+                            current_price: 1.00
                             price_variation: 0.0050
                             tax_rate: 0.20
-                            stock: 1000
+                            base_stock: 1000
+                            current_stock: 1000
                             last_activity: 0
                             price_history:
                               - 1.00
                           yellow_dye:
                             material: YELLOW_DYE
-                            category: Dyes
+                            category: dyes
                             slot: 3
                             base_price: 1.00
+                            current_price: 1.00
                             price_variation: 0.0050
                             tax_rate: 0.20
-                            stock: 1000
+                            base_stock: 1000
+                            current_stock: 1000
                             last_activity: 0
                             price_history:
                               - 1.00
                           purple_dye:
                             material: PURPLE_DYE
-                            category: Dyes
+                            category: dyes
                             slot: 4
                             base_price: 1.00
+                            current_price: 1.00
                             price_variation: 0.0050
                             tax_rate: 0.20
-                            stock: 1000
+                            base_stock: 1000
+                            current_stock: 1000
                             last_activity: 0
                             price_history:
                               - 1.00
                           wheat:
                             material: WHEAT
-                            category: Livestock
+                            category: livestock
                             slot: 0
                             base_price: 0.30
+                            current_price: 0.30
                             price_variation: 0.0010
                             tax_rate: 0.10
-                            stock: 3000
+                            base_stock: 3000
+                            current_stock: 3000
                             last_activity: 0
                             price_history:
                               - 0.30
                           carrot:
                             material: CARROT
-                            category: Livestock
+                            category: livestock
                             slot: 1
                             base_price: 0.50
+                            current_price: 0.50
                             price_variation: 0.0020
                             tax_rate: 0.15
-                            stock: 2000
+                            base_stock: 2000
+                            current_stock: 2000
                             last_activity: 0
                             price_history:
                               - 0.50
                           potato:
                             material: POTATO
-                            category: Livestock
+                            category: livestock
                             slot: 2
                             base_price: 0.40
+                            current_price: 0.40
                             price_variation: 0.0015
                             tax_rate: 0.12
-                            stock: 2500
+                            base_stock: 2500
+                            current_stock: 2500
                             last_activity: 0
                             price_history:
                               - 0.40
                           beef:
                             material: BEEF
-                            category: Livestock
+                            category: livestock
                             slot: 3
                             base_price: 2.00
+                            current_price: 2.00
                             price_variation: 0.0075
                             tax_rate: 0.20
-                            stock: 1000
+                            base_stock: 1000
+                            current_stock: 1000
                             last_activity: 0
                             price_history:
                               - 2.00
                           chicken:
                             material: CHICKEN
-                            category: Livestock
+                            category: livestock
                             slot: 4
                             base_price: 1.50
+                            current_price: 1.50
                             price_variation: 0.0050
                             tax_rate: 0.18
-                            stock: 1200
+                            base_stock: 1200
+                            current_stock: 1200
                             last_activity: 0
                             price_history:
                               - 1.50
@@ -427,9 +487,11 @@ public class FileLoader {
                             category: wools
                             slot: 0
                             base_price: 0.75
+                            current_price: 0.75
                             price_variation: 0.0030
                             tax_rate: 0.15
-                            stock: 1500
+                            base_stock: 1500
+                            current_stock: 1500
                             last_activity: 0
                             price_history:
                               - 0.75
@@ -438,9 +500,11 @@ public class FileLoader {
                             category: wools
                             slot: 1
                             base_price: 1.00
+                            current_price: 1.00
                             price_variation: 0.0050
                             tax_rate: 0.20
-                            stock: 1200
+                            base_stock: 1200
+                            current_stock: 1200
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -449,9 +513,11 @@ public class FileLoader {
                             category: wools
                             slot: 2
                             base_price: 1.00
+                            current_price: 1.00
                             price_variation: 0.0050
                             tax_rate: 0.20
-                            stock: 1200
+                            base_stock: 1200
+                            current_stock: 1200
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -460,9 +526,11 @@ public class FileLoader {
                             category: wools
                             slot: 3
                             base_price: 1.00
+                            current_price: 1.00
                             price_variation: 0.0050
                             tax_rate: 0.20
-                            stock: 1200
+                            base_stock: 1200
+                            current_stock: 1200
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -471,9 +539,11 @@ public class FileLoader {
                             category: wools
                             slot: 4
                             base_price: 1.00
+                            current_price: 1.00
                             price_variation: 0.0050
                             tax_rate: 0.20
-                            stock: 1200
+                            base_stock: 1200
+                            current_stock: 1200
                             last_activity: 0
                             price_history:
                               - 1.00

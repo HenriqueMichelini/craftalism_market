@@ -12,44 +12,57 @@ public class MarketItem {
     private final Material material;
     private final int slot;
     private final BigDecimal priceVariationPerOperation;
-    private final BigDecimal sellTax;
+    private final BigDecimal taxRate;
+    private final BigDecimal basePrice;
+    private final int baseStock;
 
     // Mutable fields
-    private BigDecimal basePrice;
-    private int amount;
+    private BigDecimal currentPrice;
+    private int currentStock;
     private long lastActivity;
     private List<BigDecimal> priceHistory;
 
-    public MarketItem(String category,
-                      Material material,
-                      int slot,
-                      BigDecimal basePrice,
-                      BigDecimal priceVariationPerOperation,
-                      BigDecimal sellTax,
-                      int amount,
-                      long lastActivity,
-                      List<BigDecimal> priceHistory) {
-        this.category = category;
-        this.material = material;
-        this.slot = slot;
-        this.basePrice = basePrice;
-        this.priceVariationPerOperation = priceVariationPerOperation;
-        this.sellTax = sellTax;
-        this.amount = amount;
-        this.lastActivity = lastActivity;
-        this.priceHistory = priceHistory;
+    public MarketItem
+    (
+            String              category,
+            Material            material,
+            int                 slot,
+            BigDecimal          basePrice,
+            BigDecimal          currentPrice,
+            BigDecimal          priceVariationPerOperation,
+            BigDecimal          taxRate,
+            int                 baseStock,
+            int                 currentStock,
+            long                lastActivity,
+            List<BigDecimal>    priceHistory
+    )
+    {
+            this.category = category;
+            this.material = material;
+            this.slot = slot;
+            this.basePrice = basePrice;
+            this.currentPrice = currentPrice;
+            this.priceVariationPerOperation = priceVariationPerOperation;
+            this.taxRate = taxRate;
+            this.baseStock = baseStock;
+            this.currentStock = currentStock;
+            this.lastActivity = lastActivity;
+            this.priceHistory = priceHistory;
     }
 
     // Getters (all fields) -------------------------------------
-    public String getCategory() { return category; }
-    public Material getMaterial() { return material; }
-    public int getSlot() { return slot; }
-    public BigDecimal getBasePrice() { return basePrice; }
-    public BigDecimal getPriceVariationPerOperation() { return priceVariationPerOperation; }
-    public BigDecimal getSellTax() { return sellTax; }
-    public int getAmount() { return amount; }
-    public long getLastActivity() { return lastActivity; }
-    public List<BigDecimal> getPriceHistory() { return priceHistory; }
+    public String           getCategory()                   { return category; }
+    public Material         getMaterial()                   { return material; }
+    public int              getSlot()                       { return slot; }
+    public BigDecimal       getBasePrice()                  { return basePrice; }
+    public BigDecimal       getCurrentPrice()               { return currentPrice; }
+    public BigDecimal       getPriceVariationPerOperation() { return priceVariationPerOperation; }
+    public BigDecimal       getTaxRate()                    { return taxRate; }
+    public int              getBaseStock()                  { return baseStock; }
+    public int              getCurrentStock()               { return currentStock; }
+    public long             getLastActivity()               { return lastActivity; }
+    public List<BigDecimal> getPriceHistory()               { return priceHistory; }
+
     public String getName() {
         String translationKey = material.isBlock()
                 ? "block.minecraft." + material.name().toLowerCase()
@@ -59,9 +72,10 @@ public class MarketItem {
 
         return PlainTextComponentSerializer.plainText().serialize(translatedComponent);
     }
+
     // Setters (mutable fields only) ----------------------------
-    public void setBasePrice(BigDecimal basePrice) { this.basePrice = basePrice; }
-    public void setAmount(int amount) { this.amount = amount; }
-    public void setLastActivity(long lastActivity) { this.lastActivity = lastActivity; }
-    public void setPriceHistory(List<BigDecimal> priceHistory) { this.priceHistory = priceHistory; }
+    public void setCurrentPrice(BigDecimal currentPrice)        { this.currentPrice = currentPrice; }
+    public void setCurrentStock(int currentStock)               { this.currentStock = currentStock; }
+    public void setLastActivity(long lastActivity)              { this.lastActivity = lastActivity; }
+    public void setPriceHistory(List<BigDecimal> priceHistory)  { this.priceHistory = priceHistory; }
 }

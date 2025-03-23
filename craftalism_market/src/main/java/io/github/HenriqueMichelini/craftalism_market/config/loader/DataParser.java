@@ -55,9 +55,11 @@ public class DataParser {
                     Material.matchMaterial(Objects.requireNonNull(itemSection.getString("material"))),
                     itemSection.getInt("slot"),
                     BigDecimal.valueOf(itemSection.getDouble("base_price")),
+                    BigDecimal.valueOf(itemSection.getDouble("current_price")),
                     BigDecimal.valueOf(itemSection.getDouble("price_variation")),
                     BigDecimal.valueOf(itemSection.getDouble("tax_rate")),
-                    itemSection.getInt("stock"),
+                    itemSection.getInt("base_stock"),
+                    itemSection.getInt("current_stock"),
                     itemSection.getLong("last_activity"), // Add this line
                     parsePriceHistory(itemSection) // Add this helper method
             );

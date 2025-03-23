@@ -9,6 +9,8 @@ import io.github.HenriqueMichelini.craftalism_market.logic.MarketUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
+
 import java.util.Objects;
 
 public class CraftalismMarket extends JavaPlugin {
@@ -32,6 +34,8 @@ public class CraftalismMarket extends JavaPlugin {
         initializeComponents();
         registerCommands();
         getLogger().info("Craftalism Market has been enabled!");
+
+        //BukkitScheduler scheduler = this.getServer().getScheduler();
     }
 
     private boolean setupEconomy() {

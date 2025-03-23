@@ -95,9 +95,9 @@ public class TradeGUI extends BaseGUI {
 
     private List<Component> createDetailedLore() {
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Buy Price: " + formatPrice(item.getBasePrice()), NamedTextColor.GREEN));
-        lore.add(Component.text("Sell Tax: " + formatPercentage(item.getSellTax()), NamedTextColor.RED));
-        lore.add(Component.text("Stock: " + item.getAmount(), NamedTextColor.AQUA));
+        lore.add(Component.text("Buy Price: " + formatPrice(item.getCurrentPrice()), NamedTextColor.GREEN));
+        lore.add(Component.text("Sell Tax: " + formatPercentage(item.getTaxRate()), NamedTextColor.RED));
+        lore.add(Component.text("Stock: " + item.getCurrentStock(), NamedTextColor.AQUA));
         lore.add(Component.empty());
         addPriceHistory(lore);
         return lore;
@@ -138,7 +138,7 @@ public class TradeGUI extends BaseGUI {
     private List<Component> createTransactionLore(String action) {
         BigDecimal totalPrice = calculateTotalPrice(action);
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Price/Unit: " + formatPrice(item.getBasePrice()), NamedTextColor.WHITE));
+        lore.add(Component.text("Price/Unit: " + formatPrice(item.getCurrentPrice()), NamedTextColor.WHITE));
         lore.add(Component.text("Quantity: " + selectedAmount, NamedTextColor.WHITE));
 
         if ("sell".equalsIgnoreCase(action)) {
@@ -191,7 +191,7 @@ public class TradeGUI extends BaseGUI {
     }
 
     private BigDecimal calculateTaxAmount(BigDecimal totalPrice) {
-        return totalPrice.multiply(item.getSellTax()).setScale(2, RoundingMode.HALF_UP);
+        return totalPrice.multiply(item.getTaxRate()).setScale(2, RoundingMode.HALF_UP);
     }
 
     private void handleBuy(Player player) {
