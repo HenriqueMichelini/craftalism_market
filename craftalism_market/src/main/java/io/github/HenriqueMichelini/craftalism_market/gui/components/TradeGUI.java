@@ -8,6 +8,7 @@ import io.github.HenriqueMichelini.craftalism_market.gui.manager.GuiManager;
 import io.github.HenriqueMichelini.craftalism_market.logic.MarketUtils;
 import io.github.HenriqueMichelini.craftalism_market.core.TransactionHandler;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
+import io.github.HenriqueMichelini.craftalism_market.stock.StockHandler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -42,6 +43,7 @@ public class TradeGUI extends BaseGUI {
     private final ConfigManager configManager;
     private final MarketUtils marketUtils;
     private final GuiManager guiManager;
+    private final StockHandler stockHandler;
     private int selectedAmount = MIN_AMOUNT;
 
     // Region: Constructor
@@ -50,7 +52,8 @@ public class TradeGUI extends BaseGUI {
             CraftalismMarket plugin,
             ConfigManager configManager,
             MarketUtils marketUtils,
-            Consumer<Player> onBack, GuiManager guiManager
+            Consumer<Player> onBack, GuiManager guiManager,
+            StockHandler stockHandler
     ) {
         super("Market", 6, plugin);
         this.itemName = itemName;
@@ -58,6 +61,7 @@ public class TradeGUI extends BaseGUI {
         this.marketUtils = marketUtils;
         this.item = validateItem(itemName);
         this.guiManager = guiManager;
+        this.stockHandler = stockHandler;
         initialize(onBack);
     }
 
@@ -199,7 +203,8 @@ public class TradeGUI extends BaseGUI {
                 player,
                 plugin.getEconomyManager(),
                 configManager,
-                marketUtils
+                marketUtils,
+                stockHandler
         );
 
         if (transactionHandler.performBuyTransaction(itemName, selectedAmount)) {
@@ -216,7 +221,8 @@ public class TradeGUI extends BaseGUI {
                 player,
                 plugin.getEconomyManager(),
                 configManager,
-                marketUtils
+                marketUtils,
+                stockHandler
         );
 
         if (transactionHandler.performSellTransaction(itemName, selectedAmount)) {

@@ -30,6 +30,7 @@ public class DataParser {
 
         for (String key : section.getKeys(false)) {
             ConfigurationSection catSection = section.getConfigurationSection(key);
+            assert catSection != null;
             Category category = new Category(
                     Material.matchMaterial(Objects.requireNonNull(catSection.getString("material"))),
                     catSection.getString("category"),
@@ -60,6 +61,8 @@ public class DataParser {
                     BigDecimal.valueOf(itemSection.getDouble("tax_rate")),
                     itemSection.getInt("base_stock"),
                     itemSection.getInt("current_stock"),
+                    itemSection.getDouble("stock_regen_rate"),
+                    itemSection.getLong("next_update_time"),
                     itemSection.getLong("last_activity"), // Add this line
                     parsePriceHistory(itemSection) // Add this helper method
             );

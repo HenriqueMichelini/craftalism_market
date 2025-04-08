@@ -14,11 +14,13 @@ public class MarketItem {
     private final BigDecimal priceVariationPerOperation;
     private final BigDecimal taxRate;
     private final BigDecimal basePrice;
-    private final int baseStock;
 
     // Mutable fields
     private BigDecimal currentPrice;
     private int currentStock;
+    private int baseStock;
+    private double stockRegenRate;
+    private long nextUpdateTime;
     private long lastActivity;
     private List<BigDecimal> priceHistory;
 
@@ -33,6 +35,8 @@ public class MarketItem {
             BigDecimal          taxRate,
             int                 baseStock,
             int                 currentStock,
+            double              stockRegenRate,
+            long                nextUpdateTime,
             long                lastActivity,
             List<BigDecimal>    priceHistory
     )
@@ -46,6 +50,8 @@ public class MarketItem {
             this.taxRate = taxRate;
             this.baseStock = baseStock;
             this.currentStock = currentStock;
+            this.stockRegenRate = stockRegenRate;
+            this.nextUpdateTime = nextUpdateTime;
             this.lastActivity = lastActivity;
             this.priceHistory = priceHistory;
     }
@@ -60,6 +66,8 @@ public class MarketItem {
     public BigDecimal       getTaxRate()                    { return taxRate; }
     public int              getBaseStock()                  { return baseStock; }
     public int              getCurrentStock()               { return currentStock; }
+    public double           getStockRegenRate()             { return  stockRegenRate; }
+    public long             getNextUpdateTime()             { return nextUpdateTime; }
     public long             getLastActivity()               { return lastActivity; }
     public List<BigDecimal> getPriceHistory()               { return priceHistory; }
 
@@ -76,6 +84,9 @@ public class MarketItem {
     // Setters (mutable fields only) ----------------------------
     public void setCurrentPrice(BigDecimal currentPrice)        { this.currentPrice = currentPrice; }
     public void setCurrentStock(int currentStock)               { this.currentStock = currentStock; }
+    public void setBaseStock(int baseStock)                     { this.baseStock = baseStock;       }
+    public void setStockRegenRate(double stockRegenRate)        { this.stockRegenRate = stockRegenRate; }
+    public void setNextUpdateTime(long nextUpdateTime)          { this.nextUpdateTime = nextUpdateTime; }
     public void setLastActivity(long lastActivity)              { this.lastActivity = lastActivity; }
     public void setPriceHistory(List<BigDecimal> priceHistory)  { this.priceHistory = priceHistory; }
 }

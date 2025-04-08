@@ -6,10 +6,11 @@ import io.github.HenriqueMichelini.craftalism_market.command.MarketCommand;
 import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.gui.manager.GuiManager;
 import io.github.HenriqueMichelini.craftalism_market.logic.MarketUtils;
+import io.github.HenriqueMichelini.craftalism_market.stock.StockHandler;
+import io.github.HenriqueMichelini.craftalism_market.task.StockUpdateTask;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.Objects;
 
@@ -20,6 +21,7 @@ public class CraftalismMarket extends JavaPlugin {
     private EconomyManager economyManager;
     private GuiManager guiManager;
     private MarketUtils marketUtils;
+    private StockHandler stockHandler;
 
     @Override
     public void onEnable() {
@@ -31,11 +33,13 @@ public class CraftalismMarket extends JavaPlugin {
             return;
         }
 
+        // Fix 2: Change initialization order
+        configManager = new ConfigManager(getDataFolder());
+        initializeStockHandler();  // Must come first
         initializeComponents();
         registerCommands();
-        getLogger().info("Craftalism Market has been enabled!");
 
-        //BukkitScheduler scheduler = this.getServer().getScheduler();
+        getLogger().info("Craftalism Market has been enabled!");
     }
 
     private boolean setupEconomy() {
@@ -48,13 +52,17 @@ public class CraftalismMarket extends JavaPlugin {
         return true;
     }
 
+    // Update initializeComponents() (remove configManager creation)
     private void initializeComponents() {
-        // Initialize config system
-        configManager = new ConfigManager(getDataFolder());
+        // Fix 3: StockHandler is now initialized first
+        marketUtils = new MarketUtils(stockHandler);
+        guiManager = new GuiManager(configManager, this, marketUtils, stockHandler);
+    }
 
-        // Initialize market logic
-        marketUtils = new MarketUtils();
-        guiManager = new GuiManager(configManager, this, marketUtils);
+    private void initializeStockHandler() {
+        this.stockHandler = new StockHandler(configManager);
+        long checkIntervalTicks = 20L; // Check every 1 second (20 ticks)
+        new StockUpdateTask(stockHandler).runTaskTimer(this, 0L, checkIntervalTicks);
     }
 
     private void registerCommands() {
@@ -73,6 +81,10 @@ public class CraftalismMarket extends JavaPlugin {
 
     public ConfigManager getConfigManager() {
         return configManager;
+    }
+
+    public StockHandler getStockHandler() {
+        return stockHandler;
     }
     //endregion
 }

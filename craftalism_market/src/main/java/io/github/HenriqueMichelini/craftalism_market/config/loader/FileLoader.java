@@ -13,14 +13,48 @@ public class FileLoader {
     private final File configFolder;
     private YamlConfiguration categoriesConfig;
     private YamlConfiguration itemsConfig;
+    private YamlConfiguration mainConfig;
 
     public FileLoader(File configFolder) {
         this.configFolder = configFolder;
     }
 
+
     public void loadFiles() {
+        loadMainConfig();
         loadCategories();
         loadItems();
+    }
+
+    private void loadMainConfig() {
+        File file = new File(configFolder, "config.yml");
+        try {
+            if (!file.exists()) createDefaultConfig(file);
+            mainConfig = YamlConfiguration.loadConfiguration(file);
+        } catch (IOException | InvalidConfigurationException e) {
+            LOGGER.log(Level.SEVERE, "Failed to load main config", e);
+        }
+    }
+
+    private void createDefaultConfig(File file) throws IOException, InvalidConfigurationException {
+        String defaultConfig = """
+        # Stock update interval in minutes
+        stock-update-interval: 10
+        
+        # Maximum stock overflow multiplier (2.0 = 200% of base stock)
+        max-stock-overflow: 2.0
+        
+        # Number of decimal places for prices
+        price-decimal-places: 2
+        """;
+
+        YamlConfiguration config = new YamlConfiguration();
+        config.loadFromString(defaultConfig);
+        config.save(file);
+    }
+
+    public YamlConfiguration getMainConfig() {
+        return mainConfig;
     }
 
     private void loadCategories() {
@@ -102,6 +136,7 @@ public class FileLoader {
                             tax_rate: 0.15
                             base_stock: 2000
                             current_stock: 2000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.37
@@ -115,6 +150,7 @@ public class FileLoader {
                             tax_rate: 0.1
                             base_stock: 5000
                             current_stock: 5000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.1
@@ -128,6 +164,7 @@ public class FileLoader {
                             tax_rate: 0.12
                             base_stock: 3000
                             current_stock: 3000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.25
@@ -141,6 +178,7 @@ public class FileLoader {
                             tax_rate: 0.12
                             base_stock: 2500
                             current_stock: 2500
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.2
@@ -154,6 +192,7 @@ public class FileLoader {
                             tax_rate: 0.15
                             base_stock: 1000
                             current_stock: 1000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.5
@@ -167,6 +206,7 @@ public class FileLoader {
                             tax_rate: 0.20
                             base_stock: 1500
                             current_stock: 1500
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -180,6 +220,7 @@ public class FileLoader {
                             tax_rate: 0.25
                             base_stock: 800
                             current_stock: 800
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 5.00
@@ -193,6 +234,7 @@ public class FileLoader {
                             tax_rate: 0.30
                             base_stock: 500
                             current_stock: 500
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 10.00
@@ -206,6 +248,7 @@ public class FileLoader {
                             tax_rate: 0.35
                             base_stock: 200
                             current_stock: 200
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 50.00
@@ -219,6 +262,7 @@ public class FileLoader {
                             tax_rate: 0.40
                             base_stock: 100
                             current_stock: 100
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 100.00
@@ -232,6 +276,7 @@ public class FileLoader {
                             tax_rate: 0.15
                             base_stock: 1500
                             current_stock: 1500
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.50
@@ -245,6 +290,7 @@ public class FileLoader {
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 1.50
@@ -258,6 +304,7 @@ public class FileLoader {
                             tax_rate: 0.18
                             base_stock: 1200
                             current_stock: 1200
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.75
@@ -271,6 +318,7 @@ public class FileLoader {
                             tax_rate: 0.22
                             base_stock: 800
                             current_stock: 800
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 2.00
@@ -284,6 +332,7 @@ public class FileLoader {
                             tax_rate: 0.30
                             base_stock: 300
                             current_stock: 300
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 10.00
@@ -297,6 +346,7 @@ public class FileLoader {
                             tax_rate: 0.15
                             base_stock: 2000
                             current_stock: 2000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.50
@@ -310,6 +360,7 @@ public class FileLoader {
                             tax_rate: 0.15
                             base_stock: 1800
                             current_stock: 1800
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.55
@@ -323,6 +374,7 @@ public class FileLoader {
                             tax_rate: 0.15
                             base_stock: 1600
                             current_stock: 1600
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.60
@@ -336,6 +388,7 @@ public class FileLoader {
                             tax_rate: 0.15
                             base_stock: 1400
                             current_stock: 1400
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.65
@@ -349,6 +402,7 @@ public class FileLoader {
                             tax_rate: 0.15
                             base_stock: 1200
                             current_stock: 1200
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.70
@@ -362,6 +416,7 @@ public class FileLoader {
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -375,6 +430,7 @@ public class FileLoader {
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -388,6 +444,7 @@ public class FileLoader {
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -401,6 +458,7 @@ public class FileLoader {
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -414,6 +472,7 @@ public class FileLoader {
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -427,6 +486,7 @@ public class FileLoader {
                             tax_rate: 0.10
                             base_stock: 3000
                             current_stock: 3000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.30
@@ -440,6 +500,7 @@ public class FileLoader {
                             tax_rate: 0.15
                             base_stock: 2000
                             current_stock: 2000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.50
@@ -453,6 +514,7 @@ public class FileLoader {
                             tax_rate: 0.12
                             base_stock: 2500
                             current_stock: 2500
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.40
@@ -466,6 +528,7 @@ public class FileLoader {
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 2.00
@@ -479,6 +542,7 @@ public class FileLoader {
                             tax_rate: 0.18
                             base_stock: 1200
                             current_stock: 1200
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 1.50
@@ -492,6 +556,7 @@ public class FileLoader {
                             tax_rate: 0.15
                             base_stock: 1500
                             current_stock: 1500
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 0.75
@@ -505,6 +570,7 @@ public class FileLoader {
                             tax_rate: 0.20
                             base_stock: 1200
                             current_stock: 1200
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -518,6 +584,7 @@ public class FileLoader {
                             tax_rate: 0.20
                             base_stock: 1200
                             current_stock: 1200
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -531,6 +598,7 @@ public class FileLoader {
                             tax_rate: 0.20
                             base_stock: 1200
                             current_stock: 1200
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 1.00
@@ -544,6 +612,7 @@ public class FileLoader {
                             tax_rate: 0.20
                             base_stock: 1200
                             current_stock: 1200
+                            next_update_time: 0
                             last_activity: 0
                             price_history:
                               - 1.00

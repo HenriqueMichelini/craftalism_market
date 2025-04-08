@@ -5,6 +5,7 @@ import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.logic.InventoryHandler;
 import io.github.HenriqueMichelini.craftalism_market.logic.MarketUtils;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
+import io.github.HenriqueMichelini.craftalism_market.stock.StockHandler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -20,8 +21,10 @@ public class TransactionHandler {
     private final MarketUtils marketUtils;
     private final ConfigManager configManager;
     private final Player player;
+    private final StockHandler stockHandler; // Add this field
 
-    public TransactionHandler(Player player, EconomyManager economyManager, ConfigManager configManager, MarketUtils marketUtils) {
+    public TransactionHandler(Player player, EconomyManager economyManager, ConfigManager configManager, MarketUtils marketUtils, StockHandler stockHandler) {
+        this.stockHandler = stockHandler;
         if (economyManager == null || marketUtils == null || configManager == null || player == null) {
             throw new IllegalArgumentException("All parameters must be non-null");
         }
@@ -109,11 +112,12 @@ public class TransactionHandler {
         return true;
     }
 
-    private void updateMarketItemPriceAndStock(MarketItem item, int soldAmount, boolean isBuy) {
+    public void updateMarketItemPriceAndStock(MarketItem item, int soldAmount, boolean isBuy) {
         BigDecimal lastPrice = marketUtils.getLastPriceOfItem(item, soldAmount, isBuy);
         item.setCurrentPrice(lastPrice);
         item.setCurrentStock(item.getCurrentStock() + (isBuy ? -soldAmount : soldAmount));
         marketUtils.updatePriceHistory(item, lastPrice);
+        stockHandler.markItemForUpdate(item);
     }
 
     private int adjustAmountBasedOnInventory(MarketItem item, int requestedAmount) {

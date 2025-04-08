@@ -5,7 +5,6 @@ items:
     slot: 0
     base_price: 0.37
     current_price: 0.37
-    price_variation: 0.0015
     tax_rate: 0.15
     base_stock: 2000
     current_stock: 2000
@@ -18,7 +17,6 @@ items:
     slot: 1
     base_price: 0.1
     current_price: 0.1
-    price_variation: 5.0E-4
     tax_rate: 0.1
     base_stock: 5000
     current_stock: 5000
@@ -31,7 +29,6 @@ items:
     slot: 2
     base_price: 0.25
     current_price: 0.25
-    price_variation: 0.001
     tax_rate: 0.12
     base_stock: 3000
     current_stock: 3000
@@ -44,7 +41,6 @@ items:
     slot: 3
     base_price: 0.2
     current_price: 0.2
-    price_variation: 8.0E-4
     tax_rate: 0.12
     base_stock: 2500
     current_stock: 2500
@@ -57,7 +53,6 @@ items:
     slot: 4
     base_price: 0.5
     current_price: 0.5
-    price_variation: 0.002
     tax_rate: 0.15
     base_stock: 1000
     current_stock: 1000
@@ -70,7 +65,6 @@ items:
     slot: 0
     base_price: 1.0
     current_price: 1.0
-    price_variation: 0.005
     tax_rate: 0.2
     base_stock: 1500
     current_stock: 1500
@@ -83,7 +77,6 @@ items:
     slot: 1
     base_price: 5.0
     current_price: 5.0
-    price_variation: 0.01
     tax_rate: 0.25
     base_stock: 800
     current_stock: 800
@@ -96,7 +89,6 @@ items:
     slot: 2
     base_price: 10.0
     current_price: 10.0
-    price_variation: 0.02
     tax_rate: 0.3
     base_stock: 500
     current_stock: 500
@@ -109,7 +101,6 @@ items:
     slot: 3
     base_price: 50.0
     current_price: 50.0
-    price_variation: 0.05
     tax_rate: 0.35
     base_stock: 200
     current_stock: 200
@@ -122,7 +113,6 @@ items:
     slot: 4
     base_price: 100.0
     current_price: 100.0
-    price_variation: 0.1
     tax_rate: 0.4
     base_stock: 100
     current_stock: 100
@@ -135,7 +125,6 @@ items:
     slot: 0
     base_price: 0.5
     current_price: 0.5
-    price_variation: 0.002
     tax_rate: 0.15
     base_stock: 1500
     current_stock: 1500
@@ -148,7 +137,6 @@ items:
     slot: 1
     base_price: 1.5
     current_price: 1.5
-    price_variation: 0.005
     tax_rate: 0.2
     base_stock: 1000
     current_stock: 1000
@@ -161,7 +149,6 @@ items:
     slot: 2
     base_price: 0.75
     current_price: 0.75
-    price_variation: 0.003
     tax_rate: 0.18
     base_stock: 1200
     current_stock: 1200
@@ -174,7 +161,6 @@ items:
     slot: 3
     base_price: 2.0
     current_price: 2.0
-    price_variation: 0.0075
     tax_rate: 0.22
     base_stock: 800
     current_stock: 800
@@ -187,7 +173,6 @@ items:
     slot: 4
     base_price: 10.0
     current_price: 10.0
-    price_variation: 0.02
     tax_rate: 0.3
     base_stock: 300
     current_stock: 300
@@ -200,7 +185,6 @@ items:
     slot: 0
     base_price: 0.5
     current_price: 0.5
-    price_variation: 0.002
     tax_rate: 0.15
     base_stock: 2000
     current_stock: 2000
@@ -213,7 +197,6 @@ items:
     slot: 1
     base_price: 0.55
     current_price: 0.55
-    price_variation: 0.0022
     tax_rate: 0.15
     base_stock: 1800
     current_stock: 1800
@@ -226,7 +209,6 @@ items:
     slot: 2
     base_price: 0.6
     current_price: 0.6
-    price_variation: 0.0025
     tax_rate: 0.15
     base_stock: 1600
     current_stock: 1600
@@ -239,7 +221,6 @@ items:
     slot: 3
     base_price: 0.65
     current_price: 0.65
-    price_variation: 0.0028
     tax_rate: 0.15
     base_stock: 1400
     current_stock: 1400
@@ -252,7 +233,6 @@ items:
     slot: 4
     base_price: 0.7
     current_price: 0.7
-    price_variation: 0.003
     tax_rate: 0.15
     base_stock: 1200
     current_stock: 1200
@@ -265,7 +245,6 @@ items:
     slot: 0
     base_price: 1.0
     current_price: 1.0
-    price_variation: 0.005
     tax_rate: 0.2
     base_stock: 1000
     current_stock: 1000
@@ -278,7 +257,6 @@ items:
     slot: 1
     base_price: 1.0
     current_price: 1.0
-    price_variation: 0.005
     tax_rate: 0.2
     base_stock: 1000
     current_stock: 1000
@@ -291,7 +269,6 @@ items:
     slot: 2
     base_price: 1.0
     current_price: 1.0
-    price_variation: 0.005
     tax_rate: 0.2
     base_stock: 1000
     current_stock: 1000
@@ -304,7 +281,6 @@ items:
     slot: 3
     base_price: 1.0
     current_price: 1.0
-    price_variation: 0.005
     tax_rate: 0.2
     base_stock: 1000
     current_stock: 1000
@@ -317,7 +293,6 @@ items:
     slot: 4
     base_price: 1.0
     current_price: 1.0
-    price_variation: 0.005
     tax_rate: 0.2
     base_stock: 1000
     current_stock: 1000
@@ -330,7 +305,6 @@ items:
     slot: 0
     base_price: 0.3
     current_price: 0.3
-    price_variation: 0.001
     tax_rate: 0.1
     base_stock: 3000
     current_stock: 3000
@@ -343,7 +317,6 @@ items:
     slot: 1
     base_price: 0.5
     current_price: 0.5
-    price_variation: 0.002
     tax_rate: 0.15
     base_stock: 2000
     current_stock: 2000
@@ -356,7 +329,6 @@ items:
     slot: 2
     base_price: 0.4
     current_price: 0.4
-    price_variation: 0.0015
     tax_rate: 0.12
     base_stock: 2500
     current_stock: 2500
@@ -369,7 +341,6 @@ items:
     slot: 3
     base_price: 2.0
     current_price: 2.0
-    price_variation: 0.0075
     tax_rate: 0.2
     base_stock: 1000
     current_stock: 1000
@@ -382,7 +353,6 @@ items:
     slot: 4
     base_price: 1.5
     current_price: 1.5
-    price_variation: 0.005
     tax_rate: 0.18
     base_stock: 1200
     current_stock: 1200
@@ -395,7 +365,6 @@ items:
     slot: 0
     base_price: 0.75
     current_price: 0.75
-    price_variation: 0.003
     tax_rate: 0.15
     base_stock: 1500
     current_stock: 1500
@@ -408,7 +377,6 @@ items:
     slot: 1
     base_price: 1.0
     current_price: 1.0
-    price_variation: 0.005
     tax_rate: 0.2
     base_stock: 1200
     current_stock: 1200
@@ -421,7 +389,6 @@ items:
     slot: 2
     base_price: 1.0
     current_price: 1.0
-    price_variation: 0.005
     tax_rate: 0.2
     base_stock: 1200
     current_stock: 1200
@@ -434,7 +401,6 @@ items:
     slot: 3
     base_price: 1.0
     current_price: 1.0
-    price_variation: 0.005
     tax_rate: 0.2
     base_stock: 1200
     current_stock: 1200
@@ -447,7 +413,6 @@ items:
     slot: 4
     base_price: 1.0
     current_price: 1.0
-    price_variation: 0.005
     tax_rate: 0.2
     base_stock: 1200
     current_stock: 1200

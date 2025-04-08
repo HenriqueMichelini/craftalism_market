@@ -1,6 +1,8 @@
 package io.github.HenriqueMichelini.craftalism_market.logic;
 
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
+import io.github.HenriqueMichelini.craftalism_market.stock.StockHandler;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -11,6 +13,11 @@ public class MarketUtils {
     private static final int PRICE_SCALE = 2;
     private static final int MAX_HISTORY_ENTRIES = 10;
     private static final BigDecimal ONE = BigDecimal.ONE;
+    private final StockHandler stockHandler;
+
+    public MarketUtils(StockHandler stockHandler) {
+        this.stockHandler = stockHandler;
+    }
 
     /**
      * Calculates total price for a transaction using geometric progression
