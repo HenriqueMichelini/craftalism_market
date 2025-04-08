@@ -30,6 +30,19 @@ public abstract class BaseGUI {
                 .disableAllInteractions()
                 .create();
         this.plugin = plugin;
+
+        // Add close handler here
+        gui.setCloseGuiAction(event -> {
+            Player player = (Player) event.getPlayer();
+            onClose(player);
+            if (this instanceof TradeGUI) {
+                ((TradeGUI) this).resetAmount();
+            }
+        });
+    }
+
+    protected void onClose(Player player) {
+        // Default empty implementation
     }
 
     public void open(Player player) {

@@ -2,6 +2,7 @@ package io.github.HenriqueMichelini.craftalism_market.stock;
 
 import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
+import io.github.HenriqueMichelini.craftalism_market.stock.listener.StockUpdateListener;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,12 +12,20 @@ import java.util.logging.Logger;
 public class StockHandler {
     private static final Logger LOGGER = Logger.getLogger(StockHandler.class.getName());
     private final PriorityQueue<MarketItem> activeItemsQueue = new PriorityQueue<>(Comparator.comparingLong(MarketItem::getNextUpdateTime));
-    private final Set<MarketItem> activeItems = new HashSet<>();
     private final Set<MarketItem> activeItemsSet = new HashSet<>();
+    private final List<StockUpdateListener> listeners = new ArrayList<>();
     private final ConfigManager configManager;
 
     public StockHandler(ConfigManager configManager) {
         this.configManager = configManager;
+    }
+
+    public void addStockUpdateListener(StockUpdateListener listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyStockUpdated(MarketItem item) {
+        new ArrayList<>(listeners).forEach(listener -> listener.onStockUpdated(item));
     }
 
     public int getUpdateIntervalMinutes() {
@@ -136,5 +145,7 @@ public class StockHandler {
                 finalNewPrice,
                 multiplier
         ));
+
+        notifyStockUpdated(item);
     }
 }

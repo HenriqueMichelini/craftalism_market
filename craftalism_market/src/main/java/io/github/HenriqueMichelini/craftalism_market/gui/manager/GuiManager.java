@@ -4,15 +4,17 @@ import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.gui.components.*;
 import io.github.HenriqueMichelini.craftalism_market.logic.MarketUtils;
+import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import io.github.HenriqueMichelini.craftalism_market.stock.StockHandler;
+import io.github.HenriqueMichelini.craftalism_market.stock.listener.StockUpdateListener;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import java.util.HashMap;
-import java.util.Map;
 
-public class GuiManager {
+import java.util.*;
+
+public class GuiManager implements StockUpdateListener {
     // Region: Dependencies
     private final ConfigManager configManager;
     private final CraftalismMarket plugin;
@@ -22,12 +24,40 @@ public class GuiManager {
     // Region: GUI Components
     private MarketGUI marketGui;
     private final Map<String, CategoryGUI> categoryGuis = new HashMap<>();
+    private final Map<String, Set<TradeGUI>> openTradeGuis = new HashMap<>();
+
+    @Override
+    public void onStockUpdated(MarketItem item) {
+        String itemName = item.getMaterial().name().toLowerCase();
+
+        // Update category GUI
+        refreshCategoryItem(item.getCategory(), itemName);
+
+        // Update open trade GUIs
+        if (openTradeGuis.containsKey(itemName)) {
+            new ArrayList<>(openTradeGuis.get(itemName)).forEach(TradeGUI::refresh);
+        }
+    }
+
+    public void registerTradeGui(String itemName, TradeGUI gui) {
+        openTradeGuis.computeIfAbsent(itemName, k -> new HashSet<>()).add(gui);
+    }
+
+    public void unregisterTradeGui(String itemName, TradeGUI gui) {
+        if (openTradeGuis.containsKey(itemName)) {
+            openTradeGuis.get(itemName).remove(gui);
+            if (openTradeGuis.get(itemName).isEmpty()) {
+                openTradeGuis.remove(itemName);
+            }
+        }
+    }
 
     public GuiManager(ConfigManager configManager, CraftalismMarket plugin, MarketUtils marketUtils, StockHandler stockHandler) {
         this.configManager = configManager;
         this.plugin = plugin;
         this.marketUtils = marketUtils;
         this.stockHandler = stockHandler;
+        stockHandler.addStockUpdateListener(this);
         initializeGUIs();
     }
 
@@ -79,7 +109,7 @@ public class GuiManager {
     }
 
     // Region: Navigation Helpers
-    private void returnToCategory(Player player, String category) {
+    public void returnToCategory(Player player, String category) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             CategoryGUI categoryGui = categoryGuis.get(category);
             if (categoryGui != null && player.isOnline()) {

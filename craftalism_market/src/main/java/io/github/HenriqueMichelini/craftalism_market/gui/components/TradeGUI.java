@@ -11,6 +11,7 @@ import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import io.github.HenriqueMichelini.craftalism_market.stock.StockHandler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -55,7 +56,7 @@ public class TradeGUI extends BaseGUI {
             Consumer<Player> onBack, GuiManager guiManager,
             StockHandler stockHandler
     ) {
-        super("Market", 6, plugin);
+        super("Trading: " + itemName, 6, plugin);
         this.itemName = itemName;
         this.configManager = configManager;
         this.marketUtils = marketUtils;
@@ -65,11 +66,43 @@ public class TradeGUI extends BaseGUI {
         initialize(onBack);
     }
 
+    // In TradeGUI.java
+    @Override
+    public void open(Player player) {
+        super.open(player);
+        guiManager.registerTradeGui(itemName, this);
+    }
+
+    @Override
+    protected void onClose(Player player) {
+        guiManager.unregisterTradeGui(itemName, this);
+    }
+
+    public void refresh() {
+        // Update all dynamic components
+        updateItemDisplay();
+        refreshTransactionButtons();
+        refreshAmountControls();
+
+        // Update back button reference
+        gui.updateItem(BACK_BUTTON_SLOT, createButton(
+                Material.BARRIER,
+                Component.text("Back", NamedTextColor.RED),
+                List.of(),
+                p -> guiManager.returnToCategory(p, item.getCategory())
+        ));
+
+        // Force GUI redraw
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (!gui.getInventory().getViewers().isEmpty()) {
+                gui.update();
+            }
+        });
+    }
+
     // Region: Initialization
     private void initialize(Consumer<Player> onBack) {
         if (item == null) return;
-
-        configureCloseHandler();
         addItemDisplay();
         addTransactionButtons();
         addAmountControls();
@@ -84,8 +117,8 @@ public class TradeGUI extends BaseGUI {
         return item;
     }
 
-    private void configureCloseHandler() {
-        gui.setCloseGuiAction(event -> resetAmount());
+    private void returnToCategory(Player player, String category) {
+        guiManager.returnToCategory(player, category);
     }
 
     // Region: Item Display
@@ -179,6 +212,21 @@ public class TradeGUI extends BaseGUI {
         );
     }
 
+    private void updateItemDisplay() {
+        ItemStack displayItem = new ItemStack(item.getMaterial());
+        ItemMeta meta = displayItem.getItemMeta();
+        meta.lore(createDetailedLore());
+        displayItem.setItemMeta(meta);
+        gui.updateItem(CENTER_SLOT, ItemBuilder.from(displayItem).asGuiItem());
+    }
+
+    private void refreshAmountControls() {
+        for (int i = 0; i < AMOUNTS.length; i++) {
+            gui.updateItem(ADD_SLOTS[i], createAmountControl(AMOUNTS[i], true));
+            gui.updateItem(DEDUCT_SLOTS[i], createAmountControl(AMOUNTS[i], false));
+        }
+    }
+
     private void handleAmountChange(int delta, boolean isAddition, Player player) {
         selectedAmount = clampAmount(isAddition ? selectedAmount + delta : selectedAmount - delta);
         provideAmountFeedback(player, isAddition);
@@ -242,7 +290,7 @@ public class TradeGUI extends BaseGUI {
                 Material.HONEY_BLOCK, "Sell", NamedTextColor.GOLD, this::handleSell));
     }
 
-    private void resetAmount() {
+    protected void resetAmount() {
         selectedAmount = MIN_AMOUNT;
         refreshTransactionButtons();
     }
@@ -265,4 +313,5 @@ public class TradeGUI extends BaseGUI {
                 : Sound.ENTITY_VILLAGER_YES;
         player.playSound(player.getLocation(), sound, 1.0f, 1.0f);
     }
+
 }
