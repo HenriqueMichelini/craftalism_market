@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import static org.bukkit.Bukkit.getLogger;
@@ -20,10 +21,17 @@ public class ConfigManager {
     private final DataParser dataParser;
     private YamlConfiguration mainConfig;
 
+    private static final int DEFAULT_UPDATE_INTERVAL = 10;
+    private static final int MIN_UPDATE_INTERVAL = 1;
+
     public ConfigManager(File dataFolder) {
         this.fileLoader = new FileLoader(dataFolder);
         this.dataParser = new DataParser(fileLoader);
         reload();
+    }
+
+    private void saveConfig() throws IOException {
+        fileLoader.saveMainConfig();
     }
 
     public void reload() {
@@ -82,9 +90,38 @@ public class ConfigManager {
         }
     }
 
-    // New config access methods
     public int getStockUpdateInterval() {
-        return mainConfig.getInt("stock-update-interval", 10);
+        int interval = mainConfig.getInt("stock-update-interval", DEFAULT_UPDATE_INTERVAL);
+        return Math.max(MIN_UPDATE_INTERVAL, interval); // Ensure minimum interval
+    }
+
+    /**
+     * Updates the stock update interval and persists the change to disk
+     * @param stockUpdateInterval New interval in minutes (minimum 1 minute)
+     * @return The actual interval that was set
+     * @throws IllegalArgumentException if interval is less than 1 minute
+     */
+    public int setStockUpdateInterval(int stockUpdateInterval) {
+        // Validate with custom exception
+        if (stockUpdateInterval < MIN_UPDATE_INTERVAL) {
+            throw new IllegalArgumentException(
+                    String.format("Stock update interval must be at least %d minute(s)", MIN_UPDATE_INTERVAL)
+            );
+        }
+
+        // Update config
+        mainConfig.set("stock-update-interval", stockUpdateInterval);
+
+        try {
+            saveConfig();
+            getLogger().info(() -> String.format(
+                    "Stock update interval changed to %d minutes", stockUpdateInterval
+            ));
+            return stockUpdateInterval;
+        } catch (IOException e) {
+            getLogger().log(Level.SEVERE, "Failed to save stock update interval", e);
+            throw new RuntimeException("Failed to save config", e);
+        }
     }
 
     public double getMaxStockOverflow() {

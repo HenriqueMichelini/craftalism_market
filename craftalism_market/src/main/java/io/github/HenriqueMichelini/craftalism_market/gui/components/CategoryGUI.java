@@ -36,10 +36,22 @@ public class CategoryGUI extends BaseGUI {
     }
 
     private List<Component> createItemLore(MarketItem item) {
+        Component stockComponent = Component.text("Stock: ", NamedTextColor.GRAY)
+                .append(Component.text(item.getCurrentStock(), getStockColor(item)));
+
         return List.of(
-                Component.text("Price: " + formatPrice(item.getCurrentPrice()), NamedTextColor.WHITE),
-                Component.text("Stock: " + item.getCurrentStock(), NamedTextColor.AQUA)
+                Component.text("Price: ", NamedTextColor.GRAY)
+                        .append(Component.text(formatPrice(item.getCurrentPrice()), NamedTextColor.GREEN)),
+                stockComponent
         );
+    }
+
+    private NamedTextColor getStockColor(MarketItem item) {
+        double ratio = (double) item.getCurrentStock() / item.getBaseStock();
+        if (ratio > 0.75) return NamedTextColor.DARK_GREEN;
+        if (ratio > 0.5) return NamedTextColor.YELLOW;
+        if (ratio > 0.25) return NamedTextColor.GOLD;
+        return NamedTextColor.RED;
     }
 
     private void addItemButton(MarketItem item) {

@@ -19,7 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -46,6 +45,8 @@ public class TradeGUI extends BaseGUI {
     private final GuiManager guiManager;
     private final StockHandler stockHandler;
     private int selectedAmount = MIN_AMOUNT;
+
+    private int lastRefreshAmount = -1;
 
     // Region: Constructor
     public TradeGUI(
@@ -79,25 +80,36 @@ public class TradeGUI extends BaseGUI {
     }
 
     public void refresh() {
-        // Update all dynamic components
-        updateItemDisplay();
-        refreshTransactionButtons();
-        refreshAmountControls();
+        try {
+            // Update all dynamic components
+            updateItemDisplay();
+            refreshTransactionButtons();
+            refreshAmountControls();
 
-        // Update back button reference
-        gui.updateItem(BACK_BUTTON_SLOT, createButton(
-                Material.BARRIER,
-                Component.text("Back", NamedTextColor.RED),
-                List.of(),
-                p -> guiManager.returnToCategory(p, item.getCategory())
-        ));
+            // Update back button reference
+            gui.updateItem(BACK_BUTTON_SLOT, createButton(
+                    Material.BARRIER,
+                    Component.text("Back", NamedTextColor.RED),
+                    List.of(),
+                    p -> guiManager.returnToCategory(p, item.getCategory())
+            ));
 
-        // Force GUI redraw
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            if (!gui.getInventory().getViewers().isEmpty()) {
-                gui.update();
-            }
-        });
+            // Force GUI redraw
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (!gui.getInventory().getViewers().isEmpty()) {
+                    gui.update();
+                }
+            });
+        } catch (Exception e) {
+            plugin.getLogger().severe("Failed to refresh TradeGUI: " + e.getMessage());
+            Component errorMsg = Component.text("GUI Error - Please reopen", NamedTextColor.RED);
+            gui.getInventory().getViewers().forEach(viewer -> {
+                if (viewer instanceof Player player) {
+                    player.sendMessage(errorMsg);
+                    gui.close(player);
+                }
+            });
+        }
     }
 
     // Region: Initialization
@@ -115,10 +127,6 @@ public class TradeGUI extends BaseGUI {
             plugin.getLogger().severe("Invalid item: " + itemName);
         }
         return item;
-    }
-
-    private void returnToCategory(Player player, String category) {
-        guiManager.returnToCategory(player, category);
     }
 
     // Region: Item Display
@@ -142,14 +150,20 @@ public class TradeGUI extends BaseGUI {
 
     private void addPriceHistory(List<Component> lore) {
         List<BigDecimal> history = item.getPriceHistory();
+        int maxEntries = 5; // Show last 5 prices
+
         if (history.isEmpty()) {
             lore.add(Component.text("Price History: No data", NamedTextColor.GRAY));
             return;
         }
-        lore.add(Component.text("Price History:", NamedTextColor.GOLD));
-        history.forEach(price ->
-                lore.add(Component.text("  - " + formatPrice(price), NamedTextColor.GRAY))
-        );
+
+        lore.add(Component.text("Price History:", NamedTextColor.DARK_AQUA));
+        history.stream()
+                .skip(Math.max(0, history.size() - maxEntries))
+                .forEach(price ->
+                        lore.add(Component.text("⏺ ", NamedTextColor.DARK_GRAY)
+                                .append(Component.text(formatPrice(price), NamedTextColor.GRAY)))
+                );
     }
 
     // Region: Transaction Handling
@@ -173,20 +187,21 @@ public class TradeGUI extends BaseGUI {
     }
 
     private List<Component> createTransactionLore(String action) {
-        BigDecimal totalPrice = calculateTotalPrice(action);
-        List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Price/Unit: " + formatPrice(item.getCurrentPrice()), NamedTextColor.WHITE));
-        lore.add(Component.text("Quantity: " + selectedAmount, NamedTextColor.WHITE));
+        return List.of(
+                Component.text("➤ Unit Price: ", NamedTextColor.GRAY)
+                        .append(Component.text(formatPrice(item.getCurrentPrice()), NamedTextColor.WHITE)),
+                Component.text("➤ Quantity: ", NamedTextColor.GRAY)
+                        .append(Component.text(selectedAmount, NamedTextColor.WHITE)),
+                createTotalComponent(action)
+        );
+    }
 
-        if ("sell".equalsIgnoreCase(action)) {
-            BigDecimal tax = calculateTaxAmount(totalPrice);
-            lore.add(Component.text("Before tax: " + formatPrice(totalPrice), NamedTextColor.WHITE));
-            lore.add(Component.text("Tax: " + formatPrice(tax), NamedTextColor.RED));
-            lore.add(Component.text("Total: " + formatPrice(totalPrice.subtract(tax)), NamedTextColor.YELLOW));
-        } else {
-            lore.add(Component.text("Total: " + formatPrice(totalPrice), NamedTextColor.YELLOW));
-        }
-        return lore;
+    private Component createTotalComponent(String action) {
+        BigDecimal total = calculateTotalPrice(action);
+        NamedTextColor color = "buy".equalsIgnoreCase(action) ? NamedTextColor.GREEN : NamedTextColor.GOLD;
+
+        return Component.text("➤ Total: ", NamedTextColor.GRAY)
+                .append(Component.text(formatPrice(total), color));
     }
 
     // Region: Amount Controls
@@ -242,10 +257,6 @@ public class TradeGUI extends BaseGUI {
         );
     }
 
-    private BigDecimal calculateTaxAmount(BigDecimal totalPrice) {
-        return totalPrice.multiply(item.getTaxRate()).setScale(2, RoundingMode.HALF_UP);
-    }
-
     private void handleBuy(Player player) {
         TransactionHandler transactionHandler = new TransactionHandler(
                 player,
@@ -256,10 +267,11 @@ public class TradeGUI extends BaseGUI {
         );
 
         if (transactionHandler.performBuyTransaction(itemName, selectedAmount)) {
-            playTransactionSound(player, "buy");
+            playUiSound(player, "success");
             guiManager.refreshCategoryItem(item.getCategory(), itemName);
             gui.close(player); // Close the GUI
         } else {
+            playUiSound(player, "error");
             player.sendMessage(Component.text("Failed to complete purchase!", NamedTextColor.RED));
         }
     }
@@ -274,20 +286,24 @@ public class TradeGUI extends BaseGUI {
         );
 
         if (transactionHandler.performSellTransaction(itemName, selectedAmount)) {
-            playTransactionSound(player, "sell");
+            playUiSound(player, "success");
             guiManager.refreshCategoryItem(item.getCategory(), itemName);
             gui.close(player); // Close the GUI
         } else {
+            playUiSound(player, "error");
             player.sendMessage(Component.text("Failed to complete sale!", NamedTextColor.RED));
         }
     }
 
     // Region: Utility Methods
     private void refreshTransactionButtons() {
-        gui.updateItem(BUY_BUTTON_SLOT, createTransactionButton(
-                Material.SLIME_BLOCK, "Buy", NamedTextColor.GREEN, this::handleBuy));
-        gui.updateItem(SELL_BUTTON_SLOT, createTransactionButton(
-                Material.HONEY_BLOCK, "Sell", NamedTextColor.GOLD, this::handleSell));
+        if (lastRefreshAmount != selectedAmount) {
+            lastRefreshAmount = selectedAmount;
+            gui.updateItem(BUY_BUTTON_SLOT, createTransactionButton(
+                    Material.SLIME_BLOCK, "Buy", NamedTextColor.GREEN, this::handleBuy));
+            gui.updateItem(SELL_BUTTON_SLOT, createTransactionButton(
+                    Material.HONEY_BLOCK, "Sell", NamedTextColor.GOLD, this::handleSell));
+        }
     }
 
     protected void resetAmount() {
@@ -305,13 +321,6 @@ public class TradeGUI extends BaseGUI {
         player.playSound(player.getLocation(),
                 isAddition ? Sound.ENTITY_EXPERIENCE_ORB_PICKUP : Sound.BLOCK_NOTE_BLOCK_BASS,
                 1.0f, 1.0f);
-    }
-
-    private void playTransactionSound(Player player, String action) {
-        Sound sound = "buy".equals(action)
-                ? Sound.BLOCK_NOTE_BLOCK_BELL
-                : Sound.ENTITY_VILLAGER_YES;
-        player.playSound(player.getLocation(), sound, 1.0f, 1.0f);
     }
 
 }

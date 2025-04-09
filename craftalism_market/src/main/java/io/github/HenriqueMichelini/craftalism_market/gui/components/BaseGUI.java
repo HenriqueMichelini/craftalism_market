@@ -6,6 +6,7 @@ import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -41,12 +42,13 @@ public abstract class BaseGUI {
         });
     }
 
-    protected void onClose(Player player) {
-        // Default empty implementation
+    public void open(Player player) {
+        plugin.getLogger().fine(player.getName() + " opened " + gui.title());
+        gui.open(player);
     }
 
-    public void open(Player player) {
-        gui.open(player);
+    protected void onClose(Player player) {
+        plugin.getLogger().fine(player.getName() + " closed " + gui.title());
     }
 
     protected GuiItem createButton(
@@ -65,22 +67,40 @@ public abstract class BaseGUI {
     }
 
     protected void addBackButton(Consumer<Player> onBack) {
-        gui.setItem(BACK_BUTTON_SLOT, createButton(
+        String cacheKey = "back_button";
+        GuiItem backButton = ButtonFactory.createCachedButton(
+                cacheKey,
                 Material.BARRIER,
                 Component.text("Back", NamedTextColor.RED),
-                List.of(),
+                List.of(), // No lore
                 onBack
-        ));
+        );
+        gui.setItem(BACK_BUTTON_SLOT, backButton);
+    }
+
+    // Add static formatters
+    private static final NumberFormat PRICE_FORMATTER = NumberFormat.getInstance(Locale.GERMANY);
+    static {
+        PRICE_FORMATTER.setMinimumFractionDigits(2);
+        PRICE_FORMATTER.setMaximumFractionDigits(2);
     }
 
     protected String formatPrice(BigDecimal price) {
-        NumberFormat formatter = NumberFormat.getInstance(Locale.GERMANY);
-        formatter.setMinimumFractionDigits(2);
-        formatter.setMaximumFractionDigits(2);
-        return "$" + formatter.format(price.doubleValue());
+        return "$" + PRICE_FORMATTER.format(price.doubleValue());
     }
 
     protected String formatPercentage(BigDecimal sellTax) {
         return sellTax.multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP) + "%";
+    }
+
+    protected void playUiSound(Player player, String soundType) {
+        Sound sound = switch(soundType.toLowerCase()) {
+            case "click" -> Sound.UI_BUTTON_CLICK;
+            case "success" -> Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+            case "error" -> Sound.BLOCK_NOTE_BLOCK_BASS;
+            default -> Sound.BLOCK_WOODEN_BUTTON_CLICK_ON;
+        };
+
+        player.playSound(player.getLocation(), sound, 0.8f, 1.0f);
     }
 }

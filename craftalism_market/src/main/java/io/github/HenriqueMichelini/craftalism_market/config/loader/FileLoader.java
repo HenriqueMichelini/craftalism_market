@@ -626,6 +626,16 @@ public class FileLoader {
         config.save(file);
     }
 
+    public void saveMainConfig() throws IOException {
+        File configFile = new File(configFolder, "config.yml");
+        try {
+            mainConfig.save(configFile);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Failed to save main config", e);
+            throw e;
+        }
+    }
+
     public YamlConfiguration getCategoriesConfig() {
         return categoriesConfig;
     }

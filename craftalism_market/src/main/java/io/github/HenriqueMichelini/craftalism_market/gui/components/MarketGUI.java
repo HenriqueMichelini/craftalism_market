@@ -31,17 +31,14 @@ public class MarketGUI extends BaseGUI {
     }
 
     private void createCategoryButton(Category category) {
-        GuiItem button = createButton(
+        String cacheKey = "category_" + category.category();
+        GuiItem button = ButtonFactory.createCachedButton(
+                cacheKey,
                 category.material(),
                 Component.text(category.title(), NamedTextColor.GREEN),
-                List.of(),
-                event -> {
-                    Player player = event.getPlayer();
-                    onCategorySelect.accept(player, category.category());
-                }
+                List.of(), // Static lore if needed
+                event -> onCategorySelect.accept(event.getPlayer(), category.category())
         );
-
-        // Set the button in the specific slot from the category
         gui.setItem(category.slot(), button);
     }
 }
