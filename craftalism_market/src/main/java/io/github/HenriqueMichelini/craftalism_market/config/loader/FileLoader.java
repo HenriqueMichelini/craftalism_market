@@ -19,6 +19,9 @@ public class FileLoader {
         this.configFolder = configFolder;
     }
 
+    public File getConfigFolder() {
+        return configFolder;
+    }
 
     public void loadFiles() {
         loadMainConfig();

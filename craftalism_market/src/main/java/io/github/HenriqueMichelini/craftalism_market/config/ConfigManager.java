@@ -7,7 +7,13 @@ import io.github.HenriqueMichelini.craftalism_market.models.Category;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.bukkit.Bukkit.getLogger;
 
 public class ConfigManager {
     private final FileLoader fileLoader;
@@ -33,6 +39,47 @@ public class ConfigManager {
 
         // Parse data
         dataParser.parseData();
+    }
+
+    // In ConfigManager.java
+    public void saveItems() {
+        File itemsFile = new File(fileLoader.getConfigFolder(), "items.yml");
+        YamlConfiguration itemsConfig = YamlConfiguration.loadConfiguration(itemsFile);
+
+        // Clear existing items section
+        itemsConfig.set("items", null);
+
+        // Serialize all MarketItems
+        for (Map.Entry<String, MarketItem> entry : dataParser.getItems().entrySet()) {
+            String key = entry.getKey();
+            MarketItem item = entry.getValue();
+
+            String path = "items." + key + ".";
+            itemsConfig.set(path + "material", item.getMaterial().name());
+            itemsConfig.set(path + "category", item.getCategory());
+            itemsConfig.set(path + "slot", item.getSlot());
+            itemsConfig.set(path + "base_price", item.getBasePrice().doubleValue());
+            itemsConfig.set(path + "current_price", item.getCurrentPrice().doubleValue());
+            itemsConfig.set(path + "price_variation", item.getPriceVariationPerOperation().doubleValue());
+            itemsConfig.set(path + "tax_rate", item.getTaxRate().doubleValue());
+            itemsConfig.set(path + "base_stock", item.getBaseStock());
+            itemsConfig.set(path + "current_stock", item.getCurrentStock());
+            itemsConfig.set(path + "stock_regen_rate", item.getStockRegenRate());
+            itemsConfig.set(path + "next_update_time", item.getNextUpdateTime());
+            itemsConfig.set(path + "last_activity", item.getLastActivity());
+
+            // Save price history as double list
+            List<Double> priceHistory = item.getPriceHistory().stream()
+                    .map(BigDecimal::doubleValue)
+                    .collect(Collectors.toList());
+            itemsConfig.set(path + "price_history", priceHistory);
+        }
+
+        try {
+            itemsConfig.save(itemsFile);
+        } catch (IOException e) {
+            getLogger().severe("Failed to save items config: " + e.getMessage());
+        }
     }
 
     // New config access methods

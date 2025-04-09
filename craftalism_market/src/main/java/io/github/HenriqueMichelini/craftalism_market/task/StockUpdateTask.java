@@ -14,6 +14,7 @@ public class StockUpdateTask extends BukkitRunnable {
     public void run() {
         System.out.println("Processing stock updates (Interval: " +
                 stockHandler.getUpdateIntervalMinutes() + " minutes)");
+        stockHandler.getUpdateIntervalMinutes(); // Force config reload
         stockHandler.processAllActiveItems();
     }
 }

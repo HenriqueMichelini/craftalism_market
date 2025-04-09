@@ -63,8 +63,8 @@ public class DataParser {
                     itemSection.getInt("current_stock"),
                     itemSection.getDouble("stock_regen_rate"),
                     itemSection.getLong("next_update_time"),
-                    itemSection.getLong("last_activity"), // Add this line
-                    parsePriceHistory(itemSection) // Add this helper method
+                    itemSection.getLong("last_activity"),
+                    parsePriceHistory(itemSection)
             );
             items.put(key, item);
         }

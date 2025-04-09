@@ -18,6 +18,25 @@ public class StockHandler {
 
     public StockHandler(ConfigManager configManager) {
         this.configManager = configManager;
+        initializeActiveItems(); // Add this line
+    }
+
+    private void initializeActiveItems() {
+        configManager.getItems().values().forEach(item -> {
+            if (item.getCurrentStock() != item.getBaseStock()) {
+                // Calculate remaining time if update was pending during last shutdown
+                long remainingTime = Math.max(0, item.getNextUpdateTime() - System.currentTimeMillis());
+                if (remainingTime == 0) {
+                    // Immediate processing needed
+                    markItemForUpdate(item);
+                } else {
+                    // Schedule normally
+                    item.setNextUpdateTime(System.currentTimeMillis() + remainingTime);
+                    activeItemsQueue.add(item);
+                    activeItemsSet.add(item);
+                }
+            }
+        });
     }
 
     public void addStockUpdateListener(StockUpdateListener listener) {
@@ -49,19 +68,24 @@ public class StockHandler {
         activeItemsSet.add(item);
     }
 
-
     public void processAllActiveItems() {
         long now = System.currentTimeMillis();
         while (!activeItemsQueue.isEmpty()) {
             MarketItem item = activeItemsQueue.peek();
+            // Add stale item handling
+            if (item.getNextUpdateTime() > now + (configManager.getStockUpdateInterval() * 60 * 1000L * 2)) {
+                activeItemsQueue.remove(item);
+                activeItemsSet.remove(item);
+                markItemForUpdate(item); // Reschedule properly
+                continue;
+            }
+
             if (item.getNextUpdateTime() > now) break;
 
             activeItemsQueue.poll();
             activeItemsSet.remove(item);
-
             processItemStock(item);
 
-            // Reschedule if not at base stock
             if (item.getCurrentStock() != item.getBaseStock()) {
                 long nextUpdate = now + (configManager.getStockUpdateInterval() * 60 * 1000L);
                 item.setNextUpdateTime(nextUpdate);

@@ -38,8 +38,25 @@ public class CraftalismMarket extends JavaPlugin {
         initializeStockHandler();  // Must come first
         initializeComponents();
         registerCommands();
+        initializeAutoSave();
 
         getLogger().info("Craftalism Market has been enabled!");
+    }
+
+    @Override
+    public void onDisable() {
+        // Save all market data
+        configManager.saveItems();
+        getLogger().info("Market data saved successfully!");
+        instance = null;
+    }
+
+    private void initializeAutoSave() {
+        // Save every 5 minutes (300 seconds * 20 ticks)
+        Bukkit.getScheduler().runTaskTimer(this, () -> {
+            configManager.saveItems();
+            getLogger().fine("Auto-saved market data");
+        }, 0L, 300 * 20L);
     }
 
     private boolean setupEconomy() {
