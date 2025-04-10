@@ -8,12 +8,14 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class MarketUtils {
     private static final int PRICE_SCALE = 2;
     private static final int MAX_HISTORY_ENTRIES = 10;
     private static final BigDecimal ONE = BigDecimal.ONE;
     private final StockHandler stockHandler;
+    private static final Logger LOGGER = Logger.getLogger(MarketUtils.class.getName());
 
     public MarketUtils(StockHandler stockHandler) {
         this.stockHandler = stockHandler;
@@ -75,6 +77,32 @@ public class MarketUtils {
         }
 
         item.setPriceHistory(new ArrayList<>(history));
+    }
+
+    public void updateTaxRate(MarketItem item, int currentBaseStock, int newBaseStock, BigDecimal oldTaxRate) {
+        if (currentBaseStock == 0) {
+            throw new IllegalArgumentException("currentBaseStock cannot be zero (division by zero)");
+        }
+
+        BigDecimal oldBase = new BigDecimal(currentBaseStock);
+        BigDecimal newBase = new BigDecimal(newBaseStock);
+
+        BigDecimal ratio = newBase.divide(oldBase, 10, RoundingMode.HALF_UP);
+        BigDecimal subtractedValue = BigDecimal.valueOf(2).subtract(ratio);
+
+        BigDecimal newTaxRate = oldTaxRate.multiply(subtractedValue);
+        BigDecimal currentTaxRate = item.getTaxRate(); // For logging only
+
+        item.setTaxRate(newTaxRate);
+
+        // In updateTaxRate():
+        LOGGER.info(() -> String.format(
+                "%s | Tax rate update: %s → %s (factor: %s)",
+                item.getName(),
+                currentTaxRate.toPlainString(),
+                newTaxRate.toPlainString(),
+                subtractedValue.toPlainString() // Already precise
+        ));
     }
 
     private void validateInput(MarketItem item, int number) {

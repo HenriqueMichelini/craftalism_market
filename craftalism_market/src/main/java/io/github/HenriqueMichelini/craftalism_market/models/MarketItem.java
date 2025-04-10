@@ -12,7 +12,7 @@ public class MarketItem {
     private final Material material;
     private final int slot;
     private final BigDecimal priceVariationPerOperation;
-    private final BigDecimal taxRate;
+    private BigDecimal taxRate;
     private final BigDecimal basePrice;
 
     // Mutable fields
@@ -87,6 +87,7 @@ public class MarketItem {
     public void setBaseStock(int baseStock)                     { this.baseStock = baseStock;       }
     public void setStockRegenRate(double stockRegenRate)        { this.stockRegenRate = stockRegenRate; }
     public void setNextUpdateTime(long nextUpdateTime)          { this.nextUpdateTime = nextUpdateTime; }
+    public void setTaxRate(BigDecimal taxRate)                  { this.taxRate = taxRate; }
     public void setLastActivity(long lastActivity)              { this.lastActivity = lastActivity; }
     public void setPriceHistory(List<BigDecimal> priceHistory)  { this.priceHistory = priceHistory; }
 }

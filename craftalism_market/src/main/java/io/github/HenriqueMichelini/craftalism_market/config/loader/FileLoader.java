@@ -49,6 +49,8 @@ public class FileLoader {
         
         # Number of decimal places for prices
         price-decimal-places: 2
+        
+        stockIncreasePercentage: 0.05
         """;
 
         YamlConfiguration config = new YamlConfiguration();

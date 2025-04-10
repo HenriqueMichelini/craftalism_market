@@ -71,22 +71,24 @@ public final class InventoryHandler {
      * Adds items to a player's inventory, dropping overflow naturally in the world.
      * @return true if all items were added to inventory, false if some were dropped
      */
-    public static boolean addItemToPlayer(@NotNull Player player, @NotNull Material material, int amount) {
+    public static int addItemToPlayer(@NotNull Player player, @NotNull Material material, int amount) {
         validateParameters(player, material, amount);
 
         Inventory inventory = player.getInventory();
         ItemStack[] items = createItemStacks(material, amount);
-        boolean allAdded = true;
+        int totalAdded = 0;
 
         for (ItemStack item : items) {
-            Map<Integer, ItemStack> leftover = inventory.addItem(item);
+            Map<Integer, ItemStack> leftover = inventory.addItem(item.clone()); // Clone to avoid modifying original
+            int added = item.getAmount();
             if (!leftover.isEmpty()) {
-                allAdded = false;
+                added -= leftover.values().iterator().next().getAmount();
                 dropLeftoverItems(player, leftover.values());
             }
+            totalAdded += added;
         }
 
-        return allAdded;
+        return totalAdded;
     }
 
     private static void validateParameters(Player player, Material material, int amount) {

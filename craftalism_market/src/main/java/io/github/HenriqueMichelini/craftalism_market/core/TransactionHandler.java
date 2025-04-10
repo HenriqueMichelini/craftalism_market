@@ -42,11 +42,19 @@ public class TransactionHandler {
         BigDecimal totalPrice = calculateTotalPrice(item, adjustedAmount, true);
 
         if (!checkBalance(totalPrice, itemName, adjustedAmount)) return false;
-
         if (!processPurchase(item, adjustedAmount, totalPrice)) return false;
 
-        updateMarketItemPriceAndStock(item, adjustedAmount, true);
-        sendSuccess("Successfully purchased %d %s for %s".formatted(adjustedAmount, item.getName(), formatPrice(totalPrice)));
+        // Update base stock based on actual added amount (now handled in processPurchase)
+        double increasePercent = configManager.getStockIncreasePercentage();
+        int increaseNumber = (int) (adjustedAmount * increasePercent);
+        int currentBaseStock = item.getBaseStock();
+        int newBaseStock = currentBaseStock + increaseNumber;
+
+        marketUtils.updateTaxRate(item, currentBaseStock, newBaseStock, item.getTaxRate());
+        stockHandler.upgradeBaseStock(item, increaseNumber);
+
+        sendSuccess("Successfully purchased %d %s for %s"
+                .formatted(adjustedAmount, item.getName(), formatPrice(totalPrice)));
         return true;
     }
 
@@ -98,17 +106,42 @@ public class TransactionHandler {
         return false;
     }
 
-    private boolean processPurchase(MarketItem item, int amount, BigDecimal totalPrice) {
+    private boolean processPurchase(MarketItem item, int requestedAmount, BigDecimal totalPrice) {
         UUID playerId = player.getUniqueId();
-        if (!economyManager.withdraw(playerId, totalPrice)) {
-            //sendError("Failed to process payment");
+
+        // Attempt to add items first (temporarily)
+        int actualAdded = InventoryHandler.addItemToPlayer(player, item.getMaterial(), requestedAmount);
+        if (actualAdded <= 0) {
+            sendError("No space in inventory!");
             return false;
         }
 
-        if (!InventoryHandler.addItemToPlayer(player, item.getMaterial(), amount)) {
-            economyManager.deposit(playerId, totalPrice);
-            sendWarning("Inventory full for %d %s. Dropping the exceeds.".formatted(amount, item.getName()));
+        // Calculate price for the actual added amount
+        BigDecimal pricePerItem = totalPrice.divide(
+                BigDecimal.valueOf(requestedAmount),
+                10,
+                RoundingMode.HALF_UP
+        );
+        BigDecimal actualPrice = pricePerItem.multiply(BigDecimal.valueOf(actualAdded));
+
+        // Withdraw only the actual price
+        if (!economyManager.withdraw(playerId, actualPrice)) {
+            // Remove items if payment fails
+            InventoryHandler.removeItemFromPlayer(player, item.getMaterial(), actualAdded);
+            sendError("Payment failed after partial item addition!");
+            return false;
         }
+
+        // Update stock and price based on actualAdded
+        updateMarketItemPriceAndStock(item, actualAdded, true);
+
+        // Handle leftover items (if any)
+        int leftover = requestedAmount - actualAdded;
+        if (leftover > 0) {
+            sendWarning("Only %d %s fit in your inventory. %d were refunded."
+                    .formatted(actualAdded, item.getName(), leftover));
+        }
+
         return true;
     }
 

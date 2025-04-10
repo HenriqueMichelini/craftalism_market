@@ -78,7 +78,7 @@ public class CraftalismMarket extends JavaPlugin {
 
     private void initializeStockHandler() {
         this.stockHandler = new StockHandler(configManager);
-        long checkIntervalTicks = 20L; // Check every 1 second (20 ticks)
+        long checkIntervalTicks = 20L * 5; // Check every 5 seconds (100 ticks)
         new StockUpdateTask(stockHandler).runTaskTimer(this, 0L, checkIntervalTicks);
     }
 

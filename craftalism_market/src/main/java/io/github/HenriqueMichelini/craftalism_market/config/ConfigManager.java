@@ -34,6 +34,8 @@ public class ConfigManager {
         fileLoader.saveMainConfig();
     }
 
+    private double stockIncreasePercentage = 0.05; // Default value
+
     public void reload() {
         // Load all configuration files
         fileLoader.loadFiles();
@@ -41,12 +43,21 @@ public class ConfigManager {
         // Get main config reference
         this.mainConfig = fileLoader.getMainConfig();
 
+        this.stockIncreasePercentage = mainConfig.getDouble(
+                "stockIncreasePercentage",
+                0.05
+        );
+
         // Validate data files
         SchemaValidator.validateCategories(fileLoader.getCategoriesConfig());
         SchemaValidator.validateItems(fileLoader.getItemsConfig());
 
         // Parse data
         dataParser.parseData();
+    }
+
+    public double getStockIncreasePercentage() {
+        return stockIncreasePercentage;
     }
 
     // In ConfigManager.java
@@ -97,11 +108,11 @@ public class ConfigManager {
 
     /**
      * Updates the stock update interval and persists the change to disk
+     *
      * @param stockUpdateInterval New interval in minutes (minimum 1 minute)
-     * @return The actual interval that was set
      * @throws IllegalArgumentException if interval is less than 1 minute
      */
-    public int setStockUpdateInterval(int stockUpdateInterval) {
+    public void setStockUpdateInterval(int stockUpdateInterval) {
         // Validate with custom exception
         if (stockUpdateInterval < MIN_UPDATE_INTERVAL) {
             throw new IllegalArgumentException(
@@ -117,7 +128,6 @@ public class ConfigManager {
             getLogger().info(() -> String.format(
                     "Stock update interval changed to %d minutes", stockUpdateInterval
             ));
-            return stockUpdateInterval;
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Failed to save stock update interval", e);
             throw new RuntimeException("Failed to save config", e);

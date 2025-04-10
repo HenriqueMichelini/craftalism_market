@@ -76,6 +76,7 @@ public class StockHandler {
 
     public void markItemForUpdate(MarketItem item) {
         synchronized (activeItemsSet) {
+            // Allow activation when currentStock != baseStock (even if currentStock > baseStock)
             if (item.getCurrentStock() == item.getBaseStock()) return;
 
             long intervalMillis = configManager.getStockUpdateInterval() * 60 * 1000L;
@@ -138,6 +139,12 @@ public class StockHandler {
         int maxAdjustment = (int) Math.round(base * regenRate);
         int delta = base - current;
 
+        // Handle overflow (currentStock > baseStock)
+        if (current > base) {
+            delta = current - base; // Positive delta for reduction
+            maxAdjustment = (int) Math.round(current * regenRate); // Use current as base for overflow
+        }
+
         int adjustment = Integer.signum(delta) * Math.max(1, Math.min(maxAdjustment, Math.abs(delta)));
 
         LOGGER.fine(() -> String.format(
@@ -185,12 +192,12 @@ public class StockHandler {
                 BigDecimal.ONE.subtract(variation); // Reverse sell multiplier
 
         // Calculate inverse multiplier with high precision
-        BigDecimal reverseMultiplier = BigDecimal.ONE.divide(
+        // Intermediate calculation precision
+        return BigDecimal.ONE.divide(
                 transactionMultiplier,
-                10, // Intermediate calculation precision
+                10,
                 RoundingMode.HALF_UP
         ).pow(steps);
-        return reverseMultiplier;
     }
 
     private int clampStockToBounds(int base, int newStock) {
@@ -213,6 +220,19 @@ public class StockHandler {
         LOGGER.info(() -> String.format(
                 "%s | Stock: %d → %d | Price: %s → %s",
                 item.getName(), oldStock, newStock, oldPrice, newPrice
+        ));
+    }
+
+    public void upgradeBaseStock(MarketItem item, int increaseNumber) {
+        int baseStock = item.getBaseStock();
+        item.setBaseStock(baseStock + increaseNumber);
+        LOGGER.info(() -> String.format(
+                "%s | Stock upgrade: %d → %d (+%d @ %.1f%%)", // Show % from config
+                item.getName(),
+                baseStock,
+                item.getBaseStock(),
+                increaseNumber,
+                configManager.getStockIncreasePercentage() * 100 // Display as percentage
         ));
     }
 }
