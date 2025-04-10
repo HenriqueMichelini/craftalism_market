@@ -18,11 +18,9 @@ public class StockHandler {
     private final ConfigManager configManager;
 
     private static final long MINUTE_IN_MILLIS = 60 * 1000L;
-    private static final double MIN_REGEN_RATE = 0.01;
 
     public StockHandler(ConfigManager configManager) {
         this.configManager = Objects.requireNonNull(configManager, "ConfigManager cannot be null");
-        // Validate interval
         if (configManager.getStockUpdateInterval() <= 0) {
             LOGGER.warning("Invalid stock update interval, using default of 5 minutes");
             configManager.setStockUpdateInterval(5);
@@ -38,14 +36,11 @@ public class StockHandler {
             if (item.getCurrentStock() != item.getBaseStock()) {
                 long storedNextUpdateTime = item.getNextUpdateTime();
                 if (storedNextUpdateTime < now) {
-                    // Process missed intervals
                     processMissedIntervals(item, now, intervalMillis);
-                    // Schedule next update if needed
                     if (item.getCurrentStock() != item.getBaseStock()) {
                         markItemForUpdate(item);
                     }
                 } else {
-                    // Schedule normally
                     item.setNextUpdateTime(storedNextUpdateTime);
                     activeItemsQueue.add(item);
                     activeItemsSet.add(item);
@@ -62,7 +57,6 @@ public class StockHandler {
         int intervalsPassed = (int) (overdueMillis / intervalMillis) + 1;
 
         for (int i = 0; i < intervalsPassed; i++) {
-            // Check if adjustment is still needed
             if (item.getCurrentStock() == item.getBaseStock()) break;
             processItemStock(item);
         }
@@ -76,8 +70,8 @@ public class StockHandler {
         new ArrayList<>(listeners).forEach(listener -> listener.onStockUpdated(item));
     }
 
-    public int getUpdateIntervalMinutes() {
-        return configManager.getStockUpdateInterval();
+    public void getUpdateIntervalMinutes() {
+        configManager.getStockUpdateInterval();
     }
 
     public void markItemForUpdate(MarketItem item) {
@@ -87,7 +81,6 @@ public class StockHandler {
             long intervalMillis = configManager.getStockUpdateInterval() * 60 * 1000L;
             long nextUpdate = System.currentTimeMillis() + intervalMillis;
 
-            // Remove and re-add to update priority
             if (activeItemsSet.contains(item)) {
                 activeItemsQueue.remove(item);
                 activeItemsSet.remove(item);
@@ -104,7 +97,6 @@ public class StockHandler {
         while (!activeItemsQueue.isEmpty()) {
             MarketItem item = activeItemsQueue.peek();
             if (item.getNextUpdateTime() > now + (configManager.getStockUpdateInterval() * MINUTE_IN_MILLIS * 2)) {
-                // Handle stale item
                 activeItemsQueue.remove(item);
                 activeItemsSet.remove(item);
                 markItemForUpdate(item);
@@ -140,7 +132,6 @@ public class StockHandler {
     }
 
     private int calculateSafeAdjustment(MarketItem item, int base, int current) {
-        // Ensure minimum 1% regeneration
         double minRegen = 0.01;
         double regenRate = Math.max(item.getStockRegenRate(), minRegen);
 
@@ -154,28 +145,52 @@ public class StockHandler {
                 item.getName(), base, current, item.getStockRegenRate(), adjustment
         ));
 
-        // Ensure at least 1 item change
         return adjustment;
     }
 
     private void updateStockAndPrice(MarketItem item, int base, int newStock) {
-        BigDecimal newPrice = calculateNewPrice(item);
+        int adjustment = newStock - item.getCurrentStock();
+        BigDecimal newPrice = calculateNewPrice(item, adjustment);
+
+        // Handle stock bounds and base price reset
         newStock = clampStockToBounds(base, newStock);
         if (newStock == base) {
             newPrice = item.getBasePrice();
         }
+
         updateItemState(item, newStock, newPrice);
     }
 
-    private BigDecimal calculateNewPrice(MarketItem item) {
-        boolean isAdding = item.getCurrentStock() < item.getBaseStock();
-        BigDecimal multiplier = isAdding ?
-                BigDecimal.ONE.subtract(item.getTaxRate()) :
-                BigDecimal.ONE.add(item.getTaxRate());
-        return item.getCurrentPrice()
-                .multiply(multiplier)
-                .setScale(configManager.getPriceDecimalPlaces(), RoundingMode.HALF_UP)
-                .max(BigDecimal.valueOf(0.01));
+    private BigDecimal calculateNewPrice(MarketItem item, int adjustment) {
+        if (adjustment == 0) return item.getCurrentPrice();
+
+        boolean isAddingStock = adjustment > 0;
+        BigDecimal reverseMultiplier = getBigDecimal(item, adjustment, isAddingStock);
+
+        // Apply geometric progression formula matching getLastPriceOfItem()
+        BigDecimal newPrice = item.getCurrentPrice()
+                .multiply(reverseMultiplier)
+                .setScale(configManager.getPriceDecimalPlaces(), RoundingMode.HALF_UP);
+
+        return newPrice.max(BigDecimal.valueOf(0.01));
+    }
+
+    private static BigDecimal getBigDecimal(MarketItem item, int adjustment, boolean isAddingStock) {
+        BigDecimal variation = item.getPriceVariationPerOperation();
+        int steps = Math.abs(adjustment);
+
+        // Get transaction multipliers matching MarketUtils logic
+        BigDecimal transactionMultiplier = isAddingStock ?
+                BigDecimal.ONE.add(variation) :  // Reverse buy multiplier
+                BigDecimal.ONE.subtract(variation); // Reverse sell multiplier
+
+        // Calculate inverse multiplier with high precision
+        BigDecimal reverseMultiplier = BigDecimal.ONE.divide(
+                transactionMultiplier,
+                10, // Intermediate calculation precision
+                RoundingMode.HALF_UP
+        ).pow(steps);
+        return reverseMultiplier;
     }
 
     private int clampStockToBounds(int base, int newStock) {
@@ -200,5 +215,4 @@ public class StockHandler {
                 item.getName(), oldStock, newStock, oldPrice, newPrice
         ));
     }
-
 }
