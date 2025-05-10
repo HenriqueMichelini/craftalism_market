@@ -137,7 +137,7 @@ public class FileLoader {
                             slot: 0
                             base_price: 3700
                             current_price: 3700
-                            price_variation: 0.0015
+                            price_variation: 15
                             tax_rate: 0.15
                             base_stock: 2000
                             current_stock: 2000
@@ -152,7 +152,7 @@ public class FileLoader {
                             slot: 1
                             base_price: 1000
                             current_price: 1000
-                            price_variation: 0.0005
+                            price_variation: 5
                             tax_rate: 0.1
                             base_stock: 5000
                             current_stock: 5000
@@ -167,7 +167,7 @@ public class FileLoader {
                             slot: 2
                             base_price: 2500
                             current_price: 2500
-                            price_variation: 0.001
+                            price_variation: 10
                             tax_rate: 0.12
                             base_stock: 3000
                             current_stock: 3000
@@ -182,7 +182,7 @@ public class FileLoader {
                             slot: 3
                             base_price: 2000
                             current_price: 2000
-                            price_variation: 0.0008
+                            price_variation: 8
                             tax_rate: 0.12
                             base_stock: 2500
                             current_stock: 2500
@@ -197,7 +197,7 @@ public class FileLoader {
                             slot: 4
                             base_price: 5000
                             current_price: 5000
-                            price_variation: 0.002
+                            price_variation: 20
                             tax_rate: 0.15
                             base_stock: 1000
                             current_stock: 1000
@@ -212,7 +212,7 @@ public class FileLoader {
                             slot: 0
                             base_price: 10000
                             current_price: 10000
-                            price_variation: 0.0050
+                            price_variation: 50
                             tax_rate: 0.20
                             base_stock: 1500
                             current_stock: 1500
@@ -227,7 +227,7 @@ public class FileLoader {
                             slot: 1
                             base_price: 50000
                             current_price: 50000
-                            price_variation: 0.0100
+                            price_variation: 10
                             tax_rate: 0.25
                             base_stock: 800
                             current_stock: 800
@@ -242,7 +242,7 @@ public class FileLoader {
                             slot: 2
                             base_price: 100000
                             current_price: 100000
-                            price_variation: 0.0200
+                            price_variation: 200
                             tax_rate: 0.30
                             base_stock: 500
                             current_stock: 500
@@ -257,7 +257,7 @@ public class FileLoader {
                             slot: 3
                             base_price: 500000
                             current_price: 500000
-                            price_variation: 0.0500
+                            price_variation: 500
                             tax_rate: 0.35
                             base_stock: 200
                             current_stock: 200
@@ -272,7 +272,7 @@ public class FileLoader {
                             slot: 4
                             base_price: 1000000
                             current_price: 1000000
-                            price_variation: 0.1000
+                            price_variation: 1000
                             tax_rate: 0.40
                             base_stock: 100
                             current_stock: 100
@@ -287,7 +287,7 @@ public class FileLoader {
                             slot: 0
                             base_price: 5000
                             current_price: 5000
-                            price_variation: 0.0020
+                            price_variation: 20
                             tax_rate: 0.15
                             base_stock: 1500
                             current_stock: 1500
@@ -302,7 +302,7 @@ public class FileLoader {
                             slot: 1
                             base_price: 150000
                             current_price: 150000
-                            price_variation: 0.0050
+                            price_variation: 50
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
@@ -317,7 +317,7 @@ public class FileLoader {
                             slot: 2
                             base_price: 7500
                             current_price: 7500
-                            price_variation: 0.0030
+                            price_variation: 30
                             tax_rate: 0.18
                             base_stock: 1200
                             current_stock: 1200
@@ -332,7 +332,7 @@ public class FileLoader {
                             slot: 3
                             base_price: 200000
                             current_price: 200000
-                            price_variation: 0.0075
+                            price_variation: 75
                             tax_rate: 0.22
                             base_stock: 800
                             current_stock: 800
@@ -347,7 +347,7 @@ public class FileLoader {
                             slot: 4
                             base_price: 100000
                             current_price: 100000
-                            price_variation: 0.0200
+                            price_variation: 200
                             tax_rate: 0.30
                             base_stock: 300
                             current_stock: 300
@@ -362,7 +362,7 @@ public class FileLoader {
                             slot: 0
                             base_price: 5000
                             current_price: 5000
-                            price_variation: 0.0020
+                            price_variation: 20
                             tax_rate: 0.15
                             base_stock: 2000
                             current_stock: 2000
@@ -377,7 +377,7 @@ public class FileLoader {
                             slot: 1
                             base_price: 5500
                             current_price: 5500
-                            price_variation: 0.0022
+                            price_variation: 22
                             tax_rate: 0.15
                             base_stock: 1800
                             current_stock: 1800
@@ -392,7 +392,7 @@ public class FileLoader {
                             slot: 2
                             base_price: 6000
                             current_price: 6000
-                            price_variation: 0.0025
+                            price_variation: 25
                             tax_rate: 0.15
                             base_stock: 1600
                             current_stock: 1600
@@ -407,7 +407,7 @@ public class FileLoader {
                             slot: 3
                             base_price: 6500
                             current_price: 6500
-                            price_variation: 0.0028
+                            price_variation: 28
                             tax_rate: 0.15
                             base_stock: 1400
                             current_stock: 1400
@@ -422,7 +422,7 @@ public class FileLoader {
                             slot: 4
                             base_price: 7000
                             current_price: 7000
-                            price_variation: 0.0030
+                            price_variation: 30
                             tax_rate: 0.15
                             base_stock: 1200
                             current_stock: 1200
@@ -437,7 +437,7 @@ public class FileLoader {
                             slot: 0
                             base_price: 10000
                             current_price: 10000
-                            price_variation: 0.0050
+                            price_variation: 50
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
@@ -452,7 +452,7 @@ public class FileLoader {
                             slot: 1
                             base_price: 10000
                             current_price: 10000
-                            price_variation: 0.0050
+                            price_variation: 50
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
@@ -467,7 +467,7 @@ public class FileLoader {
                             slot: 2
                             base_price: 10000
                             current_price: 10000
-                            price_variation: 0.0050
+                            price_variation: 50
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
@@ -482,7 +482,7 @@ public class FileLoader {
                             slot: 3
                             base_price: 10000
                             current_price: 10000
-                            price_variation: 0.0050
+                            price_variation: 50
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
@@ -497,7 +497,7 @@ public class FileLoader {
                             slot: 4
                             base_price: 10000
                             current_price: 10000
-                            price_variation: 0.0050
+                            price_variation: 50
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
@@ -512,7 +512,7 @@ public class FileLoader {
                             slot: 0
                             base_price: 3000
                             current_price: 3000
-                            price_variation: 0.0010
+                            price_variation: 10
                             tax_rate: 0.10
                             base_stock: 3000
                             current_stock: 3000
@@ -527,7 +527,7 @@ public class FileLoader {
                             slot: 1
                             base_price: 5000
                             current_price: 5000
-                            price_variation: 0.0020
+                            price_variation: 20
                             tax_rate: 0.15
                             base_stock: 2000
                             current_stock: 2000
@@ -542,7 +542,7 @@ public class FileLoader {
                             slot: 2
                             base_price: 4000
                             current_price: 4000
-                            price_variation: 0.0015
+                            price_variation: 15
                             tax_rate: 0.12
                             base_stock: 2500
                             current_stock: 2500
@@ -557,7 +557,7 @@ public class FileLoader {
                             slot: 3
                             base_price: 20000
                             current_price: 20000
-                            price_variation: 0.0075
+                            price_variation: 75
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
@@ -572,7 +572,7 @@ public class FileLoader {
                             slot: 4
                             base_price: 150000
                             current_price: 150000
-                            price_variation: 0.0050
+                            price_variation: 50
                             tax_rate: 0.18
                             base_stock: 1200
                             current_stock: 1200
@@ -587,7 +587,7 @@ public class FileLoader {
                             slot: 0
                             base_price: 7500
                             current_price: 7500
-                            price_variation: 0.0030
+                            price_variation: 30
                             tax_rate: 0.15
                             base_stock: 1500
                             current_stock: 1500
@@ -602,7 +602,7 @@ public class FileLoader {
                             slot: 1
                             base_price: 10000
                             current_price: 10000
-                            price_variation: 0.0050
+                            price_variation: 50
                             tax_rate: 0.20
                             base_stock: 1200
                             current_stock: 1200
@@ -617,7 +617,7 @@ public class FileLoader {
                             slot: 2
                             base_price: 10000
                             current_price: 10000
-                            price_variation: 0.0050
+                            price_variation: 50
                             tax_rate: 0.20
                             base_stock: 1200
                             current_stock: 1200
@@ -632,7 +632,7 @@ public class FileLoader {
                             slot: 3
                             base_price: 10000
                             current_price: 10000
-                            price_variation: 0.0050
+                            price_variation: 50
                             tax_rate: 0.20
                             base_stock: 1200
                             current_stock: 1200
@@ -647,7 +647,7 @@ public class FileLoader {
                             slot: 4
                             base_price: 10000
                             current_price: 10000
-                            price_variation: 0.0050
+                            price_variation: 50
                             tax_rate: 0.20
                             base_stock: 1200
                             current_stock: 1200

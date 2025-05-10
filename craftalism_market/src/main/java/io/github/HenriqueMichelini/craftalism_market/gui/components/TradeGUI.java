@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class TradeGUI extends BaseGUI {
-    // Region: Constants
     private static final int
             CENTER_SLOT = 13,
             BUY_BUTTON_SLOT = 38,
@@ -37,7 +36,6 @@ public class TradeGUI extends BaseGUI {
             DEDUCT_SLOTS = {8, 17, 26, 35, 44, 53},
             AMOUNTS = {1, 8, 32, 64, 576, 2304};
 
-    // Region: Fields
     private final MarketItem item;
     private final String itemName;
     private final ConfigManager configManager;
@@ -49,7 +47,6 @@ public class TradeGUI extends BaseGUI {
 
     private int lastRefreshAmount = -1;
 
-    // Region: Constructor
     public TradeGUI(
             String itemName,
             CraftalismMarket plugin,
@@ -85,12 +82,10 @@ public class TradeGUI extends BaseGUI {
 
     public void refresh() {
         try {
-            // Update all dynamic components
             updateItemDisplay();
             refreshTransactionButtons();
             refreshAmountControls();
 
-            // Update back button reference
             gui.updateItem(BACK_BUTTON_SLOT, createButton(
                     Material.BARRIER,
                     Component.text("Back", NamedTextColor.RED),
@@ -98,7 +93,6 @@ public class TradeGUI extends BaseGUI {
                     p -> guiManager.returnToCategory(p, item.getCategory())
             ));
 
-            // Force GUI redraw
             Bukkit.getScheduler().runTask(plugin, () -> {
                 if (!gui.getInventory().getViewers().isEmpty()) {
                     gui.update();
@@ -116,7 +110,6 @@ public class TradeGUI extends BaseGUI {
         }
     }
 
-    // Region: Initialization
     private void initialize(Consumer<Player> onBack) {
         if (item == null) return;
         addItemDisplay();
@@ -133,7 +126,6 @@ public class TradeGUI extends BaseGUI {
         return item;
     }
 
-    // Region: Item Display
     private void addItemDisplay() {
         ItemStack displayItem = new ItemStack(item.getMaterial());
         ItemMeta meta = displayItem.getItemMeta();
@@ -154,7 +146,7 @@ public class TradeGUI extends BaseGUI {
 
     private void addPriceHistory(List<Component> lore) {
         List<Long> history = item.getPriceHistory();
-        int maxEntries = 5; // Show last 5 prices
+        int maxEntries = 5;
 
         if (history.isEmpty()) {
             lore.add(Component.text("Price History: No data", NamedTextColor.GRAY));
@@ -170,7 +162,6 @@ public class TradeGUI extends BaseGUI {
                 );
     }
 
-    // Region: Transaction Handling
     private void addTransactionButtons() {
         gui.setItem(BUY_BUTTON_SLOT, createTransactionButton(
                 Material.SLIME_BLOCK, "Buy", NamedTextColor.GREEN, this::handleBuy));
@@ -208,7 +199,6 @@ public class TradeGUI extends BaseGUI {
                 .append(Component.text(moneyFormat.formatPrice(total), color));
     }
 
-    // Region: Amount Controls
     private void addAmountControls() {
         for (int i = 0; i < AMOUNTS.length; i++) {
             gui.setItem(ADD_SLOTS[i], createAmountControl(AMOUNTS[i], true));
@@ -225,9 +215,7 @@ public class TradeGUI extends BaseGUI {
                 material,
                 Component.text(action + " " + amount, color),
                 List.of(),
-                player -> { // 'player' is already the correct type (Player)
-                    handleAmountChange(amount, isAddition, player);
-                }
+                player -> handleAmountChange(amount, isAddition, player)
         );
     }
 
@@ -252,7 +240,6 @@ public class TradeGUI extends BaseGUI {
         refreshTransactionButtons();
     }
 
-    // Region: Core Logic
     private long calculateTotalPrice(String action) {
         return marketMath.getTotalPriceOfItem(
                 item,
@@ -274,7 +261,7 @@ public class TradeGUI extends BaseGUI {
         if (transactionHandler.performBuyTransaction(itemName, selectedAmount)) {
             playUiSound(player, "success");
             guiManager.refreshCategoryItem(item.getCategory(), itemName);
-            gui.close(player); // Close the GUI
+            gui.close(player);
         } else {
             playUiSound(player, "error");
             player.sendMessage(Component.text("Failed to complete purchase!", NamedTextColor.RED));
@@ -294,14 +281,13 @@ public class TradeGUI extends BaseGUI {
         if (transactionHandler.performSellTransaction(itemName, selectedAmount)) {
             playUiSound(player, "success");
             guiManager.refreshCategoryItem(item.getCategory(), itemName);
-            gui.close(player); // Close the GUI
+            gui.close(player);
         } else {
             playUiSound(player, "error");
             player.sendMessage(Component.text("Failed to complete sale!", NamedTextColor.RED));
         }
     }
 
-    // Region: Utility Methods
     private void refreshTransactionButtons() {
         if (lastRefreshAmount != selectedAmount) {
             lastRefreshAmount = selectedAmount;

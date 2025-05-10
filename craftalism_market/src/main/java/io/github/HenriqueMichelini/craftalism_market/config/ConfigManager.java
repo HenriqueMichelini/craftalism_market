@@ -3,6 +3,7 @@ package io.github.HenriqueMichelini.craftalism_market.config;
 import io.github.HenriqueMichelini.craftalism_market.config.loader.DataParser;
 import io.github.HenriqueMichelini.craftalism_market.config.loader.FileLoader;
 import io.github.HenriqueMichelini.craftalism_market.config.validation.SchemaValidator;
+import io.github.HenriqueMichelini.craftalism_market.logic.MarketMath;
 import io.github.HenriqueMichelini.craftalism_market.models.Category;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.bukkit.Bukkit.getLogger;
 
@@ -19,6 +21,7 @@ public class ConfigManager {
     private final DataParser dataParser;
     private YamlConfiguration mainConfig;
 
+    private static final Logger LOGGER = Logger.getLogger(ConfigManager.class.getName());
     private static final int DEFAULT_UPDATE_INTERVAL = 10;
     private static final int MIN_UPDATE_INTERVAL = 1;
 
@@ -87,7 +90,7 @@ public class ConfigManager {
         try {
             itemsConfig.save(itemsFile);
         } catch (IOException e) {
-            getLogger().severe("Failed to save items config: " + e.getMessage());
+            LOGGER.severe("Failed to save items config: " + e.getMessage());
         }
     }
 
@@ -115,11 +118,11 @@ public class ConfigManager {
 
         try {
             saveConfig();
-            getLogger().info(() -> String.format(
+            LOGGER.info(() -> String.format(
                     "Stock update interval changed to %d minutes", stockUpdateInterval
             ));
         } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Failed to save stock update interval", e);
+            LOGGER.log(Level.SEVERE, "Failed to save stock update interval", e);
             throw new RuntimeException("Failed to save config", e);
         }
     }

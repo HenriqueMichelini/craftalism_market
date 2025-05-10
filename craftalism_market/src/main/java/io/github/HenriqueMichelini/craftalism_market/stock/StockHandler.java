@@ -79,7 +79,6 @@ public class StockHandler {
 
     public void markItemForUpdate(MarketItem item) {
         synchronized (activeItemsSet) {
-            // Allow activation when currentStock != baseStock (even if currentStock > baseStock)
             if (item.getCurrentStock() == item.getBaseStock()) return;
 
             long intervalMillis = configManager.getStockUpdateInterval() * 60 * 1000L;
@@ -142,10 +141,9 @@ public class StockHandler {
         int maxAdjustment = (int) Math.round(base * regenRate);
         int delta = base - current;
 
-        // Handle overflow (currentStock > baseStock)
         if (current > base) {
-            delta = current - base; // Positive delta for reduction
-            maxAdjustment = (int) Math.round(current * regenRate); // Use current as base for overflow
+            delta = current - base;
+            maxAdjustment = (int) Math.round(current * regenRate);
         }
 
         int adjustment = Integer.signum(delta) * Math.max(1, Math.min(maxAdjustment, Math.abs(delta)));
@@ -162,7 +160,6 @@ public class StockHandler {
         int adjustment = newStock - item.getCurrentStock();
         long newPrice = calculateNewPrice(item, adjustment);
 
-        // Handle stock bounds and base price reset
         newStock = clampStockToBounds(base, newStock);
         if (newStock == base) {
             newPrice = item.getBasePrice();
@@ -177,10 +174,8 @@ public class StockHandler {
         boolean isAddingStock = adjustment > 0;
         long reverseMultiplier = getReverseMultiplier(item, adjustment, isAddingStock);
 
-        // Apply geometric progression formula matching getLastPriceOfItem()
         long newPrice = (item.getCurrentPrice() * reverseMultiplier) / (long) Math.pow(DECIMAL_SCALE, Math.abs(adjustment));
 
-        // Ensure minimum price of 1 (representing 0.01 when scaled)
         return Math.max(1, newPrice);
     }
 
@@ -188,12 +183,10 @@ public class StockHandler {
         long variation = item.getPriceVariationPerOperation();
         int steps = Math.abs(adjustment);
 
-        // Get transaction multipliers matching MarketUtils logic
         long transactionMultiplier = isAddingStock ?
-                DECIMAL_SCALE + variation :  // Reverse buy multiplier
-                DECIMAL_SCALE - variation;   // Reverse sell multiplier
+                DECIMAL_SCALE + variation :
+                DECIMAL_SCALE - variation;
 
-        // Calculate inverse multiplier with scaling
         return (long) Math.pow(DECIMAL_SCALE, 2 * steps) /
                 (long) Math.pow(transactionMultiplier, steps);
     }
@@ -229,12 +222,12 @@ public class StockHandler {
         int baseStock = item.getBaseStock();
         item.setBaseStock(baseStock + increaseNumber);
         LOGGER.info(() -> String.format(
-                "%s | Stock upgrade: %d → %d (+%d @ %.1f%%)", // Show % from config
+                "%s | Stock upgrade: %d → %d (+%d @ %.1f%%)",
                 item.getName(),
                 baseStock,
                 item.getBaseStock(),
                 increaseNumber,
-                configManager.getStockIncreasePercentage() * 100 // Display as percentage
+                configManager.getStockIncreasePercentage() * 100
         ));
     }
 }

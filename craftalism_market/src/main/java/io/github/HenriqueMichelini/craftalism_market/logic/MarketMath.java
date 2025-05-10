@@ -1,5 +1,6 @@
 package io.github.HenriqueMichelini.craftalism_market.logic;
 
+import io.github.HenriqueMichelini.craftalism_economy.economy.util.MoneyFormat;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 
 import java.util.ArrayList;
@@ -8,9 +9,8 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 public class MarketMath {
-    private static final int PRICE_SCALE = 2;
     private static final int MAX_HISTORY_ENTRIES = 10;
-    private static final long DECIMAL_SCALE = 100L; // Represents 1.00 with 2 decimal places
+    private static final long DECIMAL_SCALE = MoneyFormat.DECIMAL_SCALE;
     private static final Logger LOGGER = Logger.getLogger(MarketMath.class.getName());
 
     /**

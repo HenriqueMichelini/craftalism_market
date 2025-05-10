@@ -21,14 +21,6 @@ public final class InventoryHandler {
     }
 
     /**
-     * Checks if a player has at least the required amount of a specific material.
-     */
-    public static boolean hasItems(@NotNull Player player, @NotNull Material material, int requiredAmount) {
-        validateParameters(player, material, requiredAmount);
-        return countItems(player, material) >= requiredAmount;
-    }
-
-    /**
      * Counts the total amount of a specific material in a player's inventory.
      */
     public static int countItems(@NotNull Player player, @NotNull Material material) {

@@ -21,7 +21,6 @@ public class CraftalismMarket extends JavaPlugin {
     private ConfigManager configManager;
     private EconomyManager economyManager;
     private GuiManager guiManager;
-    private MarketMath marketMath;
     private StockHandler stockHandler;
     private MoneyFormat moneyFormat;
 
@@ -35,9 +34,8 @@ public class CraftalismMarket extends JavaPlugin {
             return;
         }
 
-        // Fix 2: Change initialization order
         configManager = new ConfigManager(getDataFolder());
-        initializeStockHandler();  // Must come first
+        initializeStockHandler();
         initializeComponents();
         registerCommands();
         initializeAutoSave();
@@ -47,14 +45,12 @@ public class CraftalismMarket extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Save all market data
         configManager.saveItems();
         getLogger().info("Market data saved successfully!");
         instance = null;
     }
 
     private void initializeAutoSave() {
-        // Save every 5 minutes (300 seconds * 20 ticks)
         Bukkit.getScheduler().runTaskTimer(this, () -> {
             configManager.saveItems();
             getLogger().fine("Auto-saved market data");
@@ -68,20 +64,18 @@ public class CraftalismMarket extends JavaPlugin {
             return false;
         }
         economyManager = ((CraftalismEconomy) economyPlugin).getEconomyManager();
-        this.moneyFormat = ((CraftalismEconomy) economyPlugin).getMoneyFormat();  // <-- THIS WAS MISSING
+        this.moneyFormat = ((CraftalismEconomy) economyPlugin).getMoneyFormat();
         return true;
     }
 
-    // Update initializeComponents() (remove configManager creation)
     private void initializeComponents() {
-        // Fix 3: StockHandler is now initialized first
-        marketMath = new MarketMath();
+        MarketMath marketMath = new MarketMath();
         guiManager = new GuiManager(configManager, this, marketMath, stockHandler, moneyFormat);
     }
 
     private void initializeStockHandler() {
         this.stockHandler = new StockHandler(configManager, moneyFormat);
-        long checkIntervalTicks = 20L * 5; // Check every 5 seconds (100 ticks)
+        long checkIntervalTicks = 20L * 5;
         new StockUpdateTask(stockHandler).runTaskTimer(this, 0L, checkIntervalTicks);
     }
 

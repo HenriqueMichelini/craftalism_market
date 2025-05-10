@@ -1,6 +1,4 @@
 package io.github.HenriqueMichelini.craftalism_market.core;
-
-import io.github.HenriqueMichelini.craftalism_economy.economy.managers.BalanceManager;
 import io.github.HenriqueMichelini.craftalism_economy.economy.managers.EconomyManager;
 import io.github.HenriqueMichelini.craftalism_economy.economy.util.MoneyFormat;
 import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
@@ -53,15 +51,12 @@ public class TransactionHandler {
 
         if (!processPurchase(item, adjustedAmount)) return false;
 
-        double increasePercent      = configManager.getStockIncreasePercentage();
-        int increaseNumber          = (int) (adjustedAmount * increasePercent);
-//        int currentBaseStock        = item.getBaseStock();
-//        int newBaseStock            = currentBaseStock + increaseNumber;
+        double increasePercent = configManager.getStockIncreasePercentage();
+        int increaseNumber = (int) (adjustedAmount * increasePercent);
 
-        //marketMath.updateTaxRate(item, currentBaseStock, newBaseStock, item.getTaxRate());
         stockHandler.upgradeBaseStock(item, increaseNumber);
 
-        sendSuccess("Successfully purchased %d %s for %s".formatted(adjustedAmount, item.getName(), moneyFormat.formatPrice(totalPrice)));
+        sendSuccess("Successfully purchased %d %s for %s".formatted(adjustedAmount, itemName, moneyFormat.formatPrice(totalPrice)));
         return true;
     }
 

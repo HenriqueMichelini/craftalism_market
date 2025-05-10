@@ -15,13 +15,11 @@ public class MarketCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
-        // Validate sender
         if (!(sender instanceof Player player)) {
             sender.sendMessage("§cThis command can only be executed by a player.");
             return true;
         }
 
-        // Open main market GUI
         guiManager.openMarket(player);
         return true;
     }
