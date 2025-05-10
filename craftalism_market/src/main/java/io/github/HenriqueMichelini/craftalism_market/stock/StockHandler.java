@@ -5,11 +5,10 @@ import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import io.github.HenriqueMichelini.craftalism_market.stock.listener.StockUpdateListener;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static io.github.HenriqueMichelini.craftalism_economy.economy.util.MoneyFormat.DECIMAL_SCALE;
 
 public class StockHandler {
     private static final Logger LOGGER = Logger.getLogger(StockHandler.class.getName());
@@ -18,6 +17,7 @@ public class StockHandler {
     private final List<StockUpdateListener> listeners = new ArrayList<>();
     private final ConfigManager configManager;
     private final MoneyFormat moneyFormat;
+    private final long DECIMAL_SCALE = MoneyFormat.DECIMAL_SCALE;
 
     private static final long MINUTE_IN_MILLIS = 60 * 1000L;
 
@@ -81,7 +81,8 @@ public class StockHandler {
         synchronized (activeItemsSet) {
             if (item.getCurrentStock() == item.getBaseStock()) return;
 
-            long intervalMillis = configManager.getStockUpdateInterval() * 60 * 1000L;
+            long intervalMillis = configManager.getStockUpdateInterval() * 1000L;
+//            long intervalMillis = configManager.getStockUpdateInterval() * 60 * 1000L;
             long nextUpdate = System.currentTimeMillis() + intervalMillis;
 
             if (activeItemsSet.contains(item)) {
@@ -169,14 +170,13 @@ public class StockHandler {
     }
 
     private long calculateNewPrice(MarketItem item, int adjustment) {
-        if (adjustment == 0) return item.getCurrentPrice();
+        if (adjustment == 0) return Math.max(100, item.getCurrentPrice());
 
-        boolean isAddingStock = adjustment > 0;
-        long reverseMultiplier = getReverseMultiplier(item, adjustment, isAddingStock);
+        long reverseMultiplier = getReverseMultiplier(item, adjustment, adjustment > 0);
+        LOGGER.fine("Reverse multiplier: " + reverseMultiplier);
+        long newPrice = (item.getCurrentPrice() * reverseMultiplier) / DECIMAL_SCALE;
 
-        long newPrice = (item.getCurrentPrice() * reverseMultiplier) / (long) Math.pow(DECIMAL_SCALE, Math.abs(adjustment));
-
-        return Math.max(1, newPrice);
+        return Math.max(100, newPrice);
     }
 
     private long getReverseMultiplier(MarketItem item, int adjustment, boolean isAddingStock) {
@@ -187,8 +187,10 @@ public class StockHandler {
                 DECIMAL_SCALE + variation :
                 DECIMAL_SCALE - variation;
 
-        return (long) Math.pow(DECIMAL_SCALE, 2 * steps) /
-                (long) Math.pow(transactionMultiplier, steps);
+        double multiplierPerStep = (double) DECIMAL_SCALE / transactionMultiplier;
+        double totalMultiplier = Math.pow(multiplierPerStep, steps);
+
+        return (long) (totalMultiplier * DECIMAL_SCALE);
     }
 
     private int clampStockToBounds(int base, int newStock) {

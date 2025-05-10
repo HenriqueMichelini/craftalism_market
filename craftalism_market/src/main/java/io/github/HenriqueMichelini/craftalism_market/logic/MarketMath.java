@@ -64,7 +64,6 @@ public class MarketMath {
         LinkedList<Long> history = new LinkedList<>(item.getPriceHistory());
         history.addFirst(newPrice);
 
-        // Trim history to max size
         while (history.size() > MAX_HISTORY_ENTRIES) {
             history.removeLast();
         }
@@ -79,7 +78,6 @@ public class MarketMath {
         }
     }
 
-    // Custom power function to avoid floating-point inaccuracies
     private long pow(long base, int exponent) {
         if (exponent == 0) return DECIMAL_SCALE;
         long result = base;
