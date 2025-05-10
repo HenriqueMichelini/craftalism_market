@@ -8,11 +8,9 @@ import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import static org.bukkit.Bukkit.getLogger;
 
@@ -37,10 +35,8 @@ public class ConfigManager {
     private double stockIncreasePercentage = 0.05; // Default value
 
     public void reload() {
-        // Load all configuration files
         fileLoader.loadFiles();
 
-        // Get main config reference
         this.mainConfig = fileLoader.getMainConfig();
 
         this.stockIncreasePercentage = mainConfig.getDouble(
@@ -48,11 +44,9 @@ public class ConfigManager {
                 0.05
         );
 
-        // Validate data files
         SchemaValidator.validateCategories(fileLoader.getCategoriesConfig());
         SchemaValidator.validateItems(fileLoader.getItemsConfig());
 
-        // Parse data
         dataParser.parseData();
     }
 
@@ -60,7 +54,6 @@ public class ConfigManager {
         return stockIncreasePercentage;
     }
 
-    // In ConfigManager.java
     public void saveItems() {
         File itemsFile = new File(fileLoader.getConfigFolder(), "items.yml");
         YamlConfiguration itemsConfig = YamlConfiguration.loadConfiguration(itemsFile);
@@ -77,20 +70,17 @@ public class ConfigManager {
             itemsConfig.set(path + "material", item.getMaterial().name());
             itemsConfig.set(path + "category", item.getCategory());
             itemsConfig.set(path + "slot", item.getSlot());
-            itemsConfig.set(path + "base_price", item.getBasePrice().doubleValue());
-            itemsConfig.set(path + "current_price", item.getCurrentPrice().doubleValue());
-            itemsConfig.set(path + "price_variation", item.getPriceVariationPerOperation().doubleValue());
-            itemsConfig.set(path + "tax_rate", item.getTaxRate().doubleValue());
+            itemsConfig.set(path + "base_price", item.getBasePrice());
+            itemsConfig.set(path + "current_price", item.getCurrentPrice());
+            itemsConfig.set(path + "price_variation", item.getPriceVariationPerOperation());
+            itemsConfig.set(path + "tax_rate", item.getTaxRate());
             itemsConfig.set(path + "base_stock", item.getBaseStock());
             itemsConfig.set(path + "current_stock", item.getCurrentStock());
             itemsConfig.set(path + "stock_regen_rate", item.getStockRegenRate());
             itemsConfig.set(path + "next_update_time", item.getNextUpdateTime());
             itemsConfig.set(path + "last_activity", item.getLastActivity());
 
-            // Save price history as double list
-            List<Double> priceHistory = item.getPriceHistory().stream()
-                    .map(BigDecimal::doubleValue)
-                    .collect(Collectors.toList());
+            List<Long> priceHistory = item.getPriceHistory();
             itemsConfig.set(path + "price_history", priceHistory);
         }
 

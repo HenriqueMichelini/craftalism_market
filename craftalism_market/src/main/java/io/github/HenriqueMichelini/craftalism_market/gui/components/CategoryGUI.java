@@ -1,5 +1,6 @@
 package io.github.HenriqueMichelini.craftalism_market.gui.components;
 
+import io.github.HenriqueMichelini.craftalism_economy.economy.util.MoneyFormat;
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
@@ -14,17 +15,20 @@ import java.util.function.Consumer;
 public class CategoryGUI extends BaseGUI {
     private final ConfigManager configManager;
     private final BiConsumer<Player, String> onItemSelect;
+    private final MoneyFormat moneyFormat;
 
     public CategoryGUI(
             String category,
             CraftalismMarket plugin,
             ConfigManager configManager,
             BiConsumer<Player, String> onItemSelect,
-            Consumer<Player> onBack
+            Consumer<Player> onBack,
+            MoneyFormat moneyFormat
     ) {
         super(category, 6, plugin);
         this.configManager = configManager;
         this.onItemSelect = onItemSelect;
+        this.moneyFormat = moneyFormat;
         populateItems(category);
         addBackButton(onBack);
     }
@@ -41,7 +45,7 @@ public class CategoryGUI extends BaseGUI {
 
         return List.of(
                 Component.text("Price: ", NamedTextColor.GRAY)
-                        .append(Component.text(formatPrice(item.getCurrentPrice()), NamedTextColor.GREEN)),
+                        .append(Component.text(moneyFormat.formatPrice(item.getCurrentPrice()), NamedTextColor.GREEN)),
                 stockComponent
         );
     }

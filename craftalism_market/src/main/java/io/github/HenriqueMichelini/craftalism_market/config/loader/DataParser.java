@@ -4,7 +4,6 @@ import io.github.HenriqueMichelini.craftalism_market.models.Category;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,14 +54,15 @@ public class DataParser {
                     itemSection.getString("category"),
                     Material.matchMaterial(Objects.requireNonNull(itemSection.getString("material"))),
                     itemSection.getInt("slot"),
-                    BigDecimal.valueOf(itemSection.getDouble("base_price")),
-                    BigDecimal.valueOf(itemSection.getDouble("current_price")),
-                    BigDecimal.valueOf(itemSection.getDouble("price_variation")),
-                    BigDecimal.valueOf(itemSection.getDouble("tax_rate")),
+                    itemSection.getLong("base_price"),
+                    itemSection.getLong("current_price"),
+                    itemSection.getLong("price_variation"),
+                    itemSection.getDouble("tax_rate"),
                     itemSection.getInt("base_stock"),
                     itemSection.getInt("current_stock"),
                     itemSection.getDouble("stock_regen_rate"),
                     itemSection.getLong("next_update_time"),
+                    itemSection.getInt("stock_surplus"),
                     itemSection.getLong("last_activity"),
                     parsePriceHistory(itemSection)
             );
@@ -70,9 +70,9 @@ public class DataParser {
         }
     }
 
-    private List<BigDecimal> parsePriceHistory(ConfigurationSection section) {
+    private List<Long> parsePriceHistory(ConfigurationSection section) {
         return section.getDoubleList("price_history").stream()
-                .map(BigDecimal::valueOf)
+                .map(Math::round)
                 .collect(Collectors.toList());
     }
 

@@ -1,9 +1,10 @@
 package io.github.HenriqueMichelini.craftalism_market.gui.manager;
 
+import io.github.HenriqueMichelini.craftalism_economy.economy.util.MoneyFormat;
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.gui.components.*;
-import io.github.HenriqueMichelini.craftalism_market.logic.MarketUtils;
+import io.github.HenriqueMichelini.craftalism_market.logic.MarketMath;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import io.github.HenriqueMichelini.craftalism_market.stock.StockHandler;
 import io.github.HenriqueMichelini.craftalism_market.stock.listener.StockUpdateListener;
@@ -18,13 +19,15 @@ public class GuiManager implements StockUpdateListener {
     // Region: Dependencies
     private final ConfigManager configManager;
     private final CraftalismMarket plugin;
-    private final MarketUtils marketUtils;
+    private final MarketMath marketMath;
     private final StockHandler stockHandler;
 
     // Region: GUI Components
     private MarketGUI marketGui;
     private final Map<String, CategoryGUI> categoryGuis = new HashMap<>();
     private final Map<String, Set<TradeGUI>> openTradeGuis = new HashMap<>();
+    private final MoneyFormat moneyFormat;
+
 
     @Override
     public void onStockUpdated(MarketItem item) {
@@ -52,11 +55,12 @@ public class GuiManager implements StockUpdateListener {
         }
     }
 
-    public GuiManager(ConfigManager configManager, CraftalismMarket plugin, MarketUtils marketUtils, StockHandler stockHandler) {
+    public GuiManager(ConfigManager configManager, CraftalismMarket plugin, MarketMath marketMath, StockHandler stockHandler, MoneyFormat moneyFormat) {
         this.configManager = configManager;
         this.plugin = plugin;
-        this.marketUtils = marketUtils;
+        this.marketMath = marketMath;
         this.stockHandler = stockHandler;
+        this.moneyFormat = moneyFormat;
         stockHandler.addStockUpdateListener(this);
         initializeGUIs();
     }
@@ -77,7 +81,8 @@ public class GuiManager implements StockUpdateListener {
                         plugin,
                         configManager,
                         this::handleItemSelection,
-                        this::openMarket
+                        this::openMarket,
+                        moneyFormat
                 ))
         );
     }
@@ -102,10 +107,11 @@ public class GuiManager implements StockUpdateListener {
                 itemName,
                 plugin,
                 configManager,
-                marketUtils,
+                marketMath,
                 p -> returnToCategory(p, getItemCategory(itemName)),
                 this,
-                stockHandler).open(player);
+                stockHandler,
+                moneyFormat).open(player);
     }
 
     // Region: Navigation Helpers

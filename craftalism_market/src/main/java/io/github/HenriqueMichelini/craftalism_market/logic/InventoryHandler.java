@@ -69,7 +69,6 @@ public final class InventoryHandler {
 
     /**
      * Adds items to a player's inventory, dropping overflow naturally in the world.
-     * @return true if all items were added to inventory, false if some were dropped
      */
     public static int addItemToPlayer(@NotNull Player player, @NotNull Material material, int amount) {
         validateParameters(player, material, amount);

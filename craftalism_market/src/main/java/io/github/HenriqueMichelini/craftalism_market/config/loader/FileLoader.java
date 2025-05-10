@@ -135,492 +135,527 @@ public class FileLoader {
                             material: COBBLESTONE
                             category: natural_resources
                             slot: 0
-                            base_price: 0.37
-                            current_price: 0.37
+                            base_price: 3700
+                            current_price: 3700
                             price_variation: 0.0015
                             tax_rate: 0.15
                             base_stock: 2000
                             current_stock: 2000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.37
+                              - 3700
                           dirt:
                             material: DIRT
                             category: natural_resources
                             slot: 1
-                            base_price: 0.1
-                            current_price: 0.1
+                            base_price: 1000
+                            current_price: 1000
                             price_variation: 0.0005
                             tax_rate: 0.1
                             base_stock: 5000
                             current_stock: 5000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.1
+                              - 1000
                           sand:
                             material: SAND
                             category: natural_resources
                             slot: 2
-                            base_price: 0.25
-                            current_price: 0.25
+                            base_price: 2500
+                            current_price: 2500
                             price_variation: 0.001
                             tax_rate: 0.12
                             base_stock: 3000
                             current_stock: 3000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.25
+                              - 2500
                           gravel:
                             material: GRAVEL
                             category: natural_resources
                             slot: 3
-                            base_price: 0.2
-                            current_price: 0.2
+                            base_price: 2000
+                            current_price: 2000
                             price_variation: 0.0008
                             tax_rate: 0.12
                             base_stock: 2500
                             current_stock: 2500
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.2
+                              - 2000
                           clay_ball:
                             material: CLAY_BALL
                             category: natural_resources
                             slot: 4
-                            base_price: 0.5
-                            current_price: 0.5
+                            base_price: 5000
+                            current_price: 5000
                             price_variation: 0.002
                             tax_rate: 0.15
                             base_stock: 1000
                             current_stock: 1000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.5
+                              - 5000
                           coal:
                             material: COAL
                             category: ores
                             slot: 0
-                            base_price: 1.00
-                            current_price: 1.00
+                            base_price: 10000
+                            current_price: 10000
                             price_variation: 0.0050
                             tax_rate: 0.20
                             base_stock: 1500
                             current_stock: 1500
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 1.00
+                              - 10000
                           iron_ingot:
                             material: IRON_INGOT
                             category: ores
                             slot: 1
-                            base_price: 5.00
-                            current_price: 5.00
+                            base_price: 50000
+                            current_price: 50000
                             price_variation: 0.0100
                             tax_rate: 0.25
                             base_stock: 800
                             current_stock: 800
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 5.00
+                              - 50000
                           gold_ingot:
                             material: GOLD_INGOT
                             category: ores
                             slot: 2
-                            base_price: 10.00
-                            current_price: 10.00
+                            base_price: 100000
+                            current_price: 100000
                             price_variation: 0.0200
                             tax_rate: 0.30
                             base_stock: 500
                             current_stock: 500
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 10.00
+                              - 100000
                           diamond:
                             material: DIAMOND
                             category: ores
                             slot: 3
-                            base_price: 50.00
-                            current_price: 50.00
+                            base_price: 500000
+                            current_price: 500000
                             price_variation: 0.0500
                             tax_rate: 0.35
                             base_stock: 200
                             current_stock: 200
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 50.00
+                              - 500000
                           emerald:
                             material: EMERALD
                             category: ores
                             slot: 4
-                            base_price: 100.00
-                            current_price: 100.00
+                            base_price: 1000000
+                            current_price: 1000000
                             price_variation: 0.1000
                             tax_rate: 0.40
                             base_stock: 100
                             current_stock: 100
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 100.00
+                              - 1000000
                           string:
                             material: STRING
                             category: mob_drops
                             slot: 0
-                            base_price: 0.50
-                            current_price: 0.50
+                            base_price: 5000
+                            current_price: 5000
                             price_variation: 0.0020
                             tax_rate: 0.15
                             base_stock: 1500
                             current_stock: 1500
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.50
+                              - 5000
                           spider_eye:
                             material: SPIDER_EYE
                             category: mob_drops
                             slot: 1
-                            base_price: 1.50
-                            current_price: 1.50
+                            base_price: 150000
+                            current_price: 150000
                             price_variation: 0.0050
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 1.50
+                              - 150000
                           bone:
                             material: BONE
                             category: mob_drops
                             slot: 2
-                            base_price: 0.75
-                            current_price: 0.75
+                            base_price: 7500
+                            current_price: 7500
                             price_variation: 0.0030
                             tax_rate: 0.18
                             base_stock: 1200
                             current_stock: 1200
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.75
+                              - 7500
                           gunpowder:
                             material: GUNPOWDER
                             category: mob_drops
                             slot: 3
-                            base_price: 2.00
-                            current_price: 2.00
+                            base_price: 200000
+                            current_price: 200000
                             price_variation: 0.0075
                             tax_rate: 0.22
                             base_stock: 800
                             current_stock: 800
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 2.00
+                              - 200000
                           ender_pearl:
                             material: ENDER_PEARL
                             category: mob_drops
                             slot: 4
-                            base_price: 10.00
-                            current_price: 10.00
+                            base_price: 100000
+                            current_price: 100000
                             price_variation: 0.0200
                             tax_rate: 0.30
                             base_stock: 300
                             current_stock: 300
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 10.00
+                              - 100000
                           oak_log:
                             material: OAK_LOG
                             category: woods
                             slot: 0
-                            base_price: 0.50
-                            current_price: 0.50
+                            base_price: 5000
+                            current_price: 5000
                             price_variation: 0.0020
                             tax_rate: 0.15
                             base_stock: 2000
                             current_stock: 2000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.50
+                              - 5000
                           spruce_log:
                             material: SPRUCE_LOG
                             category: woods
                             slot: 1
-                            base_price: 0.55
-                            current_price: 0.55
+                            base_price: 5500
+                            current_price: 5500
                             price_variation: 0.0022
                             tax_rate: 0.15
                             base_stock: 1800
                             current_stock: 1800
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.55
+                              - 5500
                           birch_log:
                             material: BIRCH_LOG
                             category: woods
                             slot: 2
-                            base_price: 0.60
-                            current_price: 0.60
+                            base_price: 6000
+                            current_price: 6000
                             price_variation: 0.0025
                             tax_rate: 0.15
                             base_stock: 1600
                             current_stock: 1600
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.60
+                              - 6000
                           jungle_log:
                             material: JUNGLE_LOG
                             category: woods
                             slot: 3
-                            base_price: 0.65
-                            current_price: 0.65
+                            base_price: 6500
+                            current_price: 6500
                             price_variation: 0.0028
                             tax_rate: 0.15
                             base_stock: 1400
                             current_stock: 1400
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.65
+                              - 6500
                           acacia_log:
                             material: ACACIA_LOG
                             category: woods
                             slot: 4
-                            base_price: 0.70
-                            current_price: 0.70
+                            base_price: 7000
+                            current_price: 7000
                             price_variation: 0.0030
                             tax_rate: 0.15
                             base_stock: 1200
                             current_stock: 1200
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.70
+                              - 7000
                           red_dye:
                             material: RED_DYE
                             category: dyes
                             slot: 0
-                            base_price: 1.00
-                            current_price: 1.00
+                            base_price: 10000
+                            current_price: 10000
                             price_variation: 0.0050
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 1.00
+                              - 10000
                           blue_dye:
                             material: BLUE_DYE
                             category: dyes
                             slot: 1
-                            base_price: 1.00
-                            current_price: 1.00
+                            base_price: 10000
+                            current_price: 10000
                             price_variation: 0.0050
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 1.00
+                              - 10000
                           green_dye:
                             material: GREEN_DYE
                             category: dyes
                             slot: 2
-                            base_price: 1.00
-                            current_price: 1.00
+                            base_price: 10000
+                            current_price: 10000
                             price_variation: 0.0050
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 1.00
+                              - 10000
                           yellow_dye:
                             material: YELLOW_DYE
                             category: dyes
                             slot: 3
-                            base_price: 1.00
-                            current_price: 1.00
+                            base_price: 10000
+                            current_price: 10000
                             price_variation: 0.0050
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 1.00
+                              - 10000
                           purple_dye:
                             material: PURPLE_DYE
                             category: dyes
                             slot: 4
-                            base_price: 1.00
-                            current_price: 1.00
+                            base_price: 10000
+                            current_price: 10000
                             price_variation: 0.0050
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 1.00
+                              - 10000
                           wheat:
                             material: WHEAT
                             category: livestock
                             slot: 0
-                            base_price: 0.30
-                            current_price: 0.30
+                            base_price: 3000
+                            current_price: 3000
                             price_variation: 0.0010
                             tax_rate: 0.10
                             base_stock: 3000
                             current_stock: 3000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.30
+                              - 3000
                           carrot:
                             material: CARROT
                             category: livestock
                             slot: 1
-                            base_price: 0.50
-                            current_price: 0.50
+                            base_price: 5000
+                            current_price: 5000
                             price_variation: 0.0020
                             tax_rate: 0.15
                             base_stock: 2000
                             current_stock: 2000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.50
+                              - 5000
                           potato:
                             material: POTATO
                             category: livestock
                             slot: 2
-                            base_price: 0.40
-                            current_price: 0.40
+                            base_price: 4000
+                            current_price: 4000
                             price_variation: 0.0015
                             tax_rate: 0.12
                             base_stock: 2500
                             current_stock: 2500
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.40
+                              - 4000
                           beef:
                             material: BEEF
                             category: livestock
                             slot: 3
-                            base_price: 2.00
-                            current_price: 2.00
+                            base_price: 20000
+                            current_price: 20000
                             price_variation: 0.0075
                             tax_rate: 0.20
                             base_stock: 1000
                             current_stock: 1000
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 2.00
+                              - 20000
                           chicken:
                             material: CHICKEN
                             category: livestock
                             slot: 4
-                            base_price: 1.50
-                            current_price: 1.50
+                            base_price: 150000
+                            current_price: 150000
                             price_variation: 0.0050
                             tax_rate: 0.18
                             base_stock: 1200
                             current_stock: 1200
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 1.50
+                              - 150000
                           white_wool:
                             material: WHITE_WOOL
                             category: wools
                             slot: 0
-                            base_price: 0.75
-                            current_price: 0.75
+                            base_price: 7500
+                            current_price: 7500
                             price_variation: 0.0030
                             tax_rate: 0.15
                             base_stock: 1500
                             current_stock: 1500
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 0.75
+                              - 7500
                           black_wool:
                             material: BLACK_WOOL
                             category: wools
                             slot: 1
-                            base_price: 1.00
-                            current_price: 1.00
+                            base_price: 10000
+                            current_price: 10000
                             price_variation: 0.0050
                             tax_rate: 0.20
                             base_stock: 1200
                             current_stock: 1200
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 1.00
+                              - 10000
                           red_wool:
                             material: RED_WOOL
                             category: wools
                             slot: 2
-                            base_price: 1.00
-                            current_price: 1.00
+                            base_price: 10000
+                            current_price: 10000
                             price_variation: 0.0050
                             tax_rate: 0.20
                             base_stock: 1200
                             current_stock: 1200
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 1.00
+                              - 10000
                           blue_wool:
                             material: BLUE_WOOL
                             category: wools
                             slot: 3
-                            base_price: 1.00
-                            current_price: 1.00
+                            base_price: 10000
+                            current_price: 10000
                             price_variation: 0.0050
                             tax_rate: 0.20
                             base_stock: 1200
                             current_stock: 1200
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 1.00
+                              - 10000
                           green_wool:
                             material: GREEN_WOOL
                             category: wools
                             slot: 4
-                            base_price: 1.00
-                            current_price: 1.00
+                            base_price: 10000
+                            current_price: 10000
                             price_variation: 0.0050
                             tax_rate: 0.20
                             base_stock: 1200
                             current_stock: 1200
+                            stock_surplus: 0
                             next_update_time: 0
                             last_activity: 0
                             price_history:
-                              - 1.00
+                              - 10000
                         """;
 
         YamlConfiguration config = new YamlConfiguration();

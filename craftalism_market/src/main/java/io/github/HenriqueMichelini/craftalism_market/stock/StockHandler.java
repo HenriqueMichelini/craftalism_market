@@ -1,14 +1,15 @@
 package io.github.HenriqueMichelini.craftalism_market.stock;
 
+import io.github.HenriqueMichelini.craftalism_economy.economy.util.MoneyFormat;
 import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import io.github.HenriqueMichelini.craftalism_market.stock.listener.StockUpdateListener;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static io.github.HenriqueMichelini.craftalism_economy.economy.util.MoneyFormat.DECIMAL_SCALE;
 
 public class StockHandler {
     private static final Logger LOGGER = Logger.getLogger(StockHandler.class.getName());
@@ -16,11 +17,13 @@ public class StockHandler {
     private final Set<MarketItem> activeItemsSet = new HashSet<>();
     private final List<StockUpdateListener> listeners = new ArrayList<>();
     private final ConfigManager configManager;
+    private final MoneyFormat moneyFormat;
 
     private static final long MINUTE_IN_MILLIS = 60 * 1000L;
 
-    public StockHandler(ConfigManager configManager) {
+    public StockHandler(ConfigManager configManager, MoneyFormat moneyFormat) {
         this.configManager = Objects.requireNonNull(configManager, "ConfigManager cannot be null");
+        this.moneyFormat = moneyFormat;
         if (configManager.getStockUpdateInterval() <= 0) {
             LOGGER.warning("Invalid stock update interval, using default of 5 minutes");
             configManager.setStockUpdateInterval(5);
@@ -157,7 +160,7 @@ public class StockHandler {
 
     private void updateStockAndPrice(MarketItem item, int base, int newStock) {
         int adjustment = newStock - item.getCurrentStock();
-        BigDecimal newPrice = calculateNewPrice(item, adjustment);
+        long newPrice = calculateNewPrice(item, adjustment);
 
         // Handle stock bounds and base price reset
         newStock = clampStockToBounds(base, newStock);
@@ -168,36 +171,31 @@ public class StockHandler {
         updateItemState(item, newStock, newPrice);
     }
 
-    private BigDecimal calculateNewPrice(MarketItem item, int adjustment) {
+    private long calculateNewPrice(MarketItem item, int adjustment) {
         if (adjustment == 0) return item.getCurrentPrice();
 
         boolean isAddingStock = adjustment > 0;
-        BigDecimal reverseMultiplier = getBigDecimal(item, adjustment, isAddingStock);
+        long reverseMultiplier = getReverseMultiplier(item, adjustment, isAddingStock);
 
         // Apply geometric progression formula matching getLastPriceOfItem()
-        BigDecimal newPrice = item.getCurrentPrice()
-                .multiply(reverseMultiplier)
-                .setScale(configManager.getPriceDecimalPlaces(), RoundingMode.HALF_UP);
+        long newPrice = (item.getCurrentPrice() * reverseMultiplier) / (long) Math.pow(DECIMAL_SCALE, Math.abs(adjustment));
 
-        return newPrice.max(BigDecimal.valueOf(0.01));
+        // Ensure minimum price of 1 (representing 0.01 when scaled)
+        return Math.max(1, newPrice);
     }
 
-    private static BigDecimal getBigDecimal(MarketItem item, int adjustment, boolean isAddingStock) {
-        BigDecimal variation = item.getPriceVariationPerOperation();
+    private long getReverseMultiplier(MarketItem item, int adjustment, boolean isAddingStock) {
+        long variation = item.getPriceVariationPerOperation();
         int steps = Math.abs(adjustment);
 
         // Get transaction multipliers matching MarketUtils logic
-        BigDecimal transactionMultiplier = isAddingStock ?
-                BigDecimal.ONE.add(variation) :  // Reverse buy multiplier
-                BigDecimal.ONE.subtract(variation); // Reverse sell multiplier
+        long transactionMultiplier = isAddingStock ?
+                DECIMAL_SCALE + variation :  // Reverse buy multiplier
+                DECIMAL_SCALE - variation;   // Reverse sell multiplier
 
-        // Calculate inverse multiplier with high precision
-        // Intermediate calculation precision
-        return BigDecimal.ONE.divide(
-                transactionMultiplier,
-                10,
-                RoundingMode.HALF_UP
-        ).pow(steps);
+        // Calculate inverse multiplier with scaling
+        return (long) Math.pow(DECIMAL_SCALE, 2 * steps) /
+                (long) Math.pow(transactionMultiplier, steps);
     }
 
     private int clampStockToBounds(int base, int newStock) {
@@ -206,9 +204,9 @@ public class StockHandler {
         return Math.max(0, Math.min(newStock, maxStock));
     }
 
-    private void updateItemState(MarketItem item, int newStock, BigDecimal newPrice) {
+    private void updateItemState(MarketItem item, int newStock, long newPrice) {
         int oldStock = item.getCurrentStock();
-        BigDecimal oldPrice = item.getCurrentPrice();
+        long oldPrice = item.getCurrentPrice();
         item.setCurrentStock(newStock);
         item.setCurrentPrice(newPrice);
         item.getPriceHistory().add(newPrice);
@@ -216,10 +214,14 @@ public class StockHandler {
         notifyStockUpdated(item);
     }
 
-    private void logStockUpdate(MarketItem item, int oldStock, BigDecimal oldPrice, int newStock, BigDecimal newPrice) {
+    private void logStockUpdate(MarketItem item, int oldStock, long oldPrice, int newStock, long newPrice) {
         LOGGER.info(() -> String.format(
                 "%s | Stock: %d → %d | Price: %s → %s",
-                item.getName(), oldStock, newStock, oldPrice, newPrice
+                item.getName(),
+                oldStock,
+                newStock,
+                moneyFormat.formatPrice(oldPrice),
+                moneyFormat.formatPrice(newPrice)
         ));
     }
 

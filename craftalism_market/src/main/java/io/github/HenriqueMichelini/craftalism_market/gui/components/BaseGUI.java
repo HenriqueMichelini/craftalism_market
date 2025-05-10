@@ -13,9 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Consumer;
 
 public abstract class BaseGUI {
@@ -76,17 +74,6 @@ public abstract class BaseGUI {
                 onBack
         );
         gui.setItem(BACK_BUTTON_SLOT, backButton);
-    }
-
-    // Add static formatters
-    private static final NumberFormat PRICE_FORMATTER = NumberFormat.getInstance(Locale.GERMANY);
-    static {
-        PRICE_FORMATTER.setMinimumFractionDigits(2);
-        PRICE_FORMATTER.setMaximumFractionDigits(2);
-    }
-
-    protected String formatPrice(BigDecimal price) {
-        return "$" + PRICE_FORMATTER.format(price.doubleValue());
     }
 
     protected String formatPercentage(BigDecimal sellTax) {

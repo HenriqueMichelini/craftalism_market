@@ -1,60 +1,67 @@
 package io.github.HenriqueMichelini.craftalism_market.core;
 
-import io.github.HenriqueMichelini.craftalism_economy.economy.EconomyManager;
+import io.github.HenriqueMichelini.craftalism_economy.economy.managers.BalanceManager;
+import io.github.HenriqueMichelini.craftalism_economy.economy.managers.EconomyManager;
+import io.github.HenriqueMichelini.craftalism_economy.economy.util.MoneyFormat;
 import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.logic.InventoryHandler;
-import io.github.HenriqueMichelini.craftalism_market.logic.MarketUtils;
+import io.github.HenriqueMichelini.craftalism_market.logic.MarketMath;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import io.github.HenriqueMichelini.craftalism_market.stock.StockHandler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.NumberFormat;
-import java.util.Locale;
 import java.util.UUID;
 
 public class TransactionHandler {
+    private static final long DECIMAL_SCALE = MoneyFormat.DECIMAL_SCALE;
+    private final MoneyFormat moneyFormat;
     private final EconomyManager economyManager;
-    private final MarketUtils marketUtils;
+    private final MarketMath marketMath;
     private final ConfigManager configManager;
     private final Player player;
-    private final StockHandler stockHandler; // Add this field
+    private final StockHandler stockHandler;
 
-    public TransactionHandler(Player player, EconomyManager economyManager, ConfigManager configManager, MarketUtils marketUtils, StockHandler stockHandler) {
-        this.stockHandler = stockHandler;
-        if (economyManager == null || marketUtils == null || configManager == null || player == null) {
+    public TransactionHandler(
+            MoneyFormat moneyFormat,
+            Player          player,
+            EconomyManager  economyManager,
+            ConfigManager   configManager,
+            MarketMath      marketMath,
+            StockHandler    stockHandler
+    )
+    {
+        if (marketMath == null || configManager == null || player == null) {
             throw new IllegalArgumentException("All parameters must be non-null");
         }
-        this.economyManager = economyManager;
-        this.marketUtils = marketUtils;
-        this.configManager = configManager;
-        this.player = player;
+        this.moneyFormat = moneyFormat;
+        this.economyManager     = economyManager;
+        this.stockHandler       = stockHandler;
+        this.marketMath         = marketMath;
+        this.configManager      = configManager;
+        this.player             = player;
     }
 
     public boolean performBuyTransaction(String itemName, int requestedAmount) {
         MarketItem item = getItemOrSendError(itemName);
+
         if (item == null) return false;
 
-        int adjustedAmount = adjustAmountBasedOnStock(item, requestedAmount);
-        BigDecimal totalPrice = calculateTotalPrice(item, adjustedAmount, true);
+        int adjustedAmount = adjustAmountBasedOnStockAvailability(item, requestedAmount);
+        long totalPrice = marketMath.getTotalPriceOfItem(item, adjustedAmount, true);
 
-        if (!checkBalance(totalPrice, itemName, adjustedAmount)) return false;
-        if (!processPurchase(item, adjustedAmount, totalPrice)) return false;
+        if (!processPurchase(item, adjustedAmount)) return false;
 
-        // Update base stock based on actual added amount (now handled in processPurchase)
-        double increasePercent = configManager.getStockIncreasePercentage();
-        int increaseNumber = (int) (adjustedAmount * increasePercent);
-        int currentBaseStock = item.getBaseStock();
-        int newBaseStock = currentBaseStock + increaseNumber;
+        double increasePercent      = configManager.getStockIncreasePercentage();
+        int increaseNumber          = (int) (adjustedAmount * increasePercent);
+//        int currentBaseStock        = item.getBaseStock();
+//        int newBaseStock            = currentBaseStock + increaseNumber;
 
-        marketUtils.updateTaxRate(item, currentBaseStock, newBaseStock, item.getTaxRate());
+        //marketMath.updateTaxRate(item, currentBaseStock, newBaseStock, item.getTaxRate());
         stockHandler.upgradeBaseStock(item, increaseNumber);
 
-        sendSuccess("Successfully purchased %d %s for %s"
-                .formatted(adjustedAmount, item.getName(), formatPrice(totalPrice)));
+        sendSuccess("Successfully purchased %d %s for %s".formatted(adjustedAmount, item.getName(), moneyFormat.formatPrice(totalPrice)));
         return true;
     }
 
@@ -70,7 +77,9 @@ public class TransactionHandler {
         TransactionResult result = calculateTransactionResult(item, adjustedAmount);
         completeSellTransaction(item, adjustedAmount, result);
         sendSuccess("Successfully sold %d %s for %s. Tax of %s deducted."
-                .formatted(adjustedAmount, item.getName(), formatPrice(result.earningsAfterTax()), formatPrice(result.tax())));
+                .formatted(adjustedAmount, item.getName(),
+                        moneyFormat.formatPrice(result.earningsAfterTax()),
+                        moneyFormat.formatPrice((long) result.tax())));
         return true;
     }
 
@@ -80,12 +89,14 @@ public class TransactionHandler {
         return item;
     }
 
-    private int adjustAmountBasedOnStock(MarketItem item, int requestedAmount) {
+    private int adjustAmountBasedOnStockAvailability(MarketItem item, int requestedAmount) {
         int availableStock = item.getCurrentStock();
+
         if (availableStock == 0) {
             sendError("There is no stock available");
             return 0;
         }
+
         if (availableStock >= requestedAmount) return requestedAmount;
 
         sendWarning("The amount selected (%d) exceeds stock (%d). Buying only %d."
@@ -93,63 +104,28 @@ public class TransactionHandler {
         return availableStock;
     }
 
-    private BigDecimal calculateTotalPrice(MarketItem item, int amount, boolean isBuy) {
-        return marketUtils.getTotalPriceOfItem(item, amount, isBuy);
-    }
-
-    private boolean checkBalance(BigDecimal totalPrice, String itemName, int amount) {
+    private boolean processPurchase(MarketItem item, int requestedAmount) {
         UUID playerId = player.getUniqueId();
-        if (economyManager.hasBalance(playerId, totalPrice)) return true;
-
-        sendError("Insufficient funds for %d %s. Needed: %s, Available: %s"
-                .formatted(amount, itemName, formatPrice(totalPrice), formatPrice(economyManager.getBalance(playerId))));
-        return false;
-    }
-
-    private boolean processPurchase(MarketItem item, int requestedAmount, BigDecimal totalPrice) {
-        UUID playerId = player.getUniqueId();
-
-        // Attempt to add items first (temporarily)
         int actualAdded = InventoryHandler.addItemToPlayer(player, item.getMaterial(), requestedAmount);
-        if (actualAdded <= 0) {
-            sendError("No space in inventory!");
-            return false;
-        }
 
-        // Calculate price for the actual added amount
-        BigDecimal pricePerItem = totalPrice.divide(
-                BigDecimal.valueOf(requestedAmount),
-                10,
-                RoundingMode.HALF_UP
-        );
-        BigDecimal actualPrice = pricePerItem.multiply(BigDecimal.valueOf(actualAdded));
+        long actualPrice = item.getCurrentPrice() * actualAdded;
 
-        // Withdraw only the actual price
         if (!economyManager.withdraw(playerId, actualPrice)) {
-            // Remove items if payment fails
             InventoryHandler.removeItemFromPlayer(player, item.getMaterial(), actualAdded);
             sendError("Payment failed after partial item addition!");
             return false;
         }
 
-        // Update stock and price based on actualAdded
         updateMarketItemPriceAndStock(item, actualAdded, true);
-
-        // Handle leftover items (if any)
-        int leftover = requestedAmount - actualAdded;
-        if (leftover > 0) {
-            sendWarning("Only %d %s fit in your inventory. %d were refunded."
-                    .formatted(actualAdded, item.getName(), leftover));
-        }
 
         return true;
     }
 
     public void updateMarketItemPriceAndStock(MarketItem item, int soldAmount, boolean isBuy) {
-        BigDecimal lastPrice = marketUtils.getLastPriceOfItem(item, soldAmount, isBuy);
+        long lastPrice = marketMath.getLastPriceOfItem(item, soldAmount, isBuy);
         item.setCurrentPrice(lastPrice);
         item.setCurrentStock(item.getCurrentStock() + (isBuy ? -soldAmount : soldAmount));
-        marketUtils.updatePriceHistory(item, lastPrice);
+        marketMath.updatePriceHistory(item, lastPrice);
         stockHandler.markItemForUpdate(item);
     }
 
@@ -176,23 +152,15 @@ public class TransactionHandler {
     }
 
     private TransactionResult calculateTransactionResult(MarketItem item, int amount) {
-        BigDecimal totalBeforeTax = calculateTotalPrice(item, amount, false);
-        BigDecimal tax = totalBeforeTax.multiply(item.getTaxRate())
-                .setScale(2, RoundingMode.HALF_UP);
-        BigDecimal earningsAfterTax = totalBeforeTax.subtract(tax);
+        long totalBeforeTax = marketMath.getTotalPriceOfItem(item, amount, false);
+        double tax = (totalBeforeTax * item.getTaxRate()) / DECIMAL_SCALE;
+        long earningsAfterTax = (long) (totalBeforeTax - tax);
         return new TransactionResult(earningsAfterTax, tax);
     }
 
     private void completeSellTransaction(MarketItem item, int amount, TransactionResult result) {
         economyManager.deposit(player.getUniqueId(), result.earningsAfterTax());
         updateMarketItemPriceAndStock(item, amount, false);
-    }
-
-    private String formatPrice(BigDecimal price) {
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
-        currencyFormat.setRoundingMode(RoundingMode.HALF_UP);
-        currencyFormat.setMinimumFractionDigits(2);
-        return currencyFormat.format(price);
     }
 
     private void sendError(String message) {
@@ -207,5 +175,5 @@ public class TransactionHandler {
         player.sendMessage(Component.text(message, NamedTextColor.GREEN));
     }
 
-    private record TransactionResult(BigDecimal earningsAfterTax, BigDecimal tax) {}
+    private record TransactionResult(long earningsAfterTax, double tax) {}
 }

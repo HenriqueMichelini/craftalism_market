@@ -2,11 +2,12 @@ package io.github.HenriqueMichelini.craftalism_market.gui.components;
 
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.GuiItem;
+import io.github.HenriqueMichelini.craftalism_economy.economy.util.MoneyFormat;
 import io.github.HenriqueMichelini.craftalism_market.CraftalismMarket;
 import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.gui.manager.GuiManager;
-import io.github.HenriqueMichelini.craftalism_market.logic.MarketUtils;
 import io.github.HenriqueMichelini.craftalism_market.core.TransactionHandler;
+import io.github.HenriqueMichelini.craftalism_market.logic.MarketMath;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import io.github.HenriqueMichelini.craftalism_market.stock.StockHandler;
 import net.kyori.adventure.text.Component;
@@ -18,7 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -41,9 +41,10 @@ public class TradeGUI extends BaseGUI {
     private final MarketItem item;
     private final String itemName;
     private final ConfigManager configManager;
-    private final MarketUtils marketUtils;
+    private final MarketMath marketMath;
     private final GuiManager guiManager;
     private final StockHandler stockHandler;
+    private final MoneyFormat moneyFormat;
     private int selectedAmount = MIN_AMOUNT;
 
     private int lastRefreshAmount = -1;
@@ -53,17 +54,20 @@ public class TradeGUI extends BaseGUI {
             String itemName,
             CraftalismMarket plugin,
             ConfigManager configManager,
-            MarketUtils marketUtils,
-            Consumer<Player> onBack, GuiManager guiManager,
-            StockHandler stockHandler
+            MarketMath marketMath,
+            Consumer<Player> onBack,
+            GuiManager guiManager,
+            StockHandler stockHandler,
+            MoneyFormat moneyFormat
     ) {
         super("Trading: " + itemName, 6, plugin);
         this.itemName = itemName;
         this.configManager = configManager;
-        this.marketUtils = marketUtils;
+        this.marketMath = marketMath;
         this.item = validateItem(itemName);
         this.guiManager = guiManager;
         this.stockHandler = stockHandler;
+        this.moneyFormat = moneyFormat;
         initialize(onBack);
     }
 
@@ -140,8 +144,8 @@ public class TradeGUI extends BaseGUI {
 
     private List<Component> createDetailedLore() {
         List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Buy Price: " + formatPrice(item.getCurrentPrice()), NamedTextColor.GREEN));
-        lore.add(Component.text("Sell Tax: " + formatPercentage(item.getTaxRate()), NamedTextColor.RED));
+        lore.add(Component.text("Buy Price: " + moneyFormat.formatPrice(item.getCurrentPrice()), NamedTextColor.GREEN));
+        lore.add(Component.text("Sell Tax: " + item.getTaxRate(), NamedTextColor.RED));
         lore.add(Component.text("Stock: " + item.getCurrentStock(), NamedTextColor.AQUA));
         lore.add(Component.empty());
         addPriceHistory(lore);
@@ -149,7 +153,7 @@ public class TradeGUI extends BaseGUI {
     }
 
     private void addPriceHistory(List<Component> lore) {
-        List<BigDecimal> history = item.getPriceHistory();
+        List<Long> history = item.getPriceHistory();
         int maxEntries = 5; // Show last 5 prices
 
         if (history.isEmpty()) {
@@ -162,7 +166,7 @@ public class TradeGUI extends BaseGUI {
                 .skip(Math.max(0, history.size() - maxEntries))
                 .forEach(price ->
                         lore.add(Component.text("⏺ ", NamedTextColor.DARK_GRAY)
-                                .append(Component.text(formatPrice(price), NamedTextColor.GRAY)))
+                                .append(Component.text(moneyFormat.formatPrice(price), NamedTextColor.GRAY)))
                 );
     }
 
@@ -189,7 +193,7 @@ public class TradeGUI extends BaseGUI {
     private List<Component> createTransactionLore(String action) {
         return List.of(
                 Component.text("➤ Unit Price: ", NamedTextColor.GRAY)
-                        .append(Component.text(formatPrice(item.getCurrentPrice()), NamedTextColor.WHITE)),
+                        .append(Component.text(moneyFormat.formatPrice(item.getCurrentPrice()), NamedTextColor.WHITE)),
                 Component.text("➤ Quantity: ", NamedTextColor.GRAY)
                         .append(Component.text(selectedAmount, NamedTextColor.WHITE)),
                 createTotalComponent(action)
@@ -197,11 +201,11 @@ public class TradeGUI extends BaseGUI {
     }
 
     private Component createTotalComponent(String action) {
-        BigDecimal total = calculateTotalPrice(action);
+        long total = calculateTotalPrice(action);
         NamedTextColor color = "buy".equalsIgnoreCase(action) ? NamedTextColor.GREEN : NamedTextColor.GOLD;
 
         return Component.text("➤ Total: ", NamedTextColor.GRAY)
-                .append(Component.text(formatPrice(total), color));
+                .append(Component.text(moneyFormat.formatPrice(total), color));
     }
 
     // Region: Amount Controls
@@ -249,8 +253,8 @@ public class TradeGUI extends BaseGUI {
     }
 
     // Region: Core Logic
-    private BigDecimal calculateTotalPrice(String action) {
-        return marketUtils.getTotalPriceOfItem(
+    private long calculateTotalPrice(String action) {
+        return marketMath.getTotalPriceOfItem(
                 item,
                 selectedAmount,
                 "buy".equalsIgnoreCase(action)
@@ -259,10 +263,11 @@ public class TradeGUI extends BaseGUI {
 
     private void handleBuy(Player player) {
         TransactionHandler transactionHandler = new TransactionHandler(
+                moneyFormat,
                 player,
                 plugin.getEconomyManager(),
                 configManager,
-                marketUtils,
+                marketMath,
                 stockHandler
         );
 
@@ -278,10 +283,11 @@ public class TradeGUI extends BaseGUI {
 
     private void handleSell(Player player) {
         TransactionHandler transactionHandler = new TransactionHandler(
+                moneyFormat,
                 player,
                 plugin.getEconomyManager(),
                 configManager,
-                marketUtils,
+                marketMath,
                 stockHandler
         );
 
