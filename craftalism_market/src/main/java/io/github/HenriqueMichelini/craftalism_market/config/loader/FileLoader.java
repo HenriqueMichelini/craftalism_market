@@ -139,6 +139,7 @@ public class FileLoader {
                             current_price: 3700
                             price_variation: 15
                             tax_rate: 0.15
+                            original_stock: 2000
                             base_stock: 2000
                             current_stock: 2000
                             stock_surplus: 0
@@ -154,6 +155,7 @@ public class FileLoader {
                             current_price: 1000
                             price_variation: 5
                             tax_rate: 0.1
+                            original_stock: 5000
                             base_stock: 5000
                             current_stock: 5000
                             stock_surplus: 0
@@ -169,6 +171,7 @@ public class FileLoader {
                             current_price: 2500
                             price_variation: 10
                             tax_rate: 0.12
+                            original_stock: 3000
                             base_stock: 3000
                             current_stock: 3000
                             stock_surplus: 0
@@ -184,6 +187,7 @@ public class FileLoader {
                             current_price: 2000
                             price_variation: 8
                             tax_rate: 0.12
+                            original_stock: 2500
                             base_stock: 2500
                             current_stock: 2500
                             stock_surplus: 0
@@ -199,6 +203,7 @@ public class FileLoader {
                             current_price: 5000
                             price_variation: 20
                             tax_rate: 0.15
+                            original_stock: 1000
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
@@ -214,6 +219,7 @@ public class FileLoader {
                             current_price: 10000
                             price_variation: 50
                             tax_rate: 0.20
+                            original_stock: 1500
                             base_stock: 1500
                             current_stock: 1500
                             stock_surplus: 0
@@ -229,6 +235,7 @@ public class FileLoader {
                             current_price: 50000
                             price_variation: 10
                             tax_rate: 0.25
+                            original_stock: 800
                             base_stock: 800
                             current_stock: 800
                             stock_surplus: 0
@@ -244,6 +251,7 @@ public class FileLoader {
                             current_price: 100000
                             price_variation: 200
                             tax_rate: 0.30
+                            original_stock: 500
                             base_stock: 500
                             current_stock: 500
                             stock_surplus: 0
@@ -259,6 +267,7 @@ public class FileLoader {
                             current_price: 500000
                             price_variation: 500
                             tax_rate: 0.35
+                            original_stock: 200
                             base_stock: 200
                             current_stock: 200
                             stock_surplus: 0
@@ -274,6 +283,7 @@ public class FileLoader {
                             current_price: 1000000
                             price_variation: 1000
                             tax_rate: 0.40
+                            original_stock: 100
                             base_stock: 100
                             current_stock: 100
                             stock_surplus: 0
@@ -289,6 +299,7 @@ public class FileLoader {
                             current_price: 5000
                             price_variation: 20
                             tax_rate: 0.15
+                            original_stock: 1500
                             base_stock: 1500
                             current_stock: 1500
                             stock_surplus: 0
@@ -304,6 +315,7 @@ public class FileLoader {
                             current_price: 150000
                             price_variation: 50
                             tax_rate: 0.20
+                            original_stock: 1000
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
@@ -319,6 +331,7 @@ public class FileLoader {
                             current_price: 7500
                             price_variation: 30
                             tax_rate: 0.18
+                            original_stock: 1200
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
@@ -334,6 +347,7 @@ public class FileLoader {
                             current_price: 200000
                             price_variation: 75
                             tax_rate: 0.22
+                            original_stock: 800
                             base_stock: 800
                             current_stock: 800
                             stock_surplus: 0
@@ -349,6 +363,7 @@ public class FileLoader {
                             current_price: 100000
                             price_variation: 200
                             tax_rate: 0.30
+                            original_stock: 300
                             base_stock: 300
                             current_stock: 300
                             stock_surplus: 0
@@ -364,6 +379,7 @@ public class FileLoader {
                             current_price: 5000
                             price_variation: 20
                             tax_rate: 0.15
+                            original_stock: 2000
                             base_stock: 2000
                             current_stock: 2000
                             stock_surplus: 0
@@ -379,6 +395,7 @@ public class FileLoader {
                             current_price: 5500
                             price_variation: 22
                             tax_rate: 0.15
+                            original_stock: 1800
                             base_stock: 1800
                             current_stock: 1800
                             stock_surplus: 0
@@ -394,6 +411,7 @@ public class FileLoader {
                             current_price: 6000
                             price_variation: 25
                             tax_rate: 0.15
+                            original_stock: 1600
                             base_stock: 1600
                             current_stock: 1600
                             stock_surplus: 0
@@ -409,6 +427,7 @@ public class FileLoader {
                             current_price: 6500
                             price_variation: 28
                             tax_rate: 0.15
+                            original_stock: 1400
                             base_stock: 1400
                             current_stock: 1400
                             stock_surplus: 0
@@ -424,6 +443,7 @@ public class FileLoader {
                             current_price: 7000
                             price_variation: 30
                             tax_rate: 0.15
+                            original_stock: 1200
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
@@ -439,6 +459,7 @@ public class FileLoader {
                             current_price: 10000
                             price_variation: 50
                             tax_rate: 0.20
+                            original_stock: 1000
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
@@ -454,6 +475,7 @@ public class FileLoader {
                             current_price: 10000
                             price_variation: 50
                             tax_rate: 0.20
+                            original_stock: 1000
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
@@ -469,6 +491,7 @@ public class FileLoader {
                             current_price: 10000
                             price_variation: 50
                             tax_rate: 0.20
+                            original_stock: 1000
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
@@ -484,6 +507,7 @@ public class FileLoader {
                             current_price: 10000
                             price_variation: 50
                             tax_rate: 0.20
+                            original_stock: 1000
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
@@ -499,6 +523,7 @@ public class FileLoader {
                             current_price: 10000
                             price_variation: 50
                             tax_rate: 0.20
+                            original_stock: 1000
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
@@ -514,6 +539,7 @@ public class FileLoader {
                             current_price: 3000
                             price_variation: 10
                             tax_rate: 0.10
+                            original_stock: 3000
                             base_stock: 3000
                             current_stock: 3000
                             stock_surplus: 0
@@ -529,6 +555,7 @@ public class FileLoader {
                             current_price: 5000
                             price_variation: 20
                             tax_rate: 0.15
+                            original_stock: 2000
                             base_stock: 2000
                             current_stock: 2000
                             stock_surplus: 0
@@ -544,6 +571,7 @@ public class FileLoader {
                             current_price: 4000
                             price_variation: 15
                             tax_rate: 0.12
+                            original_stock: 2500
                             base_stock: 2500
                             current_stock: 2500
                             stock_surplus: 0
@@ -559,6 +587,7 @@ public class FileLoader {
                             current_price: 20000
                             price_variation: 75
                             tax_rate: 0.20
+                            original_stock: 1000
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
@@ -574,6 +603,7 @@ public class FileLoader {
                             current_price: 150000
                             price_variation: 50
                             tax_rate: 0.18
+                            original_stock: 1200
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
@@ -589,6 +619,7 @@ public class FileLoader {
                             current_price: 7500
                             price_variation: 30
                             tax_rate: 0.15
+                            original_stock: 1500
                             base_stock: 1500
                             current_stock: 1500
                             stock_surplus: 0
@@ -604,6 +635,7 @@ public class FileLoader {
                             current_price: 10000
                             price_variation: 50
                             tax_rate: 0.20
+                            original_stock: 1200
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
@@ -619,6 +651,7 @@ public class FileLoader {
                             current_price: 10000
                             price_variation: 50
                             tax_rate: 0.20
+                            original_stock: 1200
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
@@ -634,6 +667,7 @@ public class FileLoader {
                             current_price: 10000
                             price_variation: 50
                             tax_rate: 0.20
+                            original_stock: 1200
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
@@ -649,6 +683,7 @@ public class FileLoader {
                             current_price: 10000
                             price_variation: 50
                             tax_rate: 0.20
+                            original_stock: 1200
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0

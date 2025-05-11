@@ -58,6 +58,7 @@ public class DataParser {
                     itemSection.getLong("current_price"),
                     itemSection.getLong("price_variation"),
                     itemSection.getDouble("tax_rate"),
+                    itemSection.getInt("original_stock"),
                     itemSection.getInt("base_stock"),
                     itemSection.getInt("current_stock"),
                     itemSection.getDouble("stock_regen_rate"),

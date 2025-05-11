@@ -10,12 +10,13 @@ public class MarketItem {
     private final String category;
     private final Material material;
     private final int slot;
-    private final long priceVariationPerOperation;
     private final double taxRate;
     private final long basePrice;
+    private final int originalStock;
 
     // Mutable fields
     private long currentPrice;
+    private long priceVariationPerOperation;
     private int currentStock;
     private int baseStock;
     private double stockRegenRate;
@@ -34,6 +35,7 @@ public class MarketItem {
             long                currentPrice,
             long                priceVariationPerOperation,
             double              taxRate,
+            int                 originalStock,
             int                 baseStock,
             int                 currentStock,
             double              stockRegenRate,
@@ -50,6 +52,7 @@ public class MarketItem {
             this.currentPrice = currentPrice;
             this.priceVariationPerOperation = priceVariationPerOperation;
             this.taxRate = taxRate;
+            this.originalStock = originalStock;
             this.baseStock = baseStock;
             this.currentStock = currentStock;
             this.stockRegenRate = stockRegenRate;
@@ -67,6 +70,7 @@ public class MarketItem {
     public long         getCurrentPrice()               { return currentPrice; }
     public long         getPriceVariationPerOperation() { return priceVariationPerOperation; }
     public double       getTaxRate()                    { return taxRate; }
+    public int          getOriginalStock()              { return originalStock; }
     public int          getBaseStock()                  { return baseStock; }
     public int          getCurrentStock()               { return currentStock; }
     public double       getStockRegenRate()             { return  stockRegenRate; }
@@ -86,12 +90,13 @@ public class MarketItem {
     }
 
     // Setters (mutable fields only) ----------------------------
-    public void setCurrentPrice(long currentPrice)              { this.currentPrice = currentPrice; }
-    public void setCurrentStock(int currentStock)               { this.currentStock = currentStock; }
-    public void setBaseStock(int baseStock)                     { this.baseStock = baseStock;       }
-    public void setStockRegenRate(double stockRegenRate)        { this.stockRegenRate = stockRegenRate; }
-    public void setNextUpdateTime(long nextUpdateTime)          { this.nextUpdateTime = nextUpdateTime; }
-    public void setStockSurplus(int stockSurplus)               { this.stockSurplus = stockSurplus; }
-    public void setLastActivity(long lastActivity)              { this.lastActivity = lastActivity; }
-    public void setPriceHistory(List<Long> priceHistory)        { this.priceHistory = priceHistory; }
+    public void setCurrentPrice(long currentPrice)                              { this.currentPrice = currentPrice; }
+    public void setPriceVariationPerOperation(long priceVariationPerOperation)  { this.priceVariationPerOperation = priceVariationPerOperation; }
+    public void setCurrentStock(int currentStock)                               { this.currentStock = currentStock; }
+    public void setBaseStock(int baseStock)                                     { this.baseStock = baseStock;       }
+    public void setStockRegenRate(double stockRegenRate)                        { this.stockRegenRate = stockRegenRate; }
+    public void setNextUpdateTime(long nextUpdateTime)                          { this.nextUpdateTime = nextUpdateTime; }
+    public void setStockSurplus(int stockSurplus)                               { this.stockSurplus = stockSurplus; }
+    public void setLastActivity(long lastActivity)                              { this.lastActivity = lastActivity; }
+    public void setPriceHistory(List<Long> priceHistory)                        { this.priceHistory = priceHistory; }
 }

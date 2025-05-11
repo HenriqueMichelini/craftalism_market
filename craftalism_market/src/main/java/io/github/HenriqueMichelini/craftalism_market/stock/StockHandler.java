@@ -165,10 +165,6 @@ public class StockHandler {
         long newPrice = calculateNewPrice(item, adjustment);
 
         newStock = clampStockToBounds(base, newStock);
-        if (newStock == base) {
-            newPrice = item.getBasePrice();
-        }
-
         updateItemState(item, newStock, newPrice);
     }
 
@@ -183,8 +179,12 @@ public class StockHandler {
     }
 
     private long getReverseMultiplier(MarketItem item, int adjustment, boolean isAddingStock) {
-        long variation = item.getPriceVariationPerOperation();
+        double variationRate = item.getPriceVariationPerOperation();
         int steps = Math.abs(adjustment);
+
+        long variation = (long) (variationRate * DECIMAL_SCALE);
+
+        variation = Math.max(variation, 1L);
 
         long transactionMultiplier = isAddingStock ?
                 DECIMAL_SCALE + variation :
@@ -224,15 +224,26 @@ public class StockHandler {
     }
 
     public void upgradeBaseStock(MarketItem item, int increaseNumber) {
-        int baseStock = item.getBaseStock();
-        item.setBaseStock(baseStock + increaseNumber);
+        int oldBaseStock = item.getBaseStock();
+        int newBaseStock = oldBaseStock + increaseNumber;
+
+        long oldVariation = item.getPriceVariationPerOperation();
+
+        long newVariation = (oldVariation * oldBaseStock) / newBaseStock;
+
+        newVariation = Math.max(newVariation, 1L);
+
+        item.setBaseStock(newBaseStock);
+        item.setPriceVariationPerOperation(newVariation);
+
+        long finalNewVariation = newVariation;
         LOGGER.info(() -> String.format(
-                "%s | Stock upgrade: %d → %d (+%d @ %.1f%%)",
+                "%s | Stock upgrade: %d → %d (+%d) | New Variation: %.4f%%",
                 item.getName(),
-                baseStock,
-                item.getBaseStock(),
+                oldBaseStock,
+                newBaseStock,
                 increaseNumber,
-                configManager.getStockIncreasePercentage() * 100
+                finalNewVariation / 100.0
         ));
     }
 }

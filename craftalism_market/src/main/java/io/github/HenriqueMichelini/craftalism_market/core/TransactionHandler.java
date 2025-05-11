@@ -21,6 +21,8 @@ public class TransactionHandler {
     private final Player player;
     private final StockHandler stockHandler;
 
+    private long totalPrice;
+
     public TransactionHandler(
             MoneyFormat moneyFormat,
             Player          player,
@@ -33,7 +35,7 @@ public class TransactionHandler {
         if (marketMath == null || configManager == null || player == null) {
             throw new IllegalArgumentException("All parameters must be non-null");
         }
-        this.moneyFormat = moneyFormat;
+        this.moneyFormat        = moneyFormat;
         this.economyManager     = economyManager;
         this.stockHandler       = stockHandler;
         this.marketMath         = marketMath;
@@ -43,20 +45,14 @@ public class TransactionHandler {
 
     public boolean performBuyTransaction(String itemName, int requestedAmount) {
         MarketItem item = getItemOrSendError(itemName);
-
         if (item == null) return false;
 
-        int adjustedAmount = adjustAmountBasedOnStockAvailability(item, requestedAmount);
-        long totalPrice = marketMath.getTotalPriceOfItem(item, adjustedAmount, true);
-
+        int adjustedAmount = adjustAmount(item, requestedAmount);
         if (!processPurchase(item, adjustedAmount)) return false;
 
-        double increasePercent = configManager.getStockIncreasePercentage();
-        int increaseNumber = (int) (adjustedAmount * increasePercent);
+        updateMarketItemPriceAndStock(item, adjustedAmount, true);
+        parseUpgradeBaseStockValues(item, requestedAmount);
 
-        stockHandler.upgradeBaseStock(item, increaseNumber);
-
-        sendSuccess("Successfully purchased %d %s for %s".formatted(adjustedAmount, itemName, moneyFormat.formatPrice(totalPrice)));
         return true;
     }
 
@@ -99,21 +95,32 @@ public class TransactionHandler {
         return availableStock;
     }
 
-    private boolean processPurchase(MarketItem item, int requestedAmount) {
+    private boolean processPurchase(MarketItem item, int amount) {
         UUID playerId = player.getUniqueId();
-        int actualAdded = InventoryHandler.addItemToPlayer(player, item.getMaterial(), requestedAmount);
 
-        long actualPrice = item.getCurrentPrice() * actualAdded;
+        long totalPrice = marketMath.getTotalPriceOfItem(item, amount, true);
 
-        if (!economyManager.withdraw(playerId, actualPrice)) {
-            InventoryHandler.removeItemFromPlayer(player, item.getMaterial(), actualAdded);
+        if (!economyManager.withdraw(playerId, totalPrice)) {
+            InventoryHandler.removeItemFromPlayer(player, item.getMaterial(), amount);
             sendError("Payment failed after partial item addition!");
             return false;
         }
 
-        updateMarketItemPriceAndStock(item, actualAdded, true);
+        sendSuccess("Successfully purchased %d %s for %s".formatted(amount, item.getName(), moneyFormat.formatPrice(totalPrice)));
 
         return true;
+    }
+
+    public int adjustAmount(MarketItem item, int amount) {
+        int adjustedAmount = adjustAmountBasedOnStockAvailability(item, amount);
+        return InventoryHandler.addItemToPlayer(player, item.getMaterial(), adjustedAmount);
+    }
+
+    public void parseUpgradeBaseStockValues(MarketItem item, int amount) {
+        double increasePercent = configManager.getStockIncreasePercentage();
+        int increaseNumber = (int) (amount * increasePercent);
+
+        stockHandler.upgradeBaseStock(item, increaseNumber);
     }
 
     public void updateMarketItemPriceAndStock(MarketItem item, int soldAmount, boolean isBuy) {
