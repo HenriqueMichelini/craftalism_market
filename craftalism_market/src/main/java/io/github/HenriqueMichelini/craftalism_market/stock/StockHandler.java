@@ -5,6 +5,8 @@ import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import io.github.HenriqueMichelini.craftalism_market.stock.listener.StockUpdateListener;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -179,21 +181,27 @@ public class StockHandler {
     }
 
     private long getReverseMultiplier(MarketItem item, int adjustment, boolean isAddingStock) {
-        double variationRate = item.getPriceVariationPerOperation();
+        long variation = item.getPriceVariationPerOperation();
         int steps = Math.abs(adjustment);
 
-        long variation = (long) (variationRate * DECIMAL_SCALE);
-
+        // Ensure minimum variation (0.01%)
         variation = Math.max(variation, 1L);
 
         long transactionMultiplier = isAddingStock ?
-                DECIMAL_SCALE + variation :
-                DECIMAL_SCALE - variation;
+                DECIMAL_SCALE + variation : // Price decreases when stock increases
+                DECIMAL_SCALE - variation;   // Price increases when stock decreases
 
-        double multiplierPerStep = (double) DECIMAL_SCALE / transactionMultiplier;
-        double totalMultiplier = Math.pow(multiplierPerStep, steps);
+        // Calculate multiplier using precise BigDecimal arithmetic
+        BigDecimal stepMultiplier = BigDecimal.valueOf(DECIMAL_SCALE)
+                .divide(BigDecimal.valueOf(transactionMultiplier), 10, RoundingMode.HALF_UP);
+        BigDecimal totalMultiplier = BigDecimal.valueOf(DECIMAL_SCALE);
 
-        return (long) (totalMultiplier * DECIMAL_SCALE);
+        for (int i = 0; i < steps; i++) {
+            totalMultiplier = totalMultiplier.multiply(stepMultiplier);
+        }
+
+        // Remove the extra DECIMAL_SCALE multiplication
+        return totalMultiplier.setScale(0, RoundingMode.HALF_UP).longValue();
     }
 
     private int clampStockToBounds(int base, int newStock) {
@@ -226,12 +234,11 @@ public class StockHandler {
     public void upgradeBaseStock(MarketItem item, int increaseNumber) {
         int oldBaseStock = item.getBaseStock();
         int newBaseStock = oldBaseStock + increaseNumber;
-
         long oldVariation = item.getPriceVariationPerOperation();
 
+        // Scale variation inversely with baseStock growth (integer math)
         long newVariation = (oldVariation * oldBaseStock) / newBaseStock;
-
-        newVariation = Math.max(newVariation, 1L);
+        newVariation = Math.max(newVariation, 1L); // Minimum 0.01% (1L)
 
         item.setBaseStock(newBaseStock);
         item.setPriceVariationPerOperation(newVariation);
@@ -243,7 +250,7 @@ public class StockHandler {
                 oldBaseStock,
                 newBaseStock,
                 increaseNumber,
-                finalNewVariation / 100.0
+                (finalNewVariation / (double) DECIMAL_SCALE) * 100 // Correctly format as percentage
         ));
     }
 }

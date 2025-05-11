@@ -21,8 +21,6 @@ public class TransactionHandler {
     private final Player player;
     private final StockHandler stockHandler;
 
-    private long totalPrice;
-
     public TransactionHandler(
             MoneyFormat moneyFormat,
             Player          player,
@@ -74,12 +72,6 @@ public class TransactionHandler {
         return true;
     }
 
-    private MarketItem getItemOrSendError(String itemName) {
-        MarketItem item = configManager.getItems().get(itemName);
-        if (item == null) sendError("Item not found!");
-        return item;
-    }
-
     private int adjustAmountBasedOnStockAvailability(MarketItem item, int requestedAmount) {
         int availableStock = item.getCurrentStock();
 
@@ -95,25 +87,23 @@ public class TransactionHandler {
         return availableStock;
     }
 
-    private boolean processPurchase(MarketItem item, int amount) {
-        UUID playerId = player.getUniqueId();
-
-        long totalPrice = marketMath.getTotalPriceOfItem(item, amount, true);
-
-        if (!economyManager.withdraw(playerId, totalPrice)) {
-            InventoryHandler.removeItemFromPlayer(player, item.getMaterial(), amount);
-            sendError("Payment failed after partial item addition!");
-            return false;
-        }
-
-        sendSuccess("Successfully purchased %d %s for %s".formatted(amount, item.getName(), moneyFormat.formatPrice(totalPrice)));
-
-        return true;
-    }
-
     public int adjustAmount(MarketItem item, int amount) {
         int adjustedAmount = adjustAmountBasedOnStockAvailability(item, amount);
         return InventoryHandler.addItemToPlayer(player, item.getMaterial(), adjustedAmount);
+    }
+
+    private int adjustAmountBasedOnInventory(MarketItem item, int requestedAmount) {
+        int playerItems = InventoryHandler.countItems(player, item.getMaterial());
+        if (playerItems <= 0) {
+            sendError("You have no %s to sell".formatted(item.getName()));
+            return 0;
+        }
+
+        int adjustedAmount = Math.min(requestedAmount, playerItems);
+        if (adjustedAmount < requestedAmount) {
+            sendWarning("Attempting to sell %d, only %d available".formatted(requestedAmount, playerItems));
+        }
+        return adjustedAmount;
     }
 
     public void parseUpgradeBaseStockValues(MarketItem item, int amount) {
@@ -131,26 +121,18 @@ public class TransactionHandler {
         stockHandler.markItemForUpdate(item);
     }
 
-    private int adjustAmountBasedOnInventory(MarketItem item, int requestedAmount) {
-        int playerItems = InventoryHandler.countItems(player, item.getMaterial());
-        if (playerItems <= 0) {
-            sendError("You have no %s to sell".formatted(item.getName()));
-            return 0;
-        }
-
-        int adjustedAmount = Math.min(requestedAmount, playerItems);
-        if (adjustedAmount < requestedAmount) {
-            sendWarning("Attempting to sell %d, only %d available".formatted(requestedAmount, playerItems));
-        }
-        return adjustedAmount;
-    }
-
     private boolean removeItemsFromInventory(MarketItem item, int amount) {
         if (!InventoryHandler.removeItemFromPlayer(player, item.getMaterial(), amount)) {
             sendError("Failed to remove items from inventory");
             return false;
         }
         return true;
+    }
+
+    private MarketItem getItemOrSendError(String itemName) {
+        MarketItem item = configManager.getItems().get(itemName);
+        if (item == null) sendError("Item not found!");
+        return item;
     }
 
     private TransactionResult calculateTransactionResult(MarketItem item, int amount) {
@@ -163,6 +145,22 @@ public class TransactionHandler {
     private void completeSellTransaction(MarketItem item, int amount, TransactionResult result) {
         economyManager.deposit(player.getUniqueId(), result.earningsAfterTax());
         updateMarketItemPriceAndStock(item, amount, false);
+    }
+
+    private boolean processPurchase(MarketItem item, int amount) {
+        UUID playerId = player.getUniqueId();
+
+        long totalPrice = marketMath.getTotalPriceOfItem(item, amount, true);
+
+        if (!economyManager.withdraw(playerId, totalPrice)) {
+            InventoryHandler.removeItemFromPlayer(player, item.getMaterial(), amount);
+            sendError("Payment failed after partial item addition!");
+            return false;
+        }
+
+        sendSuccess("Successfully purchased %d %s for %s".formatted(amount, item.getName(), moneyFormat.formatPrice(totalPrice)));
+
+        return true;
     }
 
     private void sendError(String message) {
