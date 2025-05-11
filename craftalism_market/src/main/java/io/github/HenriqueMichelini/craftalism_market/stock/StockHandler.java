@@ -5,7 +5,6 @@ import io.github.HenriqueMichelini.craftalism_market.config.ConfigManager;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import io.github.HenriqueMichelini.craftalism_market.stock.listener.StockUpdateListener;
 
-import java.math.BigInteger;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -139,15 +138,19 @@ public class StockHandler {
         double minRegen = 0.01;
         double regenRate = Math.max(item.getStockRegenRate(), minRegen);
 
-        int maxAdjustment = (int) Math.round(base * regenRate);
         int delta = base - current;
+        int maxAdjustment;
 
-        if (current > base) {
-            delta = current - base;
+        if (delta > 0) {
+            maxAdjustment = (int) Math.round(base * regenRate);
+        } else {
             maxAdjustment = (int) Math.round(current * regenRate);
         }
 
-        int adjustment = Integer.signum(delta) * Math.max(1, Math.min(maxAdjustment, Math.abs(delta)));
+        int absDelta = Math.abs(delta);
+        int absAdjustment = Math.min(maxAdjustment, absDelta);
+        absAdjustment = Math.max(1, absAdjustment);
+        int adjustment = delta > 0 ? absAdjustment : -absAdjustment;
 
         LOGGER.fine(() -> String.format(
                 "Stock adjustment for %s: base=%d, current=%d, regenRate=%.2f, adjustment=%d",
