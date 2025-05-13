@@ -137,7 +137,7 @@ public class TransactionHandler {
 
     private TransactionResult calculateTransactionResult(MarketItem item, int amount) {
         long totalBeforeTax = marketMath.getTotalPriceOfItem(item, amount, false);
-        double tax = (totalBeforeTax * item.getTaxRate()) / DECIMAL_SCALE;
+        double tax = totalBeforeTax * item.getTaxRate();
         long earningsAfterTax = (long) (totalBeforeTax - tax);
         return new TransactionResult(earningsAfterTax, tax);
     }
@@ -145,6 +145,7 @@ public class TransactionHandler {
     private void completeSellTransaction(MarketItem item, int amount, TransactionResult result) {
         economyManager.deposit(player.getUniqueId(), result.earningsAfterTax());
         updateMarketItemPriceAndStock(item, amount, false);
+        parseUpgradeBaseStockValues(item, amount);
     }
 
     private boolean processPurchase(MarketItem item, int amount) {

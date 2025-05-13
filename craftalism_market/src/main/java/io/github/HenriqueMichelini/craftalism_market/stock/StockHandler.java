@@ -136,6 +136,13 @@ public class StockHandler {
         updateStockAndPrice(item, base, newStock);
     }
 
+    private void logCalculateSafeAdjustment(String itemName, int base, int current, double stockRegenRate, int adjustment) {
+        LOGGER.fine(() -> String.format(
+                "Stock adjustment for %s: base=%d, current=%d, regenRate=%.2f, adjustment=%d",
+                itemName, base, current, stockRegenRate, adjustment
+        ));
+    }
+
     private int calculateSafeAdjustment(MarketItem item, int base, int current) {
         double minRegen = 0.01;
         double regenRate = Math.max(item.getStockRegenRate(), minRegen);
@@ -154,10 +161,7 @@ public class StockHandler {
         absAdjustment = Math.max(1, absAdjustment);
         int adjustment = delta > 0 ? absAdjustment : -absAdjustment;
 
-        LOGGER.fine(() -> String.format(
-                "Stock adjustment for %s: base=%d, current=%d, regenRate=%.2f, adjustment=%d",
-                item.getName(), base, current, item.getStockRegenRate(), adjustment
-        ));
+        logCalculateSafeAdjustment(item.getName(), base, current, item.getStockRegenRate(), adjustment);
 
         return adjustment;
     }
@@ -184,14 +188,12 @@ public class StockHandler {
         long variation = item.getPriceVariationPerOperation();
         int steps = Math.abs(adjustment);
 
-        // Ensure minimum variation (0.01%)
         variation = Math.max(variation, 1L);
 
         long transactionMultiplier = isAddingStock ?
-                DECIMAL_SCALE + variation : // Price decreases when stock increases
-                DECIMAL_SCALE - variation;   // Price increases when stock decreases
+                DECIMAL_SCALE + variation :
+                DECIMAL_SCALE - variation;
 
-        // Calculate multiplier using precise BigDecimal arithmetic
         BigDecimal stepMultiplier = BigDecimal.valueOf(DECIMAL_SCALE)
                 .divide(BigDecimal.valueOf(transactionMultiplier), 10, RoundingMode.HALF_UP);
         BigDecimal totalMultiplier = BigDecimal.valueOf(DECIMAL_SCALE);
@@ -200,7 +202,6 @@ public class StockHandler {
             totalMultiplier = totalMultiplier.multiply(stepMultiplier);
         }
 
-        // Remove the extra DECIMAL_SCALE multiplication
         return totalMultiplier.setScale(0, RoundingMode.HALF_UP).longValue();
     }
 
@@ -208,16 +209,6 @@ public class StockHandler {
         double maxOverflow = configManager.getMaxStockOverflow();
         int maxStock = (int) (base * maxOverflow);
         return Math.max(0, Math.min(newStock, maxStock));
-    }
-
-    private void updateItemState(MarketItem item, int newStock, long newPrice) {
-        int oldStock = item.getCurrentStock();
-        long oldPrice = item.getCurrentPrice();
-        item.setCurrentStock(newStock);
-        item.setCurrentPrice(newPrice);
-        item.getPriceHistory().add(newPrice);
-        logStockUpdate(item, oldStock, oldPrice, newStock, newPrice);
-        notifyStockUpdated(item);
     }
 
     private void logStockUpdate(MarketItem item, int oldStock, long oldPrice, int newStock, long newPrice) {
@@ -231,26 +222,38 @@ public class StockHandler {
         ));
     }
 
+    private void updateItemState(MarketItem item, int newStock, long newPrice) {
+        int oldStock = item.getCurrentStock();
+        long oldPrice = item.getCurrentPrice();
+        item.setCurrentStock(newStock);
+        item.setCurrentPrice(newPrice);
+        item.getPriceHistory().add(newPrice);
+        logStockUpdate(item, oldStock, oldPrice, newStock, newPrice);
+        notifyStockUpdated(item);
+    }
+
+    private void logUpgradeBaseStock(String itemName, long oldBaseStock, long newBaseStock, long increaseNumber, long newVariation) {
+        LOGGER.info(() -> String.format(
+                "%s | Stock upgrade: %d → %d (+%d) | New Variation: %.4f%%",
+                itemName,
+                oldBaseStock,
+                newBaseStock,
+                increaseNumber,
+                (newVariation / (double) DECIMAL_SCALE) * 100 // Correctly format as percentage
+        ));
+    }
+
     public void upgradeBaseStock(MarketItem item, int increaseNumber) {
         int oldBaseStock = item.getBaseStock();
         int newBaseStock = oldBaseStock + increaseNumber;
         long oldVariation = item.getPriceVariationPerOperation();
 
-        // Scale variation inversely with baseStock growth (integer math)
         long newVariation = (oldVariation * oldBaseStock) / newBaseStock;
-        newVariation = Math.max(newVariation, 1L); // Minimum 0.01% (1L)
+        newVariation = Math.max(newVariation, 1L);
 
         item.setBaseStock(newBaseStock);
         item.setPriceVariationPerOperation(newVariation);
 
-        long finalNewVariation = newVariation;
-        LOGGER.info(() -> String.format(
-                "%s | Stock upgrade: %d → %d (+%d) | New Variation: %.4f%%",
-                item.getName(),
-                oldBaseStock,
-                newBaseStock,
-                increaseNumber,
-                (finalNewVariation / (double) DECIMAL_SCALE) * 100 // Correctly format as percentage
-        ));
+        logUpgradeBaseStock(item.getName(), oldBaseStock, newBaseStock, increaseNumber, newVariation);
     }
 }
