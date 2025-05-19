@@ -49,8 +49,7 @@ public class FileLoader {
         
         # Number of decimal places for prices
         price-decimal-places: 2
-        
-        stockIncreasePercentage: 0.05
+       
         """;
 
         YamlConfiguration config = new YamlConfiguration();
@@ -143,6 +142,8 @@ public class FileLoader {
                             base_stock: 2000
                             current_stock: 2000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -159,6 +160,8 @@ public class FileLoader {
                             base_stock: 5000
                             current_stock: 5000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -175,6 +178,8 @@ public class FileLoader {
                             base_stock: 3000
                             current_stock: 3000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -191,6 +196,8 @@ public class FileLoader {
                             base_stock: 2500
                             current_stock: 2500
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -207,6 +214,8 @@ public class FileLoader {
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -223,6 +232,8 @@ public class FileLoader {
                             base_stock: 1500
                             current_stock: 1500
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -239,6 +250,8 @@ public class FileLoader {
                             base_stock: 800
                             current_stock: 800
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -255,6 +268,8 @@ public class FileLoader {
                             base_stock: 500
                             current_stock: 500
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -271,6 +286,8 @@ public class FileLoader {
                             base_stock: 200
                             current_stock: 200
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -287,6 +304,8 @@ public class FileLoader {
                             base_stock: 100
                             current_stock: 100
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -303,6 +322,8 @@ public class FileLoader {
                             base_stock: 1500
                             current_stock: 1500
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -319,6 +340,8 @@ public class FileLoader {
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -335,6 +358,8 @@ public class FileLoader {
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -351,6 +376,8 @@ public class FileLoader {
                             base_stock: 800
                             current_stock: 800
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -367,6 +394,8 @@ public class FileLoader {
                             base_stock: 300
                             current_stock: 300
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -383,6 +412,8 @@ public class FileLoader {
                             base_stock: 2000
                             current_stock: 2000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -399,6 +430,8 @@ public class FileLoader {
                             base_stock: 1800
                             current_stock: 1800
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -415,6 +448,8 @@ public class FileLoader {
                             base_stock: 1600
                             current_stock: 1600
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -431,6 +466,8 @@ public class FileLoader {
                             base_stock: 1400
                             current_stock: 1400
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -447,6 +484,8 @@ public class FileLoader {
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -463,6 +502,8 @@ public class FileLoader {
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -479,6 +520,8 @@ public class FileLoader {
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -495,6 +538,8 @@ public class FileLoader {
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -511,6 +556,8 @@ public class FileLoader {
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -527,6 +574,8 @@ public class FileLoader {
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -543,6 +592,8 @@ public class FileLoader {
                             base_stock: 3000
                             current_stock: 3000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -559,6 +610,8 @@ public class FileLoader {
                             base_stock: 2000
                             current_stock: 2000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -575,6 +628,8 @@ public class FileLoader {
                             base_stock: 2500
                             current_stock: 2500
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -591,6 +646,8 @@ public class FileLoader {
                             base_stock: 1000
                             current_stock: 1000
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -607,6 +664,8 @@ public class FileLoader {
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -623,6 +682,8 @@ public class FileLoader {
                             base_stock: 1500
                             current_stock: 1500
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -639,6 +700,8 @@ public class FileLoader {
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -655,6 +718,8 @@ public class FileLoader {
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -671,6 +736,8 @@ public class FileLoader {
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:
@@ -687,6 +754,8 @@ public class FileLoader {
                             base_stock: 1200
                             current_stock: 1200
                             stock_surplus: 0
+                            stock_regeneration_multiplier: 1
+                            stock_regeneration_rate: 0.05
                             next_update_time: 0
                             last_activity: 0
                             price_history:

@@ -19,7 +19,8 @@ public class MarketItem {
     private long priceVariationPerOperation;
     private int currentStock;
     private int baseStock;
-    private double stockRegenRate;
+    private double stockRegenerationMultiplier;
+    private double stockRegenerationRate;
     private long nextUpdateTime;
     private int stockSurplus;
 
@@ -38,11 +39,12 @@ public class MarketItem {
             int                 originalStock,
             int                 baseStock,
             int                 currentStock,
-            double              stockRegenRate,
+            double              stockRegenerationMultiplier,
+            double              stockRegenerationRate,
             long                nextUpdateTime,
             int                 stockSurplus,
             long                lastActivity,
-            List<Long>    priceHistory
+            List<Long>          priceHistory
     )
     {
             this.category = category;
@@ -55,7 +57,8 @@ public class MarketItem {
             this.originalStock = originalStock;
             this.baseStock = baseStock;
             this.currentStock = currentStock;
-            this.stockRegenRate = stockRegenRate;
+            this.stockRegenerationMultiplier = stockRegenerationMultiplier;
+            this.stockRegenerationRate = stockRegenerationRate;
             this.nextUpdateTime = nextUpdateTime;
             this.stockSurplus = stockSurplus;
             this.lastActivity = lastActivity;
@@ -73,7 +76,8 @@ public class MarketItem {
     public int          getOriginalStock()              { return originalStock; }
     public int          getBaseStock()                  { return baseStock; }
     public int          getCurrentStock()               { return currentStock; }
-    public double       getStockRegenRate()             { return  stockRegenRate; }
+    public double       getStockRegenerationMultiplier(){ return  stockRegenerationMultiplier; }
+    public double       getStockRegenerationRate()      { return stockRegenerationRate; }
     public long         getNextUpdateTime()             { return nextUpdateTime; }
     public int          getStockSurplus()               { return stockSurplus; }
     public long         getLastActivity()               { return lastActivity; }
@@ -90,13 +94,14 @@ public class MarketItem {
     }
 
     // Setters (mutable fields only) ----------------------------
-    public void setCurrentPrice(long currentPrice)                              { this.currentPrice = currentPrice; }
-    public void setPriceVariationPerOperation(long priceVariationPerOperation)  { this.priceVariationPerOperation = priceVariationPerOperation; }
-    public void setCurrentStock(int currentStock)                               { this.currentStock = currentStock; }
-    public void setBaseStock(int baseStock)                                     { this.baseStock = baseStock;       }
-    public void setStockRegenRate(double stockRegenRate)                        { this.stockRegenRate = stockRegenRate; }
-    public void setNextUpdateTime(long nextUpdateTime)                          { this.nextUpdateTime = nextUpdateTime; }
-    public void setStockSurplus(int stockSurplus)                               { this.stockSurplus = stockSurplus; }
-    public void setLastActivity(long lastActivity)                              { this.lastActivity = lastActivity; }
-    public void setPriceHistory(List<Long> priceHistory)                        { this.priceHistory = priceHistory; }
+    public void setCurrentPrice(long currentPrice)                                  { this.currentPrice = currentPrice; }
+    public void setPriceVariationPerOperation(long priceVariationPerOperation)      { this.priceVariationPerOperation = priceVariationPerOperation; }
+    public void setCurrentStock(int currentStock)                                   { this.currentStock = currentStock; }
+    public void setBaseStock(int baseStock)                                         { this.baseStock = baseStock;       }
+    public void setStockRegenerationMultiplier(double stockRegenerationMultiplier)  { this.stockRegenerationMultiplier = stockRegenerationMultiplier; }
+    public void setStockRegenerationRate(double stockRegenerationRate)              { this.stockRegenerationRate = stockRegenerationRate; }
+    public void setNextUpdateTime(long nextUpdateTime)                              { this.nextUpdateTime = nextUpdateTime; }
+    public void setStockSurplus(int stockSurplus)                                   { this.stockSurplus = stockSurplus; }
+    public void setLastActivity(long lastActivity)                                  { this.lastActivity = lastActivity; }
+    public void setPriceHistory(List<Long> priceHistory)                            { this.priceHistory = priceHistory; }
 }

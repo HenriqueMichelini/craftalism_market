@@ -3,7 +3,6 @@ package io.github.HenriqueMichelini.craftalism_market.config;
 import io.github.HenriqueMichelini.craftalism_market.config.loader.DataParser;
 import io.github.HenriqueMichelini.craftalism_market.config.loader.FileLoader;
 import io.github.HenriqueMichelini.craftalism_market.config.validation.SchemaValidator;
-import io.github.HenriqueMichelini.craftalism_market.logic.MarketMath;
 import io.github.HenriqueMichelini.craftalism_market.models.Category;
 import io.github.HenriqueMichelini.craftalism_market.models.MarketItem;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -13,8 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static org.bukkit.Bukkit.getLogger;
 
 public class ConfigManager {
     private final FileLoader fileLoader;
@@ -79,7 +76,8 @@ public class ConfigManager {
             itemsConfig.set(path + "tax_rate", item.getTaxRate());
             itemsConfig.set(path + "base_stock", item.getBaseStock());
             itemsConfig.set(path + "current_stock", item.getCurrentStock());
-            itemsConfig.set(path + "stock_regen_rate", item.getStockRegenRate());
+            itemsConfig.set(path + "stock_regeneration_multiplier", item.getStockRegenerationMultiplier());
+            itemsConfig.set(path + "stock_regeneration_rate", item.getStockRegenerationRate());
             itemsConfig.set(path + "next_update_time", item.getNextUpdateTime());
             itemsConfig.set(path + "last_activity", item.getLastActivity());
 

@@ -145,7 +145,7 @@ public class StockHandler {
 
     private int calculateSafeAdjustment(MarketItem item, int base, int current) {
         double minRegen = 0.01;
-        double regenRate = Math.max(item.getStockRegenRate(), minRegen);
+        double regenRate = Math.max(item.getStockRegenerationRate(), minRegen);
 
         int delta = base - current;
         int maxAdjustment;
@@ -161,7 +161,7 @@ public class StockHandler {
         absAdjustment = Math.max(1, absAdjustment);
         int adjustment = delta > 0 ? absAdjustment : -absAdjustment;
 
-        logCalculateSafeAdjustment(item.getName(), base, current, item.getStockRegenRate(), adjustment);
+        logCalculateSafeAdjustment(item.getName(), base, current, item.getStockRegenerationMultiplier(), adjustment);
 
         return adjustment;
     }
@@ -255,5 +255,21 @@ public class StockHandler {
         item.setPriceVariationPerOperation(newVariation);
 
         logUpgradeBaseStock(item.getName(), oldBaseStock, newBaseStock, increaseNumber, newVariation);
+    }
+
+    private void logUpgradeStockRegeneration(double oldRegeneration, double currentRegeneration) {
+        LOGGER.info(() -> String.format(
+                "%f → %f",
+                oldRegeneration,
+                currentRegeneration
+        ));
+    }
+
+    public void upgradeStockRegeneration(MarketItem item, int increaseNumber) {
+        double currentStockRegenRate = item.getStockRegenerationRate();
+        double regenerationUpgrade = (double) increaseNumber / 10000;
+        double newStockRegenRate = item.getStockRegenerationMultiplier() * (currentStockRegenRate + regenerationUpgrade);
+        item.setStockRegenerationRate(newStockRegenRate);
+        logUpgradeStockRegeneration(currentStockRegenRate, newStockRegenRate);
     }
 }

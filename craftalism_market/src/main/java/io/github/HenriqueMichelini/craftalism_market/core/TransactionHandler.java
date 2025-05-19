@@ -22,7 +22,7 @@ public class TransactionHandler {
     private final StockHandler stockHandler;
 
     public TransactionHandler(
-            MoneyFormat moneyFormat,
+            MoneyFormat     moneyFormat,
             Player          player,
             EconomyManager  economyManager,
             ConfigManager   configManager,
@@ -49,7 +49,9 @@ public class TransactionHandler {
         if (!processPurchase(item, adjustedAmount)) return false;
 
         updateMarketItemPriceAndStock(item, adjustedAmount, true);
-        parseUpgradeBaseStockValues(item, requestedAmount);
+        parseUpgradeBaseStockValues(item, adjustedAmount);
+
+        stockHandler.upgradeStockRegeneration(item, adjustedAmount);
 
         return true;
     }
@@ -65,10 +67,13 @@ public class TransactionHandler {
 
         TransactionResult result = calculateTransactionResult(item, adjustedAmount);
         completeSellTransaction(item, adjustedAmount, result);
+        stockHandler.upgradeStockRegeneration(item, adjustedAmount);
+
         sendSuccess("Successfully sold %d %s for %s. Tax of %s deducted."
                 .formatted(adjustedAmount, item.getName(),
                         moneyFormat.formatPrice(result.earningsAfterTax()),
                         moneyFormat.formatPrice((long) result.tax())));
+
         return true;
     }
 
